@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="edu.kit.textannotation.update" />
+        <module name="edu.kit.textannotation.product" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="edu.kit.textannotation.bundles" target="1.5" />
+      <module name="edu.kit.textannotation.features" target="1.5" />
+      <module name="edu.kit.textannotation.product" target="1.5" />
+      <module name="edu.kit.textannotation.releng" target="1.5" />
+      <module name="edu.kit.textannotation.root" target="1.5" />
+      <module name="edu.kit.textannotation.update" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

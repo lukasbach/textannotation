@@ -12,7 +12,6 @@
     </parent>
 
     <modules>
-        <module>edu.kit.textannotation.plugin1</module>
-        <module>edu.kit.textannotation.rcp</module>
+        <module>edu.kit.textannotation.rcpplugin</module>
     </modules>
 </project>
