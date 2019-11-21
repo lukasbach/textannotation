@@ -13,6 +13,5 @@
 
     <modules>
         <module>edu.kit.textannotation.feature</module>
-        <module>edu.kit.textannotation.feature1</module>
     </modules>
 </project>

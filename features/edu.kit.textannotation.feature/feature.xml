@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="edu.kit.textannotation.rcpplugin"
+         id="edu.kit.textannotation.annotationplugin"
          download-size="0"
          install-size="0"
          version="0.0.0"

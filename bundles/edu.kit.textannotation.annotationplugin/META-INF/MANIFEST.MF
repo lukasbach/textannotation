@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Annotationplugin
+Bundle-SymbolicName: edu.kit.textannotation.annotationplugin;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.kit.textannotation.annotationplugin.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.genericeditor,
+ org.eclipse.core.filebuffers,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: edu.kit.textannotation.annotationplugin
+Bundle-ActivationPolicy: lazy
