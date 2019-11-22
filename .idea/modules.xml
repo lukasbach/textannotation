@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/releng/edu.kit.textannotation.product/edu.kit.textannotation.product.iml" filepath="$PROJECT_DIR$/releng/edu.kit.textannotation.product/edu.kit.textannotation.product.iml" />
       <module fileurl="file://$PROJECT_DIR$/releng/edu.kit.textannotation.releng.iml" filepath="$PROJECT_DIR$/releng/edu.kit.textannotation.releng.iml" />
       <module fileurl="file://$PROJECT_DIR$/edu.kit.textannotation.root.iml" filepath="$PROJECT_DIR$/edu.kit.textannotation.root.iml" />
-      <module fileurl="file://$PROJECT_DIR$/releng/edu.kit.textannotation.update/edu.kit.textannotation.update.iml" filepath="$PROJECT_DIR$/releng/edu.kit.textannotation.update/edu.kit.textannotation.update.iml" />
     </modules>
   </component>
 </project>

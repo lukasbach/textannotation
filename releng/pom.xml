@@ -12,7 +12,6 @@
     </parent>
 
     <modules>
-        <module>edu.kit.textannotation.update</module> 
         <module>edu.kit.textannotation.product</module> 
     </modules>
 </project>

@@ -6,7 +6,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="edu.kit.textannotation.update" />
         <module name="edu.kit.textannotation.product" />
       </profile>
     </annotationProcessing>
