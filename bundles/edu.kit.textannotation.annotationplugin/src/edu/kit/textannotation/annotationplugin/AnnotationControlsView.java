@@ -48,9 +48,10 @@ public class AnnotationControlsView extends ViewPart {
 	public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationControlsView";
 	private GridLayout layout;
 	private Combo profileSelector;
-	private Button ButtonMakeSubstantive;
-	private Button ButtonMakeVerb;
-	private Button ButtonMakeObjective;
+	private Button buttonMakeSubstantive;
+	private Button buttonMakeVerb;
+	private Button buttonMakeObjective;
+	private Button buttonEditProfile;
 
 	@Inject IWorkbench workbench;
 
@@ -60,19 +61,21 @@ public class AnnotationControlsView extends ViewPart {
 		parent.setLayout(layout);
 
 		profileSelector = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
-		ButtonMakeSubstantive = new Button(parent, SWT.PUSH | SWT.FILL);
-		ButtonMakeVerb = new Button(parent, SWT.PUSH | SWT.FILL);
-		ButtonMakeObjective = new Button(parent, SWT.PUSH | SWT.FILL);
+		buttonMakeSubstantive = new Button(parent, SWT.PUSH | SWT.FILL);
+		buttonMakeVerb = new Button(parent, SWT.PUSH | SWT.FILL);
+		buttonMakeObjective = new Button(parent, SWT.PUSH | SWT.FILL);
+		buttonEditProfile = new Button(parent, SWT.PUSH | SWT.FILL);
 
         profileSelector.add("Requirements Engineering");
         profileSelector.add("Text Analysis");
         profileSelector.add("Add new profile...");
 
-		ButtonMakeSubstantive.setText("Make Substantive");
-		ButtonMakeVerb.setText("Make Verb");
-		ButtonMakeObjective.setText("Make Objective");
+		buttonMakeSubstantive.setText("Make Substantive");
+		buttonMakeVerb.setText("Make Verb");
+		buttonMakeObjective.setText("Make Objective");
+		buttonEditProfile.setText("Edit Profile");
 		
-		for (Control c: Arrays.asList(profileSelector, ButtonMakeSubstantive, ButtonMakeVerb, ButtonMakeObjective)) {
+		for (Control c: Arrays.asList(profileSelector, buttonMakeSubstantive, buttonMakeVerb, buttonMakeObjective, buttonEditProfile)) {
 			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		}
 	}
