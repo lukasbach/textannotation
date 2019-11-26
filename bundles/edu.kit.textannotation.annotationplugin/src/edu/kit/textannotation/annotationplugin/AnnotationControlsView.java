@@ -12,7 +12,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.*;
+
+import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
+
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,7 +81,12 @@ public class AnnotationControlsView extends ViewPart {
 		buttonEditProfile.addListener(SWT.Selection, new Listener() {
 		    @Override
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-		    	EditProfileDialog.openWindow();
+		    	AnnotationProfile demoProfile = new AnnotationProfile("Default Profile");
+		    	demoProfile.addAnnotationClass(new AnnotationClass("Substantive", new Color(Display.getCurrent(), 255, 0, 0)));
+		    	demoProfile.addAnnotationClass(new AnnotationClass("Verb", new Color(Display.getCurrent(), 255, 0, 0)));
+		    	demoProfile.addAnnotationClass(new AnnotationClass("Objective", new Color(Display.getCurrent(), 255, 0, 0)));
+		    	demoProfile.addAnnotationClass(new AnnotationClass("Other", new Color(Display.getCurrent(), 255, 0, 0)));
+		    	EditProfileDialog.openWindow(demoProfile);
 		    }
 		});
 		

@@ -47,6 +47,6 @@ public class AnnotationClass {
 	}
 	
 	public void removePossibleMatching(String matchingName) {
-		this.possibleMatchings.removeIf(m -> m.getName() == matchingName);
+		this.possibleMatchings.removeIf(m -> m.getName().equals(matchingName));
 	}
 }
