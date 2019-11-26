@@ -1,0 +1,1 @@
+npx standard-version --skip.bump --skip.commit --skip.tag
