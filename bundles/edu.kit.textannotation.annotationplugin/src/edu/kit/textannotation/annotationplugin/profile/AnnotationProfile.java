@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,11 @@ public class AnnotationProfile {
 	public AnnotationProfile(String name) {
 		this.setName(name);
 		this.annotationClasses = new LinkedList<AnnotationClass>();
+	}
+	
+	public AnnotationProfile(AnnotationClass[] annotationClasses) {
+		this.setName("--internalProfile");
+		this.annotationClasses = Arrays.asList(annotationClasses);
 	}
 	
 	public void addAnnotationClass(AnnotationClass ac) {
@@ -27,13 +33,14 @@ public class AnnotationProfile {
 	
 	public AnnotationClass getAnnotationClass(String name) throws Exception {
 		for (AnnotationClass ac: annotationClasses) {
-			if (ac.getName().equals(name)) {
+			if (ac.getName().equals(name.replace("\n", "").replace("\r", ""))) {
 				return ac;
 			}
 		}
 		
 		// TODO custom exception
-		throw new Exception("Could not find annotation class " + name);
+		throw new Exception("Could not find annotation class " + name + ", available classes are " 
+		  + annotationClasses.stream().map(c -> c.getName()).collect(Collectors.joining(", ")));
 	}
 	
 	public String[] getAnnotationClassNames() {

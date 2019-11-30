@@ -21,7 +21,7 @@
    <extension
          point="org.eclipse.ui.genericeditor.presentationReconcilers">
       <presentationReconciler
-            class="edu.kit.textannotation.annotationplugin.ProjectPresentationReconciler"
+            class="edu.kit.textannotation.annotationplugin.textmodel.ProjectPresentationReconciler"
             contentType="edu.kit.textannotation.annotationplugin.project">
       </presentationReconciler>
    </extension>

@@ -1,9 +1,11 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.internal.ide.registry.AskUserViaPopupUnassociatedEditorStrategy;
 
 public class AnnotationClass {
 
@@ -15,7 +17,16 @@ public class AnnotationClass {
 		this.name = name;
 		this.color = color;
 		this.possibleMatchings = new LinkedList<AnnotationClass>();
-		
+	}
+	
+	public AnnotationClass(String name, Color color, List<AnnotationClass> possibleMatchings) {
+		this.name = name;
+		this.color = color;
+		this.possibleMatchings = possibleMatchings;
+	}
+	
+	public AnnotationClass(String name, Color color, AnnotationClass[] possibleMatchings) {
+		this(name, color, Arrays.asList(possibleMatchings));
 	}
 	
 	public String getName() {
