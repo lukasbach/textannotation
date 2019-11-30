@@ -1,6 +1,7 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Color;
@@ -10,10 +11,10 @@ import org.eclipse.swt.widgets.Display;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
-public class TextModelParser {
+public class TextModelIntegration {
 	private IDocument document;
 	
-	public TextModelParser(IDocument document) {
+	public TextModelIntegration(IDocument document) {
 		this.document = document;
 	}
 	
@@ -56,6 +57,24 @@ public class TextModelParser {
 				.toArray(size -> new AnnotationClass[size]);
 		
 		return new AnnotationProfile(annotationClasses);
+	}
+	
+	public void updateTextModel(SingleAnnotation[] annotations, AnnotationProfile profile) {
+		System.out.println(this.document.get());
+		System.out.println("\n\n changed to: \n\n");
+		String[] lines = this.document.get().split("\n");
+		lines[0] = profile
+				.getAnnotationClasses()
+				.stream()
+				.map(ac -> String.format("%s,%s", ac.getName(), ac.getColorAsTextModelString()))
+				.collect(Collectors.joining(";"));
+		lines[1] = Arrays.asList(annotations)
+				.stream()
+				// TODO should not use getAnnotationDataLength here, as annotationData is about to be changed and is likely wrong here.
+				.map(a -> String.format("%s,%s,%s,%s", a.getId(), a.getOffset() - getAnnotationDataLength(), a.getLength(), a.getAnnotationIdentifier()))
+				.collect(Collectors.joining(";"));
+		System.out.println(Arrays.asList(lines).stream().collect(Collectors.joining("\n")) +"\n\n");
+		this.document.set(Arrays.asList(lines).stream().collect(Collectors.joining("\n")));
 	}
 	
 	public int getAnnotationDataLength() {

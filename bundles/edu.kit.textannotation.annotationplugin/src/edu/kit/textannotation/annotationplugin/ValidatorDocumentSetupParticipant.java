@@ -19,11 +19,16 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelFixer;
+
 public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
 
 	private final class DocumentValidator implements IDocumentListener {
 		private final IFile file;
 		private IMarker marker;
+		private TextModelFixer tmf;
+		private boolean isEventAFix = false;
+		private boolean hasDocumentInitialized = false;
 
 		private DocumentValidator(IFile file) {
 			this.file = file;
@@ -31,6 +36,24 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
+			System.out.println(
+					String.format(
+							"offset=%s, length=%s, text=%s",
+							event.getOffset(), 
+							event.getLength(), 
+							event.getText()
+							));
+			
+			if (!hasDocumentInitialized) {
+				this.hasDocumentInitialized = true;
+				this.tmf = new TextModelFixer(event.getDocument().getLength());
+			} else if (isEventAFix) {
+				isEventAFix = false;
+			} else {
+				isEventAFix = true;
+				tmf.onChange(event);
+			}
+			/*
 			if (this.marker != null) {
 				try {
 					this.marker.delete();
@@ -58,7 +81,7 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 
 		@Override

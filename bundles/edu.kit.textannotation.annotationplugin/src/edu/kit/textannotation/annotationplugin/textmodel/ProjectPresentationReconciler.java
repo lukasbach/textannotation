@@ -35,13 +35,13 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
     	private IDocument document;
     	private IPresentationDamager damager = this;
     	private IPresentationRepairer repairer = this;
-    	private TextModelParser parser;
+    	private TextModelIntegration parser;
     	
 		@Override
 		public void setDocument(IDocument document) {
 			System.out.println("Reset document");
 			this.document = document;
-			this.parser = new TextModelParser(document);
+			this.parser = new TextModelIntegration(document);
 		}
 
 		@Override

@@ -37,6 +37,10 @@ public class AnnotationClass {
 		return color;
 	}
 	
+	public String getColorAsTextModelString() {
+		return String.format("%s-%s-%s", color.getRed(), color.getGreen(), color.getBlue());
+	}
+	
 	public List<AnnotationClass> getPossibleMatchings() {
 		return possibleMatchings;
 	}
