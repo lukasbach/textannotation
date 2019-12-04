@@ -18,7 +18,7 @@ public class ProjectReconciler extends Reconciler {
     @Override
     public void install(ITextViewer textViewer) {
         super.install(textViewer);
-        ProjectionViewer pViewer =(ProjectionViewer)textViewer;
-        fStrategy.setProjectionViewer(pViewer);
+        // ProjectionViewer pViewer =(ProjectionViewer)textViewer;
+        // fStrategy.setProjectionViewer(pViewer);
     }
 }

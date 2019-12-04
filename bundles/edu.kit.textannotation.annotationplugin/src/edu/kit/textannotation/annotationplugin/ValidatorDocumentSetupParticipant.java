@@ -23,15 +23,13 @@ import edu.kit.textannotation.annotationplugin.textmodel.TextModelFixer;
 
 public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
 
-	private final class DocumentValidator implements IDocumentListener {
-		private final IFile file;
+	public final static class DocumentValidator implements IDocumentListener {
 		private IMarker marker;
 		private TextModelFixer tmf;
 		private boolean isEventAFix = false;
 		private boolean hasDocumentInitialized = false;
 
-		private DocumentValidator(IFile file) {
-			this.file = file;
+		public DocumentValidator() {
 		}
 
 		@Override
@@ -96,8 +94,7 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 	@Override
 	public void setup(IDocument document, IPath location, LocationKind locationKind) {
 		if (locationKind == LocationKind.IFILE) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(location);
-			document.addDocumentListener(new DocumentValidator(file));
+			document.addDocumentListener(new DocumentValidator());
 		}
 	}
 

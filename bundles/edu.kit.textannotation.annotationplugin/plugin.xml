@@ -12,56 +12,6 @@
       </content-type>
    </extension>
    <extension
-         point="org.eclipse.ui.editors">
-      <editorContentTypeBinding
-            contentTypeId="edu.kit.textannotation.annotationplugin.project"
-            editorId="org.eclipse.ui.genericeditor.GenericEditor">
-      </editorContentTypeBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.genericeditor.presentationReconcilers">
-      <presentationReconciler
-            class="edu.kit.textannotation.annotationplugin.textmodel.ProjectPresentationReconciler"
-            contentType="edu.kit.textannotation.annotationplugin.project">
-      </presentationReconciler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.genericeditor.hoverProviders">
-      <hoverProvider
-            class="edu.kit.textannotation.annotationplugin.ProjectHoverProvider"
-            contentType="edu.kit.textannotation.annotationplugin.project">
-      </hoverProvider>
-   </extension>
-   <extension
-         point="org.eclipse.ui.genericeditor.contentAssistProcessors">
-      <contentAssistProcessor
-            class="edu.kit.textannotation.annotationplugin.ProjectContentAssistProcessor"
-            contentType="edu.kit.textannotation.annotationplugin.project">
-      </contentAssistProcessor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.genericeditor.autoEditStrategies">
-      <autoEditStrategy
-            class="edu.kit.textannotation.annotationplugin.ProjectAutoEditStrategy"
-            contentType="edu.kit.textannotation.annotationplugin.project">
-      </autoEditStrategy>
-   </extension>
-   <extension
-         point="org.eclipse.ui.genericeditor.reconcilers">
-      <reconciler
-            class="edu.kit.textannotation.annotationplugin.ProjectReconciler"
-            contentType="edu.kit.textannotation.annotationplugin.project">
-      </reconciler>
-   </extension>
-   <extension
-         point="org.eclipse.core.filebuffers.documentSetup">
-      <participant
-            class="edu.kit.textannotation.annotationplugin.ValidatorDocumentSetupParticipant"
-            contentTypeId="edu.kit.textannotation.annotationplugin.project"
-            extensions="project">
-      </participant>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             id="edu.kit.textannotation.annotationplugin.commands.category"
@@ -163,6 +113,18 @@
       <contexts
             file="contexts.xml">
       </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor"
+            id="edu.kit.textannotation.annotationplugin.editor"
+            name="textannotationeditor">
+      </editor>
+      <editorContentTypeBinding
+            contentTypeId="edu.kit.textannotation.annotationplugin.project"
+            editorId="edu.kit.textannotation.annotationplugin.editor">
+      </editorContentTypeBinding>
    </extension>
 
 </plugin>
