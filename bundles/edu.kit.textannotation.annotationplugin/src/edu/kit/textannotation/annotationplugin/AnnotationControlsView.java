@@ -55,6 +55,13 @@ public class AnnotationControlsView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
+		finder.annotationEditorActivated.addListener(editor -> System.out.println("FOUND EDITOR" + editor.getAnnotationData().toString()));
+		if (finder.getAnnotationEditor() != null) {
+			System.out.println("INITIAL EDITOR" + finder.getAnnotationEditor().toString());
+		}
+		// TODO do something with editor
+		
 		layout = new GridLayout(1, false);
 		parent.setLayout(layout);
 

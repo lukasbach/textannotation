@@ -10,4 +10,9 @@ public class AnnotationData {
 		this.annotations = annotations;
 		this.profile = profile;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("AnnotationData(%s, %s)", annotations.toString(), profile.toString());
+	}
 }

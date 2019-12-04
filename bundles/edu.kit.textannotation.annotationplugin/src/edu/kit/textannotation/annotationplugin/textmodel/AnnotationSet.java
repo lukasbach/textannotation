@@ -19,5 +19,10 @@ public class AnnotationSet {
 
 	public List<SingleAnnotation> getAnnotations() {
 		return annotations;
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		return "AnnotationSet(" + annotations.size() + ")";
+	}
 }

@@ -71,6 +71,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			}
 		});
     }
+
+	public AnnotationData getAnnotationData() {
+		return annotationData;
+	}
     
     
     
