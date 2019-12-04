@@ -6,14 +6,20 @@ import org.eclipse.jface.text.IDocument;
 public class AnnotationSetFixer {
 	private AnnotationSet annotations;
 	private int oldDocumentLength;
+	private boolean isFeedbackEvent;
 
 	public AnnotationSetFixer(AnnotationSet annotations, int initialDocumentLength) {
 		this.annotations = annotations;
 		this.oldDocumentLength = initialDocumentLength;
-		
+		this.isFeedbackEvent = false;
 	}
 	
 	public void applyEditEvent(DocumentEvent e) {
+		if (isFeedbackEvent) {
+			isFeedbackEvent = false;
+			return;
+		}
+		
 		IDocument doc = e.getDocument();
 		int docLength = doc.getLength();
 		int eventStart = e.getOffset();
@@ -30,5 +36,10 @@ public class AnnotationSetFixer {
 				// NOOP
 			}
 		}
+		
+		// Change document model to trigger syntax rehighlighting
+		// use isFeedbackEvent to prevent infinite loop
+		isFeedbackEvent = true;
+		doc.set(doc.get());
 	}
 }
