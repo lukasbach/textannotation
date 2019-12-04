@@ -64,4 +64,9 @@ public class AnnotationClass {
 	public void removePossibleMatching(String matchingName) {
 		this.possibleMatchings.removeIf(m -> m.getName().equals(matchingName));
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("AnnotationClass(%s, %s)", name, this.getColorAsTextModelString());
+	}
 }

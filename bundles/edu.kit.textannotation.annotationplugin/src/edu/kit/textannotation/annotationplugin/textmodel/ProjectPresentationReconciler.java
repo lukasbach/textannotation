@@ -26,6 +26,9 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.TextViewer;
 
 public class ProjectPresentationReconciler extends PresentationReconciler {
+	
+	private AnnotationProfile profile;
+	private AnnotationSet annotations;
 
     private final TextAttribute tagAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(0,0, 255)));
     private final TextAttribute headerAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
@@ -58,12 +61,13 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 
 		@Override
 		public void createPresentation(TextPresentation presentation, ITypedRegion damage) {
-			AnnotationProfile profile = parser.parseAnnotationProfile();
-			SingleAnnotation[] annotations = parser.parseAnnotationData();
+			// AnnotationProfile profile = parser.parseAnnotationProfile();
+			// SingleAnnotation[] annotations = parser.parseAnnotationData();
 			
-			for (SingleAnnotation an: annotations) {
+			for (SingleAnnotation an: annotations.getAnnotations()) {
 				try {
 					AnnotationClass ac = profile.getAnnotationClass(an.getAnnotationIdentifier());
+					System.out.println(ac.toString() + ", " + an.getOffset() + ", " + an.getLength());
 					presentation.addStyleRange(new StyleRange(
 							an.getOffset(), 
 							an.getLength(), 
@@ -106,5 +110,10 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
         CustomDamagerRepairer dr = new CustomDamagerRepairer();
         this.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
         this.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+    }
+    
+    public void setAnnotationInformation(AnnotationProfile profile, AnnotationSet annotations) {
+    	this.profile = profile;
+    	this.annotations = annotations;
     }
 }

@@ -20,9 +20,7 @@ public class TextModelIntegration {
 	
 	public SingleAnnotation[] parseAnnotationData() {
 		// uuid,offset,length,annotationname,reference,reference,reference;
-		System.out.println("!!!!!" + document
-					.get()
-					.split("\n", 3)[1]);
+		System.out.println("!!!!!" + document.get());
 		return Arrays.asList(
 					document
 					.get()
@@ -32,7 +30,7 @@ public class TextModelIntegration {
 				.map(v -> v.split(",", 5))
 				.map(v -> new SingleAnnotation(
 						v[0], 
-						Integer.parseInt(v[1]) + this.getAnnotationDataLength(), 
+						Integer.parseInt(v[1]), 
 						Integer.parseInt(v[2]),
 						v[3], 
 						v.length > 4 ? v[4].split(",") : new String[0]
@@ -71,10 +69,27 @@ public class TextModelIntegration {
 		lines[1] = Arrays.asList(annotations)
 				.stream()
 				// TODO should not use getAnnotationDataLength here, as annotationData is about to be changed and is likely wrong here.
-				.map(a -> String.format("%s,%s,%s,%s", a.getId(), a.getOffset() - getAnnotationDataLength(), a.getLength(), a.getAnnotationIdentifier()))
+				.map(a -> String.format("%s,%s,%s,%s", a.getId(), a.getOffset(), a.getLength(), a.getAnnotationIdentifier()))
 				.collect(Collectors.joining(";"));
 		System.out.println(Arrays.asList(lines).stream().collect(Collectors.joining("\n")) +"\n\n");
 		this.document.set(Arrays.asList(lines).stream().collect(Collectors.joining("\n")));
+	}
+	
+	public String buildAnnotationPrefix(AnnotationSet annotations, AnnotationProfile profile) {
+		return (
+			profile
+				.getAnnotationClasses()
+				.stream()
+				.map(ac -> String.format("%s,%s", ac.getName(), ac.getColorAsTextModelString()))
+				.collect(Collectors.joining(";"))
+			+ "\n" + 
+			annotations.getAnnotations()
+				.stream()
+				// TODO should not use getAnnotationDataLength here, as annotationData is about to be changed and is likely wrong here.
+				.map(a -> String.format("%s,%s,%s,%s", a.getId(), a.getOffset(), a.getLength(), a.getAnnotationIdentifier()))
+				.collect(Collectors.joining(";"))
+			+ "\n"
+		);		
 	}
 	
 	public int getAnnotationDataLength() {
