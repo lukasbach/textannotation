@@ -50,7 +50,7 @@ public class TextModelIntegration {
 				.map(v -> v.split(",", 3))
 				.map(v -> new AnnotationClass(
 						v[0], 
-						new Color(Display.getCurrent(), new RGB(128,128,128))
+						parseColor(v[1])
 						))
 				.toArray(size -> new AnnotationClass[size]);
 		
@@ -95,5 +95,12 @@ public class TextModelIntegration {
 	public int getAnnotationDataLength() {
 		String[] lines = document.get().split("\n");
 		return lines[0].length() + lines[1].length();
+	}
+	
+	private Color parseColor(String colorString) {
+		// colorString has the format 123-456-789
+		Integer[] rgb = Arrays.asList(colorString.split("-")).stream().map(Integer::parseInt).toArray(size -> new Integer[size]);
+		return new Color(Display.getCurrent(), new RGB(rgb[0], rgb[1], rgb[2]));
+		
 	}
 }
