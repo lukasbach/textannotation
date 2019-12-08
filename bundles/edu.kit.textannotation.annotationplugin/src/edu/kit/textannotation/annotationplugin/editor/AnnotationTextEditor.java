@@ -28,8 +28,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	private AnnotationData annotationData;
 	private AnnotationSetFixer annotationFixer;
 	private ISourceViewer sourceViewer;
+	private String id;
 	
 	public AnnotationTextEditor() {
+		id = UUID.randomUUID().toString();
 		documentProvider = new AnnotationDocumentProvider();
 		documentProvider.initializeEvent.addListener(e -> {
 			annotationData = e.annotationData;
@@ -72,7 +74,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		// Trigger rehighlight
 		IDocument doc = sourceViewer.getDocument();
 		doc.set(doc.get());
-		
+	}
+	
+	public String getId() {
+		return id;
 	}
     
     private void prepareSourceViewer(ISourceViewer sv) {

@@ -16,12 +16,14 @@ import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 
 public class AnnotationEditorFinder {
 	private IWorkbench workbench;
+	private String activeEditorId;
 	
 	public final EventManager<AnnotationTextEditor> annotationEditorActivated = new EventManager<AnnotationTextEditor>();
 	public final EventManager<EventManager.EmptyEvent> annotationEditorDeactivated = new EventManager<EventManager.EmptyEvent>();
 	
 	public AnnotationEditorFinder(IWorkbench workbench) {
 		this.workbench = workbench;
+		this.activeEditorId = "";
 		workbench.getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener2() {
 			@Override public void partVisible(IWorkbenchPartReference partRef) {}					
 			@Override public void partOpened(IWorkbenchPartReference partRef) {}					
@@ -33,8 +35,11 @@ public class AnnotationEditorFinder {
 			@Override public void partActivated(IWorkbenchPartReference partRef) {
 				IEditorPart activeEditor = workbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 				if (activeEditor instanceof AnnotationTextEditor) {
-					// TODO save and check if editor was already selected and did not change
-					annotationEditorActivated.fire((AnnotationTextEditor) activeEditor);
+					String editorId = ((AnnotationTextEditor) activeEditor).getId();
+					if (!activeEditorId.equals(editorId)) {
+						annotationEditorActivated.fire((AnnotationTextEditor) activeEditor);
+						activeEditorId = editorId;
+					}
 				} else {
 					annotationEditorDeactivated.fire(new EventManager.EmptyEvent());
 				}
