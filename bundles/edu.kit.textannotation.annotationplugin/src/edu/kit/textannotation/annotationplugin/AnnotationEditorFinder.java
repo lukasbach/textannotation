@@ -21,6 +21,7 @@ public class AnnotationEditorFinder {
 	public final EventManager<EventManager.EmptyEvent> annotationEditorDeactivated = new EventManager<EventManager.EmptyEvent>();
 	
 	public AnnotationEditorFinder(IWorkbench workbench) {
+		this.workbench = workbench;
 		workbench.getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener2() {
 			@Override public void partVisible(IWorkbenchPartReference partRef) {}					
 			@Override public void partOpened(IWorkbenchPartReference partRef) {}					
