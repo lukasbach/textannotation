@@ -2,26 +2,19 @@ package edu.kit.textannotation.annotationplugin.editor;
 
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import edu.kit.textannotation.annotationplugin.AnnotationControlsView;
-import edu.kit.textannotation.annotationplugin.ValidatorDocumentSetupParticipant;
-import edu.kit.textannotation.annotationplugin.ValidatorDocumentSetupParticipant.DocumentValidator;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationData;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationDocumentProvider;

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.internal.ide.registry.AskUserViaPopupUnassociatedEditorStrategy;
 
 public class AnnotationClass {
 

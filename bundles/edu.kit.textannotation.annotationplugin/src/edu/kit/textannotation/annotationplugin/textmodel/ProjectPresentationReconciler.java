@@ -32,10 +32,6 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 	
 	private AnnotationProfile profile;
 	private AnnotationSet annotations;
-
-    private final TextAttribute tagAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(0,0, 255)));
-    private final TextAttribute headerAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
-    private final TextAttribute invisbleAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
     
     private class CustomDamagerRepairer implements IPresentationDamager, IPresentationRepairer  {
     	private IDocument document;

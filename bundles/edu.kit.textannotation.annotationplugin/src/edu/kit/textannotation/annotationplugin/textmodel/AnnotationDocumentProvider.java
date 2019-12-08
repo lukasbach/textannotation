@@ -15,7 +15,6 @@ import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
 public class AnnotationDocumentProvider extends FileDocumentProvider {
-	private AbstractDocumentProvider documentProviderView = this;
 	private TextModelIntegration tmi;
 	private AnnotationSet annotationSet;
 	private AnnotationProfile annotationProfile;

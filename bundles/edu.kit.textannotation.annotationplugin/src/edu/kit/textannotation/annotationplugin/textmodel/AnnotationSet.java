@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.text.DocumentEvent;
-
 public class AnnotationSet {
 	private List<SingleAnnotation> annotations;
 	
