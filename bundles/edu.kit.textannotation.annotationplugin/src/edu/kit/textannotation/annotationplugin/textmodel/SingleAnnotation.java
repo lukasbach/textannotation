@@ -50,4 +50,8 @@ public class SingleAnnotation {
 	public String[] getReferences() {
 		return references;
 	}
+	
+	public String toString() {
+		return String.format("SingleAnnotation(annotation=%s, offset=%s, length=%s)", getAnnotationIdentifier(), getOffset(), getLength());
+	}
 }

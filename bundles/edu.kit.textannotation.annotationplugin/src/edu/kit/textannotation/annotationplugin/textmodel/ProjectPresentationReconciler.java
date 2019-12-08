@@ -8,6 +8,9 @@ import org.eclipse.swt.widgets.Display;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -61,13 +64,21 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 
 		@Override
 		public void createPresentation(TextPresentation presentation, ITypedRegion damage) {
-			// AnnotationProfile profile = parser.parseAnnotationProfile();
-			// SingleAnnotation[] annotations = parser.parseAnnotationData();
+			System.out.println("Document: " + document.get());
+			System.out.println("Creating presentation with the following annotations:");
+			List<SingleAnnotation> annotationList = annotations
+					.getAnnotations()
+					.stream()
+					.sorted((SingleAnnotation a, SingleAnnotation b) -> {
+						return a.getOffset() - b.getOffset();
+					})
+					// TODO make sure that annotations dont overlap. Probably better to make sure during annotation creation
+					.collect(Collectors.toList());
 			
-			for (SingleAnnotation an: annotations.getAnnotations()) {
+			for (SingleAnnotation an: annotationList) {
 				try {
 					AnnotationClass ac = profile.getAnnotationClass(an.getAnnotationIdentifier());
-					System.out.println(ac.toString() + ", " + an.getOffset() + ", " + an.getLength());
+					System.out.println("Annotation: " + ac.toString() + ", offset=" + an.getOffset() + ", len=" + an.getLength());
 					presentation.addStyleRange(new StyleRange(
 							an.getOffset(), 
 							an.getLength(), 
@@ -78,35 +89,12 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 					e.printStackTrace();
 				}
 			}
-			
-			
-			System.out.println(
-					"offset=" + damage.getOffset() +  
-					"length=" + damage.getLength() + 
-					"type=" + damage.getType()
-					);
-			if (damage.getLength() > 10) {
-				// presentation.addStyleRange(new StyleRange(2, 3, new Color(Display.getCurrent(), new RGB(0,0, 255)), new Color(Display.getCurrent(), new RGB(0,0, 50))));
-			}
-			
+			System.out.print("\n\n");
 		}
     	
     }
     
-    
-
     public ProjectPresentationReconciler() {
-        // TODO this is logic for .project file to color tags in blue. Replace with your language logic!
-    	// RuleBasedScanner scanner= new RuleBasedScanner();
-    	// IRule[] rules = new IRule[3];
-    	// rules[1]= new SingleLineRule("<", ">", new Token(tagAttribute));
-    	// rules[0]= new SingleLineRule("<?", "?>", new Token(headerAttribute));
-    	// rules[2]= new MultiLineRule("##1##", "##/1##", new Token(tagAttribute));
-    	// scanner.setRules(rules);
-    	// DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
-    	// this.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-    	// this.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        
         CustomDamagerRepairer dr = new CustomDamagerRepairer();
         this.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
         this.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);

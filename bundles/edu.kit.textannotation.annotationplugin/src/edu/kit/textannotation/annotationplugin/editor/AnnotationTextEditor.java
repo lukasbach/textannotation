@@ -1,29 +1,40 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import edu.kit.textannotation.annotationplugin.AnnotationControlsView;
 import edu.kit.textannotation.annotationplugin.ValidatorDocumentSetupParticipant;
 import edu.kit.textannotation.annotationplugin.ValidatorDocumentSetupParticipant.DocumentValidator;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationData;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationDocumentProvider;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSetFixer;
 import edu.kit.textannotation.annotationplugin.textmodel.ProjectPresentationReconciler;
+import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 
 public class AnnotationTextEditor extends AbstractTextEditor {
 	private ProjectPresentationReconciler presentationReconciler;
 	private AnnotationDocumentProvider documentProvider;
 	private AnnotationData annotationData;
 	private AnnotationSetFixer annotationFixer;
+	private ISourceViewer sourceViewer;
 	
 	public AnnotationTextEditor() {
 		documentProvider = new AnnotationDocumentProvider();
@@ -50,11 +61,29 @@ public class AnnotationTextEditor extends AbstractTextEditor {
         	}
         });
     }
+
+	public AnnotationData getAnnotationData() {
+		return annotationData;
+	}
+	
+	public void annotate(AnnotationClass annotationClass) {
+		Point p = sourceViewer.getSelectedRange();
+		int offset = p.x;
+		int length = p.y;
+		
+		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(), 
+				offset, length, annotationClass.getName(), new String[0]);
+		System.out.println("Annotating: " + annotation.toString());
+		annotationData.annotations.addAnnotation(annotation);
+		
+		// Trigger rehighlight
+		IDocument doc = sourceViewer.getDocument();
+		doc.set(doc.get());
+		
+	}
     
     private void prepareSourceViewer(ISourceViewer sv) {
-    	// sv.getDocument().addDocumentListener(new ValidatorDocumentSetupParticipant.DocumentValidator());
-    	DocumentValidator dv = new ValidatorDocumentSetupParticipant.DocumentValidator();
-    	System.out.println("DOCUMENT:" + sv.getDocument());
+    	sourceViewer = sv;
     	
 		sv.addTextListener(new ITextListener() {	
 			@Override
@@ -71,10 +100,6 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			}
 		});
     }
-
-	public AnnotationData getAnnotationData() {
-		return annotationData;
-	}
     
     
     

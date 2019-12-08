@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 public class EventManager<T> {
 	private List<Consumer<T>> listeners;
 	
-	public class EmptyEvent {};
+	public static class EmptyEvent {};
 	
 	public EventManager() {
 		listeners = new ArrayList<Consumer<T>>();

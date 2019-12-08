@@ -10,7 +10,7 @@ public class AnnotationSet {
 	private List<SingleAnnotation> annotations;
 	
 	public AnnotationSet(SingleAnnotation[] annotations) {
-		this.annotations = Arrays.asList(annotations);
+		this.annotations = new ArrayList<SingleAnnotation>(Arrays.asList(annotations));
 	}
 	
 	public AnnotationSet(List<SingleAnnotation> annotations) {
@@ -19,6 +19,10 @@ public class AnnotationSet {
 
 	public List<SingleAnnotation> getAnnotations() {
 		return annotations;
+	}
+	
+	public void addAnnotation(SingleAnnotation annotation) {
+		this.annotations.add(annotation);
 	}
 	
 	@Override
