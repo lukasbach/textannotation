@@ -54,8 +54,18 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 			 * event.getLength: 
 			 */
 			
-			// System.out.println("offset" + event.getOffset() + " length" + event.getLength() + " text" + event.getText() + " plen" + partition.getLength() + " poff" + partition.getOffset()); 
-			return partition;
+			// System.out.println("offset" + event.getOffset() + " length" + event.getLength() + " text" + event.getText() + " plen" + partition.getLength() + " poff" + partition.getOffset());
+			// System.out.println("Marking as damaged: " + );
+			// return partition;
+			// TODO damaged region detected is currently very buggy...
+			return new IRegion() {
+				@Override public int getOffset() {
+					return 0;
+				}
+				@Override public int getLength() {
+					return document.getLength();
+				}
+			};
  		}
 
 		@Override

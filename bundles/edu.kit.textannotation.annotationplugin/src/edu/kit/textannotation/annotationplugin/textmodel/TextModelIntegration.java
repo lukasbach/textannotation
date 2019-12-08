@@ -81,7 +81,7 @@ public class TextModelIntegration {
 	
 	private Color parseColor(String colorString) {
 		// colorString has the format 123-456-789
-		Integer[] rgb = Arrays.asList(colorString.split("-")).stream().map(Integer::parseInt).toArray(size -> new Integer[size]);
+		Integer[] rgb = Arrays.asList(colorString.split("-")).stream().map(String::trim).map(Integer::parseInt).toArray(size -> new Integer[size]);
 		return new Color(Display.getCurrent(), new RGB(rgb[0], rgb[1], rgb[2]));
 		
 	}
