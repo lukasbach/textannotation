@@ -1,4 +1,4 @@
-	package edu.kit.textannotation.annotationplugin.textmodel;
+package edu.kit.textannotation.annotationplugin.textmodel;
 
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 			// System.out.println("Marking as damaged: " + );
 			// return partition;
 			// TODO damaged region detected is currently very buggy...
+			System.out.println(String.format("Damage Region set to %s:%s", 0, document.getLength()));
 			return new IRegion() {
 				@Override public int getOffset() {
 					return 0;
@@ -70,14 +72,11 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 
 		@Override
 		public void createPresentation(TextPresentation presentation, ITypedRegion damage) {
-			System.out.println("Document: " + document.get());
-			System.out.println("Creating presentation with the following annotations:");
+			System.out.println(String.format("Creating presentation with the following annotations on damage %s:%s", damage.getOffset(), damage.getLength()));
 			List<SingleAnnotation> annotationList = annotations
 					.getAnnotations()
 					.stream()
-					.sorted((SingleAnnotation a, SingleAnnotation b) -> {
-						return a.getOffset() - b.getOffset();
-					})
+					.sorted(Comparator.comparingInt(SingleAnnotation::getOffset))
 					// TODO make sure that annotations dont overlap. Probably better to make sure during annotation creation
 					.collect(Collectors.toList());
 			

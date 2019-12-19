@@ -3,8 +3,12 @@ package edu.kit.textannotation.annotationplugin.profile;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 public class AnnotationClass {
 
@@ -23,6 +27,19 @@ public class AnnotationClass {
 		this.color = color;
 		this.possibleMatchings = possibleMatchings;
 	}
+
+	public static AnnotationClass fromXml(Node node) {
+		NamedNodeMap attributes = node.getAttributes();
+		List<Integer> rgb = Arrays.stream(attributes.getNamedItem("color")
+				.getTextContent().replace(" ", "").split(","))
+				.map(Integer::parseInt).collect(Collectors.toList());
+		Color color = new Color(Display.getCurrent(), rgb.get(0), rgb.get(1), rgb.get(2));
+
+		return new AnnotationClass(
+				attributes.getNamedItem("name").getTextContent(),
+				color
+		);
+	}
 	
 	public AnnotationClass(String name, Color color, AnnotationClass[] possibleMatchings) {
 		this(name, color, Arrays.asList(possibleMatchings));
@@ -37,7 +54,7 @@ public class AnnotationClass {
 	}
 	
 	public String getColorAsTextModelString() {
-		return String.format("%s-%s-%s", color.getRed(), color.getGreen(), color.getBlue());
+		return String.format("%s, %s, %s", color.getRed(), color.getGreen(), color.getBlue());
 	}
 	
 	public List<AnnotationClass> getPossibleMatchings() {

@@ -1,88 +1,157 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import java.util.Arrays;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+// TODO refactor visibilities, static methods, add internal state etc
 public class TextModelIntegration {
 	private IDocument document;
 	
 	public TextModelIntegration(IDocument document) {
 		this.document = document;
 	}
-	
-	public SingleAnnotation[] parseAnnotationData() {
-		// uuid,offset,length,annotationname,reference,reference,reference;
-		System.out.println("!!!!!" + document.get());
-		return Arrays.asList(
-					document
-					.get()
-					.split("\n", 3)[1]
-							.split(";"))
-				.stream()
-				.map(v -> v.split(",", 5))
-				.map(v -> new SingleAnnotation(
-						v[0], 
-						Integer.parseInt(v[1]), 
-						Integer.parseInt(v[2]),
-						v[3], 
-						v.length > 4 ? v[4].split(",") : new String[0]
-						))
-				.toArray(size -> new SingleAnnotation[size]);
+
+	public static String parseContent(String rawSource) throws IOException, SAXException, ParserConfigurationException {
+		Element root = parseXmlFile(rawSource);
+		return root.getElementsByTagName("content").item(0).getTextContent();
 	}
-	
-	public AnnotationProfile parseAnnotationProfile() {
-		// annotationname,color,possibleMatch,possibleMatch;
-		// TODO add matchings
-		AnnotationClass[] annotationClasses = Arrays.asList(
-					document
-					.get()
-					.split("\n", 2)[0]
-							.split(";"))
+
+	public static List<SingleAnnotation> parseAnnotationData(String rawSource) throws ParserConfigurationException, IOException, SAXException {
+		Element root = parseXmlFile(rawSource);
+		NodeList annotationElements = root.getElementsByTagName("annotation");
+
+		return IntStream
+				.rangeClosed(0, annotationElements.getLength() - 1)
+				.boxed()
+				.collect(Collectors.toList())
 				.stream()
-				.map(v -> v.split(",", 3))
-				.map(v -> new AnnotationClass(
-						v[0], 
-						parseColor(v[1])
-						))
-				.toArray(size -> new AnnotationClass[size]);
-		
-		return new AnnotationProfile(annotationClasses);
+				.map(annotationElements::item)
+				.map(SingleAnnotation::fromXmlNode)
+				.collect(Collectors.toList());
 	}
-	
-	public String buildAnnotationPrefix(AnnotationSet annotations, AnnotationProfile profile) {
-		return (
-			profile
-				.getAnnotationClasses()
-				.stream()
-				.map(ac -> String.format("%s,%s", ac.getName(), ac.getColorAsTextModelString()))
-				.collect(Collectors.joining(";"))
-			+ "\n" + 
-			annotations.getAnnotations()
-				.stream()
-				// TODO should not use getAnnotationDataLength here, as annotationData is about to be changed and is likely wrong here.
-				.map(a -> String.format("%s,%s,%s,%s", a.getId(), a.getOffset(), a.getLength(), a.getAnnotationIdentifier()))
-				.collect(Collectors.joining(";"))
-			+ "\n"
-		);		
+
+	public static AnnotationProfile parseAnnotationProfile(String rawSource) throws IOException, SAXException, ParserConfigurationException {
+		Element root = parseXmlFile(rawSource);
+		Node annotationProfileElement = root.getElementsByTagName("annotationprofile").item(0);
+		NodeList annotationClassElements = root.getElementsByTagName("annotationclass");
+		NamedNodeMap annotationProfileAttributes = annotationProfileElement.getAttributes();
+
+		AnnotationProfile profile = new AnnotationProfile(annotationProfileAttributes.getNamedItem("name").getTextContent());
+
+		IntStream
+			.rangeClosed(0, annotationClassElements.getLength() - 1)
+			.boxed()
+			.collect(Collectors.toList())
+			.stream()
+			.map(annotationClassElements::item)
+			.map(AnnotationClass::fromXml)
+			.forEach(profile::addAnnotationClass);
+
+		return profile;
 	}
-	
-	public int getAnnotationDataLength() {
-		String[] lines = document.get().split("\n");
-		return lines[0].length() + lines[1].length();
+
+	public static String buildAnnotationXml(AnnotationProfile profile, AnnotationSet annotationSet, String text, boolean embedProfile) throws ParserConfigurationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.newDocument();
+
+		Element root = doc.createElement("annotated");
+		doc.appendChild(root);
+
+		if (embedProfile) {
+			root.appendChild(buildProfileElement(profile, doc));
+		} else {
+			Element profileEl = doc.createElement("annotationprofile");
+			profileEl.setAttribute("name", profile.getName());
+			root.appendChild(profileEl);
+		}
+
+		annotationSet.stream().forEach(annotation -> {
+			Element annotationEl = doc.createElement("annotation");
+			annotationEl.setAttribute("id", annotation.getId());
+			annotationEl.setAttribute("offset", "" + annotation.getOffset());
+			annotationEl.setAttribute("length", "" + annotation.getLength());
+			annotationEl.setAttribute("annotation", annotation.getAnnotationIdentifier());
+			root.appendChild(annotationEl);
+		});
+
+		Element contentEl = doc.createElement("content");
+		contentEl.setTextContent(text);
+		root.appendChild(contentEl);
+
+		return convertDocumentToString(doc);
 	}
-	
-	private Color parseColor(String colorString) {
-		// colorString has the format 123-456-789
-		Integer[] rgb = Arrays.asList(colorString.split("-")).stream().map(String::trim).map(Integer::parseInt).toArray(size -> new Integer[size]);
-		return new Color(Display.getCurrent(), new RGB(rgb[0], rgb[1], rgb[2]));
-		
+
+	public static String buildProfileXml(AnnotationProfile profile) throws ParserConfigurationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.newDocument();
+		doc.appendChild(buildProfileElement(profile, doc));
+		return convertDocumentToString(doc);
+	}
+
+	private static Element buildProfileElement(AnnotationProfile profile, Document doc) {
+		Element profileElement = doc.createElement("annotationprofile");
+		profileElement.setAttribute("name", profile.getName());
+
+		profile.getAnnotationClasses().forEach(annotationClass -> {
+			Element classEl = doc.createElement("annotationclass");
+			classEl.setAttribute("name", annotationClass.getName());
+			classEl.setAttribute("color", annotationClass.getColorAsTextModelString());
+			profileElement.appendChild(classEl);
+		});
+
+		return profileElement;
+	}
+
+	private static String convertDocumentToString(Document doc) {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			return writer.getBuffer().toString();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private static Element parseXmlFile(String rawSource) throws ParserConfigurationException, IOException, SAXException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document xml = db.parse(new ByteArrayInputStream(rawSource.getBytes(StandardCharsets.UTF_8)));
+		return xml.getDocumentElement();
 	}
 }

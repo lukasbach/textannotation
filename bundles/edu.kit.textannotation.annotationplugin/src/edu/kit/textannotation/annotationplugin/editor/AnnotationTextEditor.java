@@ -98,8 +98,4 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			}
 		});
     }
-    
-    
-    
-    
 }

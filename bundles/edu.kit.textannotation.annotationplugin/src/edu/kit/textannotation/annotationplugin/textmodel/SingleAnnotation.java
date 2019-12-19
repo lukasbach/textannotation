@@ -1,5 +1,8 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
 public class SingleAnnotation {
 	private String id;
 	private int offset;
@@ -13,6 +16,18 @@ public class SingleAnnotation {
 		this.length = length;
 		this.annotationIdentifier = annotationIdentifier;
 		this.references = references;
+	}
+
+	static SingleAnnotation fromXmlNode(Node node) {
+		NamedNodeMap attributes = node.getAttributes();
+
+		return new SingleAnnotation(
+				attributes.getNamedItem("id").getTextContent(),
+				Integer.parseInt(attributes.getNamedItem("offset").getTextContent()),
+				Integer.parseInt(attributes.getNamedItem("length").getTextContent()),
+				attributes.getNamedItem("annotation").getTextContent(),
+				new String[] {}
+		);
 	}
 
 	public String getId() {
