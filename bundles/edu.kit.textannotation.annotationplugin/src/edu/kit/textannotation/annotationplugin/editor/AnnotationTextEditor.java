@@ -2,10 +2,7 @@ package edu.kit.textannotation.annotationplugin.editor;
 
 import java.util.UUID;
 
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextListener;
-import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -54,6 +51,11 @@ public class AnnotationTextEditor extends AbstractTextEditor {
         		prepareSourceViewer(sourceViewer);
         		return presentationReconciler;
         	}
+
+        	@Override
+			public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+				return new HoverProvider(annotationData);
+			}
         });
     }
 

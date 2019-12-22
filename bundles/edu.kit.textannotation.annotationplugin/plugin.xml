@@ -126,5 +126,12 @@
             editorId="edu.kit.textannotation.annotationplugin.editor">
       </editorContentTypeBinding>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.hoverProviders">
+      <hoverProvider
+            class="edu.kit.textannotation.annotationplugin.editor.HoverProvider"
+            contentType="edu.kit.textannotation.annotationplugin.project">
+      </hoverProvider>
+   </extension>
 
 </plugin>
