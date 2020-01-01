@@ -58,6 +58,30 @@ public class SingleAnnotation {
 		this.length += length;
 	}
 
+	public boolean containsPosition(int pos) {
+		return getStart() <= pos && getEnd() >= pos;
+	}
+
+	public boolean isContainedWithin(int start, int end) {
+		return start <= getStart() && end >= getEnd();
+	}
+
+	public void setStart(int start) {
+		setOffset(start);
+	}
+
+	public void setEnd(int end) {
+		setLength(end - getStart() + 1);
+	}
+
+	public int getStart() {
+		return getOffset();
+	}
+
+	public int getEnd() {
+		return getOffset() + getLength() - 1;
+	}
+
 	public String getAnnotationIdentifier() {
 		return annotationIdentifier;
 	}

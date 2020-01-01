@@ -25,11 +25,35 @@ public class AnnotationSet {
 	}
 	
 	public void addAnnotation(SingleAnnotation annotation) {
-		this.annotations.add(annotation);
+		trimAnnotation(annotation);
+
+		if (annotation.getLength() > 0) {
+			this.annotations.add(annotation);
+		}
 	}
 	
 	@Override
 	public String toString() {
 		return "AnnotationSet(" + annotations.size() + ")";
+	}
+
+	/**
+	 * Make sure that the supplied annotation does not overlap with any annotations which exist
+	 * in this annotation set by trimming its start and end.
+	 */
+	private void trimAnnotation(SingleAnnotation annotation) {
+		for (SingleAnnotation existingAnnotation: annotations) {
+			if (annotation.getLength() > 0) {
+				if (existingAnnotation.containsPosition(annotation.getStart())) {
+					annotation.setStart(existingAnnotation.getEnd() + 1);
+				}
+				if (existingAnnotation.containsPosition(annotation.getEnd())) {
+					annotation.setEnd(existingAnnotation.getStart() - 1);
+				}
+				if (existingAnnotation.isContainedWithin(annotation.getStart(), annotation.getEnd())) {
+					annotation.setEnd(existingAnnotation.getStart() - 1);
+				}
+			}
+		}
 	}
 }
