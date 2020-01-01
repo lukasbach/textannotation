@@ -77,7 +77,6 @@ public class ProjectPresentationReconciler extends PresentationReconciler {
 					.getAnnotations()
 					.stream()
 					.sorted(Comparator.comparingInt(SingleAnnotation::getOffset))
-					// TODO make sure that annotations dont overlap. Probably better to make sure during annotation creation
 					.collect(Collectors.toList());
 			
 			for (SingleAnnotation an: annotationList) {
