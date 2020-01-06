@@ -1,8 +1,6 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
-import edu.kit.textannotation.annotationplugin.AnnotationControlsView;
 import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -26,29 +24,27 @@ import org.osgi.framework.FrameworkUtil;
  * OR with the extension that matches the expected one (mpe).
  */
 
-public class TextAnnotationFileWizardPage extends WizardPage {
+public class ProfileWizardPage extends WizardPage {
 	private Text containerText;
 
 	private Text fileText;
 
 	private ISelection selection;
 
-	private Combo profile;
+	private Text profile;
 
 	/**
 	 * Constructor for TextAnnotationFileWizardPage.
 	 */
-	public TextAnnotationFileWizardPage(ISelection selection) {
+	public ProfileWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Annotatable Text File");
-		setDescription("This wizard creates a new file which can be annotated with metadata.");
+		setTitle("Text Annotation Profile");
+		setDescription("This wizard creates a new profile which can be used to annotate text files.");
 		this.selection = selection;
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-		AnnotationProfileRegistry registry = AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass()));
-
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -81,13 +77,12 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		label.setText("&");
 
 		label = new Label(container, SWT.NULL);
-		label.setText("&Annotation Profile:");
+		label.setText("&Profile name:");
 
-		profile = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
-		registry.getProfiles().forEach(p -> profile.add(p.getName()));
+		profile = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		profile.setLayoutData(gd);
-		profile.addSelectionListener(new ComboSelectionListener(this::dialogChanged));
+		profile.addModifyListener(e -> dialogChanged());
 
 		initialize();
 		dialogChanged();
@@ -114,7 +109,7 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("newAnnotationFile.project");
+		fileText.setText("newProfile.xml");
 	}
 
 	/**
@@ -171,8 +166,8 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
-			if (!ext.equalsIgnoreCase("project")) {
-				updateStatus("File extension must be \"project\"");
+			if (!ext.equalsIgnoreCase("xml")) {
+				updateStatus("File extension must be \"xml\"");
 				return;
 			}
 		}
