@@ -56,9 +56,22 @@ public class TextModelIntegration {
 				.collect(Collectors.toList());
 	}
 
+	static String parseProfileName(String rawSource) throws IOException, SAXException, ParserConfigurationException {
+		return parseXmlFile(rawSource)
+				.getElementsByTagName("annotationprofile")
+				.item(0)
+				.getAttributes()
+				.getNamedItem("name")
+				.getNodeValue();
+	}
+
 	public static AnnotationProfile parseAnnotationProfile(String rawSource) throws IOException, SAXException, ParserConfigurationException {
 		Element root = parseXmlFile(rawSource);
-		Node annotationProfileElement = root.getElementsByTagName("annotationprofile").item(0);
+		if (!root.getTagName().equals("annotationprofile")) {
+			throw new ParserConfigurationException(""); // TODO
+		}
+
+		Node annotationProfileElement = root; // TODO
 		NodeList annotationClassElements = root.getElementsByTagName("annotationclass");
 		NamedNodeMap annotationProfileAttributes = annotationProfileElement.getAttributes();
 
@@ -76,7 +89,8 @@ public class TextModelIntegration {
 		return profile;
 	}
 
-	public static String buildAnnotationXml(AnnotationProfile profile, AnnotationSet annotationSet, String text, boolean embedProfile) throws ParserConfigurationException {
+	// TODO use TextModelData
+	public static String buildAnnotationXml(TextModelData textModelData) throws ParserConfigurationException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.newDocument();
@@ -84,15 +98,11 @@ public class TextModelIntegration {
 		Element root = doc.createElement("annotated");
 		doc.appendChild(root);
 
-		if (embedProfile) {
-			root.appendChild(buildProfileElement(profile, doc));
-		} else {
-			Element profileEl = doc.createElement("annotationprofile");
-			profileEl.setAttribute("name", profile.getName());
-			root.appendChild(profileEl);
-		}
+		Element profileEl = doc.createElement("annotationprofile");
+		profileEl.setAttribute("name", textModelData.getProfileName());
+		root.appendChild(profileEl);
 
-		annotationSet.stream().forEach(annotation -> {
+		textModelData.getAnnotations().stream().forEach(annotation -> {
 			Element annotationEl = doc.createElement("annotation");
 			annotationEl.setAttribute("id", annotation.getId());
 			annotationEl.setAttribute("offset", "" + annotation.getOffset());
@@ -102,7 +112,7 @@ public class TextModelIntegration {
 		});
 
 		Element contentEl = doc.createElement("content");
-		contentEl.setTextContent(text);
+		contentEl.setTextContent(textModelData.getDocument().get());
 		root.appendChild(contentEl);
 
 		return convertDocumentToString(doc);

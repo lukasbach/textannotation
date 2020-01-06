@@ -2,6 +2,10 @@ package edu.kit.textannotation.annotationplugin;
 
 import java.util.Arrays;
 
+import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -12,7 +16,7 @@ import org.eclipse.ui.part.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationData;
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -28,15 +32,30 @@ public class AnnotationControlsView extends ViewPart {
 	private Combo profileSelector;
 	private Button buttonEditProfile;
 	private Button buttonNewProfile;
+	private AnnotationTextEditor editor;
+	private AnnotationProfileRegistry registry;
+
+	private class ComboSelectionListener implements SelectionListener {
+		private Runnable onSelect;
+
+		ComboSelectionListener(Runnable onSelect) {
+			this.onSelect = onSelect;
+		}
+
+		@Override public void widgetDefaultSelected(SelectionEvent e) {}
+		@Override public void widgetSelected(SelectionEvent e) {
+			onSelect.run();
+		}
+	}
 
 	@Inject IWorkbench workbench;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
-		finder.annotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getAnnotationData()));
+		finder.annotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getTextModelData()));
 		if (finder.getAnnotationEditor() != null) {
-			rebuildContent(parent, finder.getAnnotationEditor().getAnnotationData());
+			rebuildContent(parent, finder.getAnnotationEditor().getTextModelData());
 		}
 	}
 
@@ -49,7 +68,10 @@ public class AnnotationControlsView extends ViewPart {
 		return "Annotation Controls";
 	}
 	
-	private void rebuildContent(Composite parent, AnnotationData annotationData) {
+	private void rebuildContent(Composite parent, TextModelData textModelData) {
+		editor = new AnnotationEditorFinder(workbench).getAnnotationEditor();
+		registry = editor.getAnnotationProfileRegistry();
+
 		for (Control child: parent.getChildren()) {
 			child.dispose();
 		}
@@ -61,44 +83,37 @@ public class AnnotationControlsView extends ViewPart {
 		selectorComposite.setLayout(new GridLayout(3, false));
 
 		profileSelector = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.BORDER);
-		
-		
+		registry.getProfiles().forEach(p -> profileSelector.add(p.getName()));
+		profileSelector.select(registry.getProfiles().indexOf(new AnnotationProfile(textModelData.getProfileName())));
+		profileSelector.addSelectionListener(new ComboSelectionListener(() -> {
+			textModelData.setProfileName(profileSelector.getText());
+			rebuildContent(parent, textModelData);
+		}));
+
 		buttonEditProfile = new Button(selectorComposite, SWT.PUSH);
 		buttonNewProfile = new Button(selectorComposite, SWT.PUSH);
 
-        profileSelector.add("Requirements Engineering");
-        profileSelector.add("Text Analysis");
-        profileSelector.add("Add new profile...");
-        
 		buttonEditProfile.setText("Edit Profile");
 		buttonNewProfile.setText("New Profile");
 		
-		buttonEditProfile.addListener(SWT.Selection, new Listener() {
-		    @Override
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-		    	AnnotationProfile demoProfile = new AnnotationProfile("Default Profile");
-		    	demoProfile.addAnnotationClass(new AnnotationClass("Substantive", new Color(Display.getCurrent(), 255, 0, 0)));
-		    	demoProfile.addAnnotationClass(new AnnotationClass("Verb", new Color(Display.getCurrent(), 255, 0, 0)));
-		    	demoProfile.addAnnotationClass(new AnnotationClass("Objective", new Color(Display.getCurrent(), 255, 0, 0)));
-		    	demoProfile.addAnnotationClass(new AnnotationClass("Other", new Color(Display.getCurrent(), 255, 0, 0)));
-		    	EditProfileDialog.openWindow(demoProfile);
-		    }
+		buttonEditProfile.addListener(SWT.Selection, event -> {
+			AnnotationProfile demoProfile = new AnnotationProfile("Default Profile");
+			demoProfile.addAnnotationClass(new AnnotationClass("Substantive", new Color(Display.getCurrent(), 255, 0, 0)));
+			demoProfile.addAnnotationClass(new AnnotationClass("Verb", new Color(Display.getCurrent(), 255, 0, 0)));
+			demoProfile.addAnnotationClass(new AnnotationClass("Objective", new Color(Display.getCurrent(), 255, 0, 0)));
+			demoProfile.addAnnotationClass(new AnnotationClass("Other", new Color(Display.getCurrent(), 255, 0, 0)));
+			EditProfileDialog.openWindow(demoProfile);
 		});
 		
 		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
 			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		}
 
-		for (AnnotationClass a: annotationData.profile.getAnnotationClasses()) {
+		for (AnnotationClass a: registry.findProfile(textModelData.getProfileName()).getAnnotationClasses()) {
 			Button b = new Button(parent, SWT.PUSH | SWT.FILL);
 			b.setText(a.getName());
 			b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			b.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(org.eclipse.swt.widgets.Event event) {
-					new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a);
-				}
-			});
+			b.addListener(SWT.Selection, event -> new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a));
 		}
 
 		// TODO how to properly redraw parent s.t. widths are properly aligned?
