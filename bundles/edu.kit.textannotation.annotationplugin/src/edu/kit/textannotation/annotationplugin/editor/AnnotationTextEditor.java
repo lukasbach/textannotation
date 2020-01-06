@@ -59,11 +59,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	}
 
 	private void initRegistry() {
-		List<String> paths = new ArrayList<>();
-		// paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
-		paths.add(Platform.getStateLocation(bundle).toString() + "/profiles"); // workspace/.metadata/.textannotation
-		paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
-		registry = new AnnotationProfileRegistry(paths);
+		registry = AnnotationProfileRegistry.createNew(bundle);
 	}
 	
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {

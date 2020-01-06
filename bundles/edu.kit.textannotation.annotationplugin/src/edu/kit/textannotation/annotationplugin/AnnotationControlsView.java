@@ -4,14 +4,11 @@ import java.util.Arrays;
 
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
@@ -34,19 +31,6 @@ public class AnnotationControlsView extends ViewPart {
 	private Button buttonNewProfile;
 	private AnnotationTextEditor editor;
 	private AnnotationProfileRegistry registry;
-
-	private class ComboSelectionListener implements SelectionListener {
-		private Runnable onSelect;
-
-		ComboSelectionListener(Runnable onSelect) {
-			this.onSelect = onSelect;
-		}
-
-		@Override public void widgetDefaultSelected(SelectionEvent e) {}
-		@Override public void widgetSelected(SelectionEvent e) {
-			onSelect.run();
-		}
-	}
 
 	@Inject IWorkbench workbench;
 	

@@ -1,5 +1,7 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -15,6 +17,8 @@ import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * This is a sample new wizard. Its role is to create a new file 
  * resource in the provided container. If the container resource
@@ -26,14 +30,14 @@ import org.eclipse.ui.ide.IDE;
  * be able to open it.
  */
 
-public class SampleNewWizard extends Wizard implements INewWizard {
-	private SampleNewWizardPage page;
+public class TextAnnotationFileWizard extends Wizard implements INewWizard {
+	private TextAnnotationFileWizardPage page;
 	private ISelection selection;
 
 	/**
 	 * Constructor for SampleNewWizard.
 	 */
-	public SampleNewWizard() {
+	public TextAnnotationFileWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -43,7 +47,7 @@ public class SampleNewWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public void addPages() {
-		page = new SampleNewWizardPage(selection);
+		page = new TextAnnotationFileWizardPage(selection);
 		addPage(page);
 	}
 
@@ -56,9 +60,10 @@ public class SampleNewWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
+		final String profileName = page.getProfile();
 		IRunnableWithProgress op = monitor -> {
 			try {
-				doFinish(containerName, fileName, monitor);
+				doFinish(containerName, fileName, profileName, monitor);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			} finally {
@@ -86,6 +91,7 @@ public class SampleNewWizard extends Wizard implements INewWizard {
 	private void doFinish(
 		String containerName,
 		String fileName,
+		String profileName,
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
@@ -98,7 +104,7 @@ public class SampleNewWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream();
+			InputStream stream = openContentStream(profileName);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -124,10 +130,17 @@ public class SampleNewWizard extends Wizard implements INewWizard {
 	 * We will initialize file contents with a sample text.
 	 */
 
-	private InputStream openContentStream() {
-		String contents =
-			"This is the initial file contents for *.mpe file that should be word-sorted in the Preview page of the multi-page editor";
-		return new ByteArrayInputStream(contents.getBytes());
+	private InputStream openContentStream(String profileName) throws CoreException {
+		String content = "";
+
+		try {
+			content = TextModelIntegration.buildAnnotationXml(new TextModelData(profileName));
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			throwCoreException("Could not create initial file.");
+		}
+
+		return new ByteArrayInputStream(content.getBytes());
 	}
 
 	private void throwCoreException(String message) throws CoreException {

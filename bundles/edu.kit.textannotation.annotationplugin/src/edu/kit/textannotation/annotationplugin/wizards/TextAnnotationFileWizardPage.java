@@ -1,5 +1,9 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
+import edu.kit.textannotation.annotationplugin.AnnotationControlsView;
+import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -12,11 +16,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -24,27 +26,29 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * OR with the extension that matches the expected one (mpe).
  */
 
-public class SampleNewWizardPage extends WizardPage {
+public class TextAnnotationFileWizardPage extends WizardPage {
 	private Text containerText;
 
 	private Text fileText;
 
 	private ISelection selection;
 
+	private Combo profile;
+
 	/**
-	 * Constructor for SampleNewWizardPage.
-	 * 
-	 * @param pageName
+	 * Constructor for TextAnnotationFileWizardPage.
 	 */
-	public SampleNewWizardPage(ISelection selection) {
+	public TextAnnotationFileWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Multi-page Editor File");
-		setDescription("This wizard creates a new file with *.mpe extension that can be opened by a multi-page editor.");
+		setTitle("Annotatable Text File");
+		setDescription("This wizard creates a new file which can be annotated with metadata.");
 		this.selection = selection;
 	}
 
 	@Override
 	public void createControl(Composite parent) {
+		AnnotationProfileRegistry registry = AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass()));
+
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -72,6 +76,19 @@ public class SampleNewWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fileText.setLayoutData(gd);
 		fileText.addModifyListener(e -> dialogChanged());
+
+		label = new Label(container, SWT.NULL);
+		label.setText("&");
+
+		label = new Label(container, SWT.NULL);
+		label.setText("&Annotation Profile:");
+
+		profile = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
+		registry.getProfiles().forEach(p -> profile.add(p.getName()));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		profile.setLayoutData(gd);
+		profile.addSelectionListener(new ComboSelectionListener(this::dialogChanged));
+
 		initialize();
 		dialogChanged();
 		setControl(container);
@@ -97,7 +114,7 @@ public class SampleNewWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("new_file.mpe");
+		fileText.setText("new_file.project");
 	}
 
 	/**
@@ -147,11 +164,15 @@ public class SampleNewWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
+		if (getProfile() == null) {
+			updateStatus("Profile must be specified.");
+			return;
+		}
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
-			if (ext.equalsIgnoreCase("mpe") == false) {
-				updateStatus("File extension must be \"mpe\"");
+			if (ext.equalsIgnoreCase("project") == false) {
+				updateStatus("File extension must be \"project\"");
 				return;
 			}
 		}
@@ -163,11 +184,15 @@ public class SampleNewWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-	public String getContainerName() {
+	String getContainerName() {
 		return containerText.getText();
 	}
 
-	public String getFileName() {
+	String getFileName() {
 		return fileText.getText();
+	}
+
+	String getProfile() {
+		return profile.getText();
 	}
 }

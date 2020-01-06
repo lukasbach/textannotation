@@ -11,6 +11,10 @@ public class AnnotationSet {
 	public AnnotationSet(SingleAnnotation[] annotations) {
 		this.annotations = new ArrayList<SingleAnnotation>(Arrays.asList(annotations));
 	}
+
+	public AnnotationSet() {
+		this.annotations = new ArrayList<>();
+	}
 	
 	public AnnotationSet(List<SingleAnnotation> annotations) {
 		this.annotations = annotations;
