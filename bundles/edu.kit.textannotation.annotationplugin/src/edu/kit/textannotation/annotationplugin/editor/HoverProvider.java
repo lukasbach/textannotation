@@ -1,6 +1,6 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationData;
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.internal.ui.text.java.hover.AbstractAnnotationHover;
 import org.eclipse.jface.text.BadLocationException;
@@ -11,16 +11,16 @@ import org.eclipse.jface.text.Position;
 import java.util.Optional;
 
 public class HoverProvider extends AbstractAnnotationHover {
-	private AnnotationData annotationData;
+	private TextModelData textModelData;
 
-	HoverProvider(AnnotationData annotationData) {
+	HoverProvider(TextModelData textModelData) {
 		super(true);
 		System.out.println("Create Hover Provider");
-		this.annotationData = annotationData;
+		this.textModelData = textModelData;
 	}
 
 	private SingleAnnotation getSingleAnnotationAt(int offset) {
-		return annotationData.annotations
+		return textModelData.getAnnotations()
 				.stream()
 				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
 				.findFirst()
@@ -30,7 +30,7 @@ public class HoverProvider extends AbstractAnnotationHover {
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		System.out.println("getHoverRegion: " + offset);
-		Optional<SingleAnnotation> match = annotationData.annotations
+		Optional<SingleAnnotation> match = textModelData.getAnnotations()
 				.stream()
 				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
 				.findFirst();

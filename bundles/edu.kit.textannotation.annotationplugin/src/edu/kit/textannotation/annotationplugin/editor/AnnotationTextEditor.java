@@ -1,7 +1,13 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -13,32 +19,51 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationData;
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationDocumentProvider;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSetFixer;
 import edu.kit.textannotation.annotationplugin.textmodel.ProjectPresentationReconciler;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 public class AnnotationTextEditor extends AbstractTextEditor {
 	private ProjectPresentationReconciler presentationReconciler;
 	private AnnotationDocumentProvider documentProvider;
-	private AnnotationData annotationData;
+	private TextModelData textModelData;
 	private AnnotationSetFixer annotationFixer;
 	private ISourceViewer sourceViewer;
 	private String id;
+	private AnnotationProfileRegistry registry;
+	private Bundle bundle;
+	private BundleContext bundleContext;
 	
 	public AnnotationTextEditor() {
 		id = UUID.randomUUID().toString();
 		documentProvider = new AnnotationDocumentProvider();
 		documentProvider.initializeEvent.addListener(e -> {
-			annotationData = e.annotationData;
-			annotationFixer = new AnnotationSetFixer(e.annotationData.annotations, e.document.getLength());
-			presentationReconciler.setAnnotationInformation(e.annotationData.profile, e.annotationData.annotations);
+			textModelData = e.textModelData;
+			annotationFixer = new AnnotationSetFixer(e.textModelData.getAnnotations(), e.textModelData.getDocument().getLength());
+			presentationReconciler.setAnnotationInformation(registry.findProfile(e.textModelData.getProfileName()), e.textModelData.getAnnotations());
 		});
 		
         setDocumentProvider(documentProvider);
         
         this.presentationReconciler = new ProjectPresentationReconciler();
+
+		bundle = FrameworkUtil.getBundle(this.getClass());
+		bundleContext = bundle.getBundleContext();
+
+		initRegistry();
+	}
+
+	private void initRegistry() {
+		List<String> paths = new ArrayList<>();
+		// paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
+		paths.add(Platform.getStateLocation(bundle).toString() + "/profiles"); // workspace/.metadata/.textannotation
+		paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
+		registry = new AnnotationProfileRegistry(paths);
 	}
 	
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
@@ -54,13 +79,13 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
         	@Override
 			public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-				return new HoverProvider(annotationData);
+				return new HoverProvider(textModelData);
 			}
         });
     }
 
-	public AnnotationData getAnnotationData() {
-		return annotationData;
+	public TextModelData getTextModelData() {
+		return textModelData;
 	}
 	
 	public void annotate(AnnotationClass annotationClass) {
@@ -71,7 +96,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(), 
 				offset, length, annotationClass.getName(), new String[0]);
 		System.out.println("Annotating: " + annotation.toString());
-		annotationData.annotations.addAnnotation(annotation);
+		textModelData.getAnnotations().addAnnotation(annotation);
 		
 		// Trigger rehighlight
 		IDocument doc = sourceViewer.getDocument();
@@ -100,4 +125,8 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			}
 		});
     }
+
+	public AnnotationProfileRegistry getAnnotationProfileRegistry() {
+		return registry;
+	}
 }

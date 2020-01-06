@@ -40,11 +40,11 @@ public class AnnotationProfile {
 		
 		// TODO custom exception
 		throw new Exception("Could not find annotation class " + name + ", available classes are " 
-		  + annotationClasses.stream().map(c -> c.getName()).collect(Collectors.joining(", ")));
+		  + annotationClasses.stream().map(AnnotationClass::getName).collect(Collectors.joining(", ")));
 	}
 	
 	public String[] getAnnotationClassNames() {
-		return annotationClasses.stream().map(ac -> ac.getName()).toArray(size -> new String[size]);
+		return annotationClasses.stream().map(AnnotationClass::getName).toArray(String[]::new);
 	}
 	
 	public void alterAnnotationClass(String oldName, AnnotationClass alteredClass) {
@@ -63,7 +63,12 @@ public class AnnotationProfile {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof AnnotationProfile) && ((AnnotationProfile)obj).getName().equals(getName());
+	}
+
 	@Override
 	public String toString() {
 		return getName();
