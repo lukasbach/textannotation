@@ -3,6 +3,7 @@ package edu.kit.textannotation.annotationplugin.textmodel;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 public class TextModelData {
@@ -12,10 +13,16 @@ public class TextModelData {
 	private String profileName;
 	private IDocument document;
 
-	TextModelData(AnnotationSet annotations, String profileName, IDocument document) {
+	public TextModelData(AnnotationSet annotations, String profileName, IDocument document) {
 		this.setAnnotations(annotations);
 		this.profileName = profileName;
 		this.setDocument(document);
+	}
+
+	public TextModelData(String profileName) {
+		this.setAnnotations(new AnnotationSet());
+		this.profileName = profileName;
+		this.document = new Document("");
 	}
 
 	@Override

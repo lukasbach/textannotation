@@ -1,9 +1,10 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
-import org.xml.sax.SAXException;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +22,14 @@ public class AnnotationProfileRegistry {
         this.registryPaths = registryPaths;
         this.profiles = new LinkedList<>();
         registryPaths.forEach(p -> System.out.println("REGPATH: " + p));
+    }
+
+    public static AnnotationProfileRegistry createNew(Bundle bundle) {
+        List<String> paths = new ArrayList<>();
+        // paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
+        paths.add(Platform.getStateLocation(bundle).toString() + "/profiles"); // workspace/.metadata/.textannotation
+        paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
+        return new AnnotationProfileRegistry(paths);
     }
 
     public AnnotationProfile findProfile(String profileName) {

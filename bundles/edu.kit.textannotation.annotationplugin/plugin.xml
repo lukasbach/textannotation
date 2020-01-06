@@ -70,14 +70,14 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            name="Sample Wizards"
+            name="Text Annotation"
             id="edu.kit.textannotation.annotationplugin">
       </category>
       <wizard
             id="edu.kit.textannotation.annotationplugin.wizards.SampleNewWizard"
-            name="Multi-page Editor file"
+            name="Annotatable Text File"
             icon="icons/sample.png"
-            class="edu.kit.textannotation.annotationplugin.wizards.SampleNewWizard"
+            class="edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard"
             category="edu.kit.textannotation.annotationplugin">
       </wizard>
    </extension>
