@@ -74,11 +74,18 @@
             id="edu.kit.textannotation.annotationplugin">
       </category>
       <wizard
-            id="edu.kit.textannotation.annotationplugin.wizards.SampleNewWizard"
+            id="edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard"
             name="Annotatable Text File"
             icon="icons/sample.png"
             class="edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard"
             category="edu.kit.textannotation.annotationplugin">
+      </wizard>
+      <wizard
+              id="edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"
+              name="Text Annotation Profile"
+              icon="icons/sample.png"
+              class="edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"
+              category="edu.kit.textannotation.annotationplugin">
       </wizard>
    </extension>
    <extension

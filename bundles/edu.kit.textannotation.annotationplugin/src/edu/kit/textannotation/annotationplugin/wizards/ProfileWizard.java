@@ -1,23 +1,23 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -30,14 +30,14 @@ import javax.xml.parsers.ParserConfigurationException;
  * be able to open it.
  */
 
-public class TextAnnotationFileWizard extends Wizard implements INewWizard {
-	private TextAnnotationFileWizardPage page;
+public class ProfileWizard extends Wizard implements INewWizard {
+	private ProfileWizardPage page;
 	private ISelection selection;
 
 	/**
 	 * Constructor for SampleNewWizard.
 	 */
-	public TextAnnotationFileWizard() {
+	public ProfileWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -47,7 +47,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public void addPages() {
-		page = new TextAnnotationFileWizardPage(selection);
+		page = new ProfileWizardPage(selection);
 		addPage(page);
 	}
 
@@ -83,9 +83,8 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 	}
 
 	/**
-	 * The worker method. It will find the container, create the
-	 * file if missing or just replace its contents, and open
-	 * the editor on the newly created file.
+	 * The worker method. It will find the container and create the
+	 * file if missing or just replace its contents.
 	 */
 
 	private void doFinish(
@@ -113,17 +112,18 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 			stream.close();
 		} catch (IOException e) {
 		}
-		monitor.worked(1);
-		monitor.setTaskName("Opening file for editing...");
-		getShell().getDisplay().asyncExec(() -> {
-			IWorkbenchPage page =
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			try {
-				IDE.openEditor(page, file, true);
-			} catch (PartInitException e) {
-			}
-		});
-		monitor.worked(1);
+
+		// Don't open file in editor because profile can be edited in profile view.
+		// monitor.setTaskName("Opening file for editing...");
+		// getShell().getDisplay().asyncExec(() -> {
+		// 	IWorkbenchPage page =
+		// 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		// 	try {
+		// 		IDE.openEditor(page, file, true);
+		// 	} catch (PartInitException e) {
+		// 	}
+		// });
+		// monitor.worked(1);
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 		String content = "";
 
 		try {
-			content = TextModelIntegration.buildAnnotationXml(new TextModelData(profileName));
+			content = TextModelIntegration.buildProfileXml(new AnnotationProfile(profileName));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 			throwCoreException("Could not create initial file.");
