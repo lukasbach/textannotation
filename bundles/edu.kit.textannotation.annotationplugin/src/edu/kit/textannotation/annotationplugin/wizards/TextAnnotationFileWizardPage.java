@@ -1,8 +1,6 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
-import edu.kit.textannotation.annotationplugin.AnnotationControlsView;
 import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;

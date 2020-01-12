@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
+import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.internal.ui.text.java.hover.AbstractAnnotationHover;
@@ -10,21 +11,14 @@ import org.eclipse.jface.text.Position;
 
 import java.util.Optional;
 
-public class HoverProvider extends AbstractAnnotationHover {
+class HoverProvider extends AbstractAnnotationHover {
 	private TextModelData textModelData;
+
+	final EventManager<SingleAnnotation> onHover = new EventManager<>("hoverprovider:hover");
 
 	HoverProvider(TextModelData textModelData) {
 		super(true);
-		System.out.println("Create Hover Provider");
 		this.textModelData = textModelData;
-	}
-
-	private SingleAnnotation getSingleAnnotationAt(int offset) {
-		return textModelData.getAnnotations()
-				.stream()
-				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
-				.findFirst()
-				.orElse(null);
 	}
 
 	@Override
@@ -57,7 +51,10 @@ public class HoverProvider extends AbstractAnnotationHover {
 
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-		SingleAnnotation ann = getSingleAnnotationAt(hoverRegion.getOffset());
+		SingleAnnotation ann = textModelData.getSingleAnnotationAt(hoverRegion.getOffset());
+
+		this.onHover.fire(ann);
+
 		String content = "";
 
 		try {

@@ -3,6 +3,8 @@ package edu.kit.textannotation.annotationplugin.textmodel;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
@@ -31,7 +33,7 @@ public class TextModelData {
 	}
 
 
-	private AnnotationProfile getProfile(AnnotationProfileRegistry registry) {
+	private AnnotationProfile getProfile(AnnotationProfileRegistry registry) throws ProfileNotFoundException {
 		return registry.findProfile(getProfileName());
 	}
 
@@ -58,5 +60,22 @@ public class TextModelData {
 
 	public void setDocument(IDocument document) {
 		this.document = document;
+	}
+
+	public String getAnnotationContent(SingleAnnotation annotation) {
+		try {
+			return document.get(annotation.getOffset(), annotation.getLength());
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			return "[BADANNOTATION]";
+		}
+	}
+
+	public SingleAnnotation getSingleAnnotationAt(int offset) {
+		return getAnnotations()
+				.stream()
+				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
+				.findFirst()
+				.orElse(null);
 	}
 }

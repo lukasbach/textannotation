@@ -17,9 +17,10 @@ import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 public class AnnotationEditorFinder {
 	private IWorkbench workbench;
 	private String activeEditorId;
+	private AnnotationTextEditor lastEditor;
 	
-	public final EventManager<AnnotationTextEditor> annotationEditorActivated = new EventManager<AnnotationTextEditor>();
-	public final EventManager<EventManager.EmptyEvent> annotationEditorDeactivated = new EventManager<EventManager.EmptyEvent>();
+	public final EventManager<AnnotationTextEditor> annotationEditorActivated = new EventManager<AnnotationTextEditor>("editor activated");
+	public final EventManager<AnnotationTextEditor> annotationEditorDeactivated = new EventManager<AnnotationTextEditor>("editor deactivated");
 	
 	public AnnotationEditorFinder(IWorkbench workbench) {
 		this.workbench = workbench;
@@ -39,16 +40,20 @@ public class AnnotationEditorFinder {
 					if (!activeEditorId.equals(editorId)) {
 						annotationEditorActivated.fire((AnnotationTextEditor) activeEditor);
 						activeEditorId = editorId;
+						lastEditor = (AnnotationTextEditor) activeEditor;
 					}
-				} else {
-					annotationEditorDeactivated.fire(new EventManager.EmptyEvent());
+				} else if (lastEditor != null) {
+					annotationEditorDeactivated.fire(lastEditor);
 				}
 			}
 		});
 	}
 	
 	public AnnotationTextEditor getAnnotationEditor() {
-		IEditorPart activeEditor = workbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		IEditorPart activeEditor = workbench
+				.getActiveWorkbenchWindow()
+				.getActivePage()
+				.getActiveEditor();
 		
 		if (activeEditor instanceof AnnotationTextEditor) {
 			return (AnnotationTextEditor) activeEditor;
