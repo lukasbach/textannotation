@@ -1,20 +1,20 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import org.eclipse.core.runtime.Platform;
+import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -35,9 +35,12 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	private AnnotationSetFixer annotationFixer;
 	private ISourceViewer sourceViewer;
 	private String id;
-	private AnnotationProfileRegistry registry;
 	private Bundle bundle;
 	private BundleContext bundleContext;
+
+	public final EventManager<SingleAnnotation> onHoverAnnotation = new EventManager<>("editor:hover");
+	public final EventManager<SingleAnnotation> onClickAnnotation = new EventManager<>("editor:click");
+	public final EventManager<EventManager.EmptyEvent> onClickOutsideOfAnnotation = new EventManager<>("editor:clickoutside");
 	
 	public AnnotationTextEditor() {
 		id = UUID.randomUUID().toString();
@@ -45,7 +48,11 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		documentProvider.initializeEvent.addListener(e -> {
 			textModelData = e.textModelData;
 			annotationFixer = new AnnotationSetFixer(e.textModelData.getAnnotations(), e.textModelData.getDocument().getLength());
-			presentationReconciler.setAnnotationInformation(registry.findProfile(e.textModelData.getProfileName()), e.textModelData.getAnnotations());
+			try {
+				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileName()), e.textModelData.getAnnotations());
+			} catch (ProfileNotFoundException ex) {
+				ex.printStackTrace();
+			}
 		});
 		
         setDocumentProvider(documentProvider);
@@ -54,17 +61,36 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
 		bundle = FrameworkUtil.getBundle(this.getClass());
 		bundleContext = bundle.getBundleContext();
-
-		initRegistry();
 	}
 
-	private void initRegistry() {
-		registry = AnnotationProfileRegistry.createNew(bundle);
+	@Override
+	public void handleCursorPositionChanged() {
+		super.handleCursorPositionChanged();
+
+		if (sourceViewer == null || sourceViewer.getSelectedRange() == null) {
+			return;
+		}
+
+		Point selected = sourceViewer.getSelectedRange();
+		@Nullable SingleAnnotation annotation = textModelData.getSingleAnnotationAt(selected.x);
+
+		if (annotation != null) {
+			onClickAnnotation.fire(annotation);
+		} else {
+			onClickOutsideOfAnnotation.fire(new EventManager.EmptyEvent());
+		}
 	}
 	
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
     	super.init(site, input);
         setInput(input);
+
+        HoverProvider hover = new HoverProvider(textModelData);
+        hover.onHover.addListener(onClickAnnotation::fire);
+
+        handleCursorPositionChanged();
+
+        // site.getSelectionProvider().addSelectionChangedListener(event -> onClickAnnotation.fire(textModelData.getSingleAnnotationAt(event.getSelection().)));
 
         setSourceViewerConfiguration(new SourceViewerConfiguration() {
         	@Override
@@ -75,9 +101,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
         	@Override
 			public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-				return new HoverProvider(textModelData);
+				return hover;
 			}
         });
+
     }
 
 	public TextModelData getTextModelData() {
@@ -123,6 +150,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
     }
 
 	public AnnotationProfileRegistry getAnnotationProfileRegistry() {
-		return registry;
+		return AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass()));
+	}
+
+	public String getAnnotationContent(SingleAnnotation annotation) {
+		return textModelData.getAnnotationContent(annotation);
 	}
 }

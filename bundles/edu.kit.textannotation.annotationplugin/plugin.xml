@@ -102,6 +102,14 @@
             inject="true"
             name="Text Annotation Controls">
       </view>
+      <view
+              category="edu.kit.textannotation.annotationplugin"
+              class="edu.kit.textannotation.annotationplugin.views.AnnotationInfoView"
+              icon="icons/sample.png"
+              id="edu.kit.textannotation.annotationplugin.views.AnnotationInfoView"
+              inject="true"
+              name="Text Annotation Details">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

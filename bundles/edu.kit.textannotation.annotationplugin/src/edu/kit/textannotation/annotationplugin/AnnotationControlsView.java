@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -93,17 +94,22 @@ public class AnnotationControlsView extends ViewPart {
 			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		}
 
-		for (AnnotationClass a: registry.findProfile(textModelData.getProfileName()).getAnnotationClasses()) {
-			Button b = new Button(parent, SWT.PUSH | SWT.FILL);
-			b.setText(a.getName());
-			b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			b.addListener(SWT.Selection, event -> new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a));
+		try {
+			for (AnnotationClass a: registry.findProfile(textModelData.getProfileName()).getAnnotationClasses()) {
+				Button b = new Button(parent, SWT.PUSH | SWT.FILL);
+				b.setText(a.getName());
+				b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+				b.addListener(SWT.Selection, event -> new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a));
+			}
+		} catch (ProfileNotFoundException e) {
+			// TODO
+			e.printStackTrace();
 		}
 
 		// TODO how to properly redraw parent s.t. widths are properly aligned?
-		parent.pack();
+		// parent.pack();
 		parent.layout();
-		parent.redraw();
-		parent.update();
+		// parent.redraw();
+		// parent.update();
 	}
 }

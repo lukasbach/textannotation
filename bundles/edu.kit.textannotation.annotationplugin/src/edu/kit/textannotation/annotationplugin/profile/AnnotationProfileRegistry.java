@@ -3,6 +3,8 @@ package edu.kit.textannotation.annotationplugin.profile;
 import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.part.EditorPart;
 import org.osgi.framework.Bundle;
 
 import java.io.IOException;
@@ -26,15 +28,20 @@ public class AnnotationProfileRegistry {
 
     public static AnnotationProfileRegistry createNew(Bundle bundle) {
         List<String> paths = new ArrayList<>();
-        // paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
+        paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
         paths.add(Platform.getStateLocation(bundle).toString() + "/profiles"); // workspace/.metadata/.textannotation
-        paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
+        // paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
+        paths.add(EclipseUtils.getCurrentWorkspaceDirectory(bundle));
         return new AnnotationProfileRegistry(paths);
     }
 
-    public AnnotationProfile findProfile(String profileName) {
+    public AnnotationProfile findProfile(String profileName) throws ProfileNotFoundException {
         readProfiles();
-        return profiles.stream().filter(p -> p.getName().equals(profileName)).findFirst().orElse(null); // TODO
+        return profiles
+                .stream()
+                .filter(p -> p.getName().equals(profileName))
+                .findFirst()
+                .orElseThrow(() -> new ProfileNotFoundException(profileName, this));
     }
 
     public List<AnnotationProfile> getProfiles() {
@@ -60,8 +67,8 @@ public class AnnotationProfileRegistry {
                                 System.out.println(String.format("Parsed '%s' from '%s'", profile.getName(), f.toString()));
                                 return profile;
                             } catch (Exception e) {
-                                System.out.println(String.format("Skipping %s because %s", f, e.getMessage()));
-                                e.printStackTrace();
+                                // System.out.println(String.format("Skipping %s because %s", f, e.getMessage()));
+                                // e.printStackTrace();
                                 // Genuinely don't care what the problem is, if there is a problem with reading/parsing
                                 // the file, it probably is not a annotation profile.
                                 return null;
