@@ -9,7 +9,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 public class TextModelData {
-	final EventManager<String> onChangeProfile = new EventManager<>();
+	final EventManager<String> onChangeProfile = new EventManager<>("textmodeldata:changeprofile");
 
 	private AnnotationSet annotations;
 	private String profileName;

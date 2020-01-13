@@ -32,12 +32,13 @@ public class AnnotationControlsView extends ViewPart {
 	private Button buttonNewProfile;
 	private AnnotationTextEditor editor;
 	private AnnotationProfileRegistry registry;
+	private AnnotationEditorFinder finder;
 
 	@Inject IWorkbench workbench;
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
+		finder = new AnnotationEditorFinder(workbench);
 		finder.annotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getTextModelData()));
 		if (finder.getAnnotationEditor() != null) {
 			rebuildContent(parent, finder.getAnnotationEditor().getTextModelData());
@@ -54,7 +55,7 @@ public class AnnotationControlsView extends ViewPart {
 	}
 	
 	private void rebuildContent(Composite parent, TextModelData textModelData) {
-		editor = new AnnotationEditorFinder(workbench).getAnnotationEditor();
+		editor = finder.getAnnotationEditor();
 		registry = editor.getAnnotationProfileRegistry();
 
 		for (Control child: parent.getChildren()) {
@@ -70,10 +71,10 @@ public class AnnotationControlsView extends ViewPart {
 		profileSelector = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.BORDER);
 		registry.getProfiles().forEach(p -> profileSelector.add(p.getName()));
 		profileSelector.select(registry.getProfiles().indexOf(new AnnotationProfile(textModelData.getProfileName())));
-		profileSelector.addSelectionListener(new ComboSelectionListener(() -> {
-			textModelData.setProfileName(profileSelector.getText());
+		ComboSelectionListener.create(profileSelector, (value) -> {
+			textModelData.setProfileName(value);
 			rebuildContent(parent, textModelData);
-		}));
+		});
 
 		buttonEditProfile = new Button(selectorComposite, SWT.PUSH);
 		buttonNewProfile = new Button(selectorComposite, SWT.PUSH);
