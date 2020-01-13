@@ -85,7 +85,7 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		registry.getProfiles().forEach(p -> profile.add(p.getName()));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		profile.setLayoutData(gd);
-		profile.addSelectionListener(new ComboSelectionListener(this::dialogChanged));
+		ComboSelectionListener.create(profile, v -> dialogChanged());
 
 		initialize();
 		dialogChanged();
