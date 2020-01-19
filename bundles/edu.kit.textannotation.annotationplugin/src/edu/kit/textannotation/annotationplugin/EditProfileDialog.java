@@ -1,6 +1,9 @@
 package edu.kit.textannotation.annotationplugin;
 
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.List;
@@ -14,23 +17,42 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class EditProfileDialog extends Shell {
 	private Text txtSelectedItemName;
 	private AnnotationProfile profile;
 	private AnnotationClass selectedAnnotationClass;
+	private Runnable onSave;
+	private LayoutUtilities lu = new LayoutUtilities();
+
+	private CCombo colorSelector;
+	private StyledText colorDisplay;
+	private Text itemName;
+	private List annotationClassesList;
+
+	private int newClassNameCounter = 1;
+
+	private String[] defaultColors = new String[] {
+			"46, 204, 113",
+			"52, 152, 219",
+			"155, 89, 182",
+			"231, 76, 60",
+			"230, 126, 34",
+			"243, 156, 18",
+			"241, 196, 15"
+	};
 	
-	public static void openWindow(AnnotationProfile profile) {
-		
+	public static void openWindow(AnnotationProfileRegistry registry, String profileName) {
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
-			EditProfileDialog shell = new EditProfileDialog(display, profile);
+			AnnotationProfile profile = registry.findProfile(profileName);
+			EditProfileDialog shell = new EditProfileDialog(display, profile, registry::overwriteProfile);
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
@@ -47,81 +69,137 @@ public class EditProfileDialog extends Shell {
 	 * Create the shell.
 	 * @param display
 	 */
-	public EditProfileDialog(Display display, AnnotationProfile profile) {
+	public EditProfileDialog(Display display, AnnotationProfile profile, Consumer<AnnotationProfile> onSave) {
 		super(display, SWT.SHELL_TRIM);
 		this.profile = profile;
 		this.selectedAnnotationClass = null;
-		
-		List annotationClassesList = new List(this, SWT.BORDER);
-		annotationClassesList.setItems(profile.getAnnotationClassNames());
-		annotationClassesList.setBounds(10, 10, 246, 291);
-		
-		txtSelectedItemName = new Text(this, SWT.BORDER);
-		txtSelectedItemName.setText("Selected Item Name");
-		txtSelectedItemName.setBounds(262, 10, 263, 21);
-		
-		CCombo colorSelector = new CCombo(this, SWT.BORDER);
-		colorSelector.setText("#abcdef");
-		colorSelector.setBounds(262, 37, 240, 21);
-		
-		StyledText colorDisplay = new StyledText(this, SWT.BORDER);
-		colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		colorDisplay.setBounds(504, 37, 21, 21);
-		
-		Label seperator = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-		seperator.setBounds(262, 64, 263, 2);
-		
-		CLabel canBeMatchedWithLabel = new CLabel(this, SWT.NONE);
-		canBeMatchedWithLabel.setBounds(262, 66, 263, 21);
-		canBeMatchedWithLabel.setText("Can be matched with:");
-		
-		List canBeMatchedWithList = new List(this, SWT.BORDER);
-		canBeMatchedWithList.setItems(new String[] {"Verb", "Objective", "Something", "Else"});
-		canBeMatchedWithList.setBounds(262, 90, 263, 180);
-		
-		Button btnSave = new Button(this, SWT.NONE);
-		btnSave.setBounds(262, 276, 263, 25);
-		btnSave.setText("Save");
+		this.onSave = () -> onSave.accept(profile);
+
+		rebuildContent(this);
 		createContents();
-		
-		// Hooks
-		annotationClassesList.addListener(SWT.Selection, e -> {
-			try {
-				AnnotationClass ac = profile.getAnnotationClass(annotationClassesList.getSelection()[0]);
-				selectedAnnotationClass = ac;
-				txtSelectedItemName.setText(ac.getName());
-				canBeMatchedWithList.setItems(
-						profile
-							.getAnnotationClasses()
-							.stream()
-							.filter(acl -> !acl.getName().equals(ac.getName()))
-							.map(acl -> acl.getName())
-							.toArray(n -> new String[n])
-						);
-			} catch(Exception e1) {
-				e1.printStackTrace();
-			}
-		});
-		
-		txtSelectedItemName.addModifyListener(e -> {
-			int selectionIndex = annotationClassesList.getSelectionIndex();
-			selectedAnnotationClass.setName(txtSelectedItemName.getText());
-			annotationClassesList.setItems(profile.getAnnotationClassNames());
-			annotationClassesList.setSelection(selectionIndex);
-		});
-		
-		colorSelector.addListener(SWT.Selection, e -> {
-			// TODO colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		});
 	}
 
-	/**
-	 * Create contents of the shell.
-	 */
-	protected void createContents() {
-		setText("Edit Profile");
-		setSize(551, 350);
+	private void rebuildContent(Composite parent) {
+		// Composite mainContainer = new Composite(parent, SWT.NONE);
+		parent.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
 
+		Composite leftContainer = new Composite(parent, SWT.NONE);
+		leftContainer.setLayout(lu.gridLayout().withNumCols(1).get());
+		leftContainer.setLayoutData(lu.completelyFillingGridData());
+
+		Composite rightContainer = new Composite(parent, SWT.NONE);
+		rightContainer.setLayout(lu.gridLayout().withNumCols(1).get());
+		rightContainer.setLayoutData(lu.verticallyFillingGridData());
+
+		annotationClassesList = new List(leftContainer, SWT.BORDER);
+		annotationClassesList.setLayoutData(lu.completelyFillingGridData());
+		annotationClassesList.setItems(profile.getAnnotationClassNames());
+		annotationClassesList.addListener(SWT.Selection, e -> selectAnnotationClass(annotationClassesList.getSelection()[0]));
+
+		itemName = new Text(rightContainer, SWT.BORDER);
+		itemName.setLayoutData(lu.horizontalFillingGridData());
+		itemName.setText("Selected Item Name");
+		itemName.addModifyListener(e -> changeAnnotationClassName(itemName.getText()));
+
+		Composite colorSelectorContainer = new Composite(rightContainer, SWT.NONE);
+		colorSelectorContainer.setLayoutData(lu.horizontalFillingGridData());
+		colorSelectorContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+
+		colorSelector = new CCombo(colorSelectorContainer, SWT.BORDER);
+		colorSelector.setLayoutData(lu.horizontalFillingGridData());
+		colorSelector.setText("#abcdef");
+		colorSelector.setLayoutData(lu.gridData().withExcessHorizontalSpace(true).withHorizontalAlignment(SWT.FILL).get());
+		colorSelector.addModifyListener(e -> changeAnnotationColor(colorSelector.getText()));
+		colorSelector.setItems(defaultColors);
+
+		colorDisplay = new StyledText(colorSelectorContainer, SWT.BORDER);
+		// colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+		int i = colorSelector.getItemHeight();
+		colorDisplay.setLayoutData(lu.gridData().withWidthHint(i).withHeightHint(i).get());
+		colorDisplay.setEditable(false);
+
+		// CLabel canBeMatchedWithLabel = new CLabel(rightContainer, SWT.NONE);
+		// canBeMatchedWithLabel.setText("Can be matched with:");
+
+		// List canBeMatchedWithList = new List(rightContainer, SWT.BORDER);
+		// canBeMatchedWithList.setItems("Verb", "Objective", "Something", "Else");
+		// canBeMatchedWithList.setLayoutData(lu.gridData().withVerticalAlignment(SWT.FILL).get());
+		// canBeMatchedWithList.setLayoutData(lu.completelyFillingGridData());
+
+		Button btnRemoveClass = new Button(rightContainer, SWT.NONE);
+		btnRemoveClass.setLayoutData(lu.horizontalFillingGridData());
+		btnRemoveClass.setText("Remove selected Class");
+		btnRemoveClass.addListener(SWT.Selection, e -> removeCurrentClass());
+
+		Label seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(lu.horizontalFillingGridData());
+
+		Button btnAddClass = new Button(rightContainer, SWT.NONE);
+		btnAddClass.setLayoutData(lu.horizontalFillingGridData());
+		btnAddClass.setText("Add Class");
+		btnAddClass.addListener(SWT.Selection, e -> addNewClass());
+
+		Button btnSave = new Button(rightContainer, SWT.NONE);
+		btnSave.setLayoutData(lu.completelyFillingGridData());
+		btnSave.setText("Save");
+		btnSave.addListener(SWT.Selection, e -> {
+			onSave.run();
+			close();
+		});
+
+		parent.layout();
+	}
+
+	private void createContents() {
+		setText("Edit Profile");
+		setSize(550, 350);
+	}
+
+	private void selectAnnotationClass(String annotationClassName) {
+		try {
+			selectedAnnotationClass = profile.getAnnotationClass(annotationClassName);
+			colorDisplay.setBackground(selectedAnnotationClass.getColor());
+			colorSelector.setText(selectedAnnotationClass.getColorAsTextModelString());
+			itemName.setText(annotationClassName);
+		} catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		}
+	}
+
+	private void changeAnnotationClassName(String name) {
+		selectedAnnotationClass.setName(name);
+		annotationClassesList.setItems(profile.getAnnotationClassNames());
+		annotationClassesList.setSelection(new String[]{ name });
+	}
+
+	private void changeAnnotationColor(String colorString) {
+		try {
+			Integer[] colorInts = Arrays.stream(colorString.split(", "))
+					.map(Integer::parseInt).toArray(Integer[]::new);
+			Color color = new Color(Display.getCurrent(), colorInts[0], colorInts[1], colorInts[2]);
+			selectedAnnotationClass.setColor(color);
+			colorDisplay.setBackground(color);
+		} catch (Exception e) {
+			System.out.println("Could not parse color: " + colorString);
+			// If something goes wrong, the colors is probably incorrectly formatted. Just attempt reading it on
+			// the next input
+		}
+	}
+
+	private void removeCurrentClass() {
+		profile.removeAnnotationClass(selectedAnnotationClass);
+		annotationClassesList.setItems(profile.getAnnotationClassNames());
+		annotationClassesList.setSelection(0);
+	}
+
+	private void addNewClass() {
+		Color defaultColor = new Color(Display.getCurrent(), 52, 152, 219);
+		AnnotationClass newClass = new AnnotationClass("New Annotation Class " + newClassNameCounter++, defaultColor);
+		profile.addAnnotationClass(newClass);
+		annotationClassesList.setItems(profile.getAnnotationClassNames());
+		annotationClassesList.setSelection(new String[]{newClass.getName()});
+		selectAnnotationClass(newClass.getName());
 	}
 
 	@Override

@@ -83,12 +83,7 @@ public class AnnotationControlsView extends ViewPart {
 		buttonNewProfile.setText("New Profile");
 		
 		buttonEditProfile.addListener(SWT.Selection, event -> {
-			AnnotationProfile demoProfile = new AnnotationProfile("Default Profile");
-			demoProfile.addAnnotationClass(new AnnotationClass("Substantive", new Color(Display.getCurrent(), 255, 0, 0)));
-			demoProfile.addAnnotationClass(new AnnotationClass("Verb", new Color(Display.getCurrent(), 255, 0, 0)));
-			demoProfile.addAnnotationClass(new AnnotationClass("Objective", new Color(Display.getCurrent(), 255, 0, 0)));
-			demoProfile.addAnnotationClass(new AnnotationClass("Other", new Color(Display.getCurrent(), 255, 0, 0)));
-			EditProfileDialog.openWindow(demoProfile);
+			EditProfileDialog.openWindow(registry, textModelData.getProfileName());
 		});
 		
 		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
