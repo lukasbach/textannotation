@@ -1,12 +1,14 @@
 package edu.kit.textannotation.annotationplugin.views;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
+import com.sun.corba.se.spi.oa.ObjectAdapter;
 import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
 import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationMetaDataKey;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.*;
@@ -23,6 +25,7 @@ public class AnnotationInfoView extends ViewPart {
     public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationInfoView";
     private AnnotationProfileRegistry registry;
     private AnnotationTextEditor editor;
+    private LayoutUtilities lu = new LayoutUtilities();
 
     @Inject IWorkbench workbench;
 
@@ -66,8 +69,9 @@ public class AnnotationInfoView extends ViewPart {
         }
 
         GridLayout layout = new GridLayout();
+        // TODO LayoutUtilities
         parent.setLayout(layout);
-        layout.numColumns = 2;
+        layout.numColumns = 3;
         layout.verticalSpacing = 7;
         layout.horizontalSpacing = 20;
         layout.marginWidth = 25;
@@ -76,23 +80,79 @@ public class AnnotationInfoView extends ViewPart {
         addLine(parent, "Marked Text:", editor.getAnnotationContent(hoveringAnnotation));
         addLine(parent, "Annotated Class:", hoveringAnnotation.getAnnotationIdentifier());
         addLine(parent, "Location:", String.format("%s:%s", hoveringAnnotation.getOffset(), hoveringAnnotation.getLength()));
-        addLine(parent, "Refereces:", "TODO");
+        addLine(parent, "References:", "TODO");
 
+        hoveringAnnotation.streamMetaData().forEach(metaDataEntry -> {
+            addLine(
+                    parent,
+                    metaDataEntry.readableKey,
+                    metaDataEntry.value,
+                    v -> {
+                        try {
+                            hoveringAnnotation.putMetaDataEntry(metaDataEntry.xmlKey, v);
+                        } catch (InvalidAnnotationMetaDataKey invalidAnnotationMetaDataKey) {
+                            // TODO should not happen
+                            invalidAnnotationMetaDataKey.printStackTrace();
+                        }
+                    },
+                    "delete",
+                    () -> {
+                        try {
+                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.xmlKey);
+                            rebuildContent(parent, hoveringAnnotation);
+                        } catch (InvalidAnnotationMetaDataKey invalidAnnotationMetaDataKey) {
+                            // TODO should not happen
+                            invalidAnnotationMetaDataKey.printStackTrace();
+                        }
+                    }
+            );
+        });
 
-        // TODO how to properly redraw parent s.t. widths are properly aligned?
-        // parent.pack();
+        Button addEntry = new Button(parent, SWT.NONE);
+        addEntry.setText("Add meta data entry");
+        addEntry.setLayoutData(lu.gridData().withHorizontalSpan(3).withExcessHorizontalSpace(true)
+                .withHorizontalAlignment(SWT.FILL).get());
+        addEntry.addListener(SWT.Selection, e -> {
+            try {
+                hoveringAnnotation.putMetaDataEntry("New Key", "");
+                rebuildContent(parent, hoveringAnnotation);
+            } catch (InvalidAnnotationMetaDataKey ignored) {}
+        });
+        // TODO allow editing the key
+
         parent.layout();
-        // parent.redraw();
-        // parent.update();
     }
 
     private void addLine(Composite parent, String label, String value) {
+        addLine(parent, label, value, null, null, null);
+    }
+
+    private void addLine(Composite parent, String label, String value, @Nullable Consumer<String> onChange) {
+        addLine(parent, label, value, onChange, null, null);
+    }
+
+    private void addLine(Composite parent, String label, String value, @Nullable Consumer<String> onChange, 
+                         @Nullable String buttonText, @Nullable Runnable onButtonClick) {
         Label l = new Label(parent, SWT.NULL);
         l.setText(label);
+
         Text t = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        t.setLayoutData(gd);
+        t.setLayoutData(lu.gridData().withHorizontalAlignment(SWT.FILL).withExcessHorizontalSpace(true).get());
         t.setText(value);
-        t.setEditable(false);
+        t.setEditable(onChange != null);
+        if (onChange != null) {
+            t.addModifyListener(e -> onChange.accept(t.getText()));
+        }
+
+        if (buttonText != null) {
+            Button b = new Button(parent, SWT.NONE);
+            b.setText(buttonText);
+            b.setLayoutData(lu.horizontalFillingGridData());
+            if (onButtonClick != null) {
+                b.addListener(SWT.Selection, e -> onButtonClick.run());
+            }
+        } else {
+            new Text(parent, SWT.NONE);
+        }
     }
 }
