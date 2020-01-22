@@ -89,7 +89,6 @@ public class TextModelIntegration {
 		return profile;
 	}
 
-	// TODO use TextModelData
 	public static String buildAnnotationXml(TextModelData textModelData) throws ParserConfigurationException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -102,12 +101,17 @@ public class TextModelIntegration {
 		profileEl.setAttribute("name", textModelData.getProfileName());
 		root.appendChild(profileEl);
 
+		// TODO !!!!! store meta data in child elements, not in attributes!
 		textModelData.getAnnotations().stream().forEach(annotation -> {
 			Element annotationEl = doc.createElement("annotation");
 			annotationEl.setAttribute("id", annotation.getId());
 			annotationEl.setAttribute("offset", "" + annotation.getOffset());
 			annotationEl.setAttribute("length", "" + annotation.getLength());
 			annotationEl.setAttribute("annotation", annotation.getAnnotationIdentifier());
+			annotation.streamMetaData().forEach(metaDataEntry -> {
+				System.out.println("data-" + metaDataEntry.xmlKey);
+				annotationEl.setAttribute("data-" + metaDataEntry.xmlKey, metaDataEntry.value);
+			});
 			root.appendChild(annotationEl);
 		});
 

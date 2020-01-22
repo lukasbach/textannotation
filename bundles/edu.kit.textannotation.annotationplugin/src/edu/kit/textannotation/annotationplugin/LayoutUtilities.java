@@ -80,6 +80,16 @@ public class LayoutUtilities {
             return this;
         }
 
+        public GridDataWrapper withHorizontalSpan(int span) {
+            gridData.horizontalSpan = span;
+            return this;
+        }
+
+        public GridDataWrapper withVerticalSpan(int span) {
+            gridData.verticalSpan = span;
+            return this;
+        }
+
         public GridDataWrapper withWidthHint(int hint) {
             gridData.widthHint = hint;
             return this;
