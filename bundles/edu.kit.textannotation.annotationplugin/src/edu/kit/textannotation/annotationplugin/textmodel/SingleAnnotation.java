@@ -1,8 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
 import edu.kit.textannotation.annotationplugin.EventManager;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +18,11 @@ public class SingleAnnotation {
 	public EventManager<EventManager.EmptyEvent> onLocationChange = new EventManager<>("singleAnnotation:locationChange");
 
 	public class MetaDataEntry {
-		public String xmlKey;
-		public String readableKey;
+		public String key;
 		public String value;
 
-		MetaDataEntry(String xmlKey, String readableKey, String value) {
-			this.xmlKey = xmlKey;
-			this.readableKey = readableKey;
+		MetaDataEntry(String xmlKey, String value) {
+			this.key = xmlKey;
 			this.value = value;
 		}
 	}
@@ -38,32 +34,6 @@ public class SingleAnnotation {
 		this.annotationIdentifier = annotationIdentifier;
 		this.references = references;
 		this.metaData = new HashMap<>();
-	}
-
-	static SingleAnnotation fromXmlNode(Node node) {
-		NamedNodeMap attributes = node.getAttributes();
-
-		SingleAnnotation annotation = new SingleAnnotation(
-				attributes.getNamedItem("id").getTextContent(),
-				Integer.parseInt(attributes.getNamedItem("offset").getTextContent()),
-				Integer.parseInt(attributes.getNamedItem("length").getTextContent()),
-				attributes.getNamedItem("annotation").getTextContent(),
-				new String[] {}
-		);
-
-		for (int i = 0; i < attributes.getLength(); i++) {
-			Node attribute = attributes.item(i);
-			if (attribute.getNodeName().startsWith("data-")) {
-				try {
-					annotation.putMetaDataEntry(attribute.getNodeName().substring(5), attribute.getNodeValue());
-				} catch (InvalidAnnotationMetaDataKey invalidAnnotationMetaDataKey) {
-					// TODO
-					invalidAnnotationMetaDataKey.printStackTrace();
-				}
-			}
-		}
-
-		return annotation;
 	}
 
 	public String getId() {
@@ -122,20 +92,20 @@ public class SingleAnnotation {
 		return getOffset() + getLength() - 1;
 	}
 
-	public void putMetaDataEntry(String key, String value) throws InvalidAnnotationMetaDataKey {
-		metaData.put(cleanDataMapKey(key), value);
+	public void putMetaDataEntry(String key, String value) {
+		metaData.put(key, value);
 		onMetaDataChange.fire(new EventManager.EmptyEvent());
 	}
 
-	public void removeMetaDataEntry(String key) throws InvalidAnnotationMetaDataKey {
-		metaData.remove(cleanDataMapKey(key));
+	public void removeMetaDataEntry(String key) {
+		metaData.remove(key);
 		onMetaDataChange.fire(new EventManager.EmptyEvent());
 	}
 
 	public Stream<MetaDataEntry> streamMetaData() {
 		return metaData.keySet()
 				.stream()
-				.map(key -> new MetaDataEntry(key, key.replace("_", " "), metaData.get(key)));
+				.map(key -> new MetaDataEntry(key, metaData.get(key)));
 	}
 
 	public void clearMetaData() {
@@ -153,20 +123,5 @@ public class SingleAnnotation {
 	
 	public String toString() {
 		return String.format("SingleAnnotation(annotation=%s, offset=%s, length=%s)", getAnnotationIdentifier(), getOffset(), getLength());
-	}
-
-	/**
-	 * Clean a supplied key so that it can be used as XML attribute key. Spaces or similar symbols will
-	 * be replaced with a '_' symbol.
-	 * @param key the original key
-	 * @return the cleaned key
-	 * @throws InvalidAnnotationMetaDataKey if the key contains invalid characters or is empty.
-	 */
-	private String cleanDataMapKey(String key) throws InvalidAnnotationMetaDataKey {
-		if (key != null && key.matches("[a-zA-Z0-9\\-\\_\\s]+")) {
-			return key.replaceAll("\\s", "_");
-		} else {
-			throw new InvalidAnnotationMetaDataKey(key);
-		}
 	}
 }

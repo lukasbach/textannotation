@@ -52,8 +52,30 @@ public class TextModelIntegration {
 				.collect(Collectors.toList())
 				.stream()
 				.map(annotationElements::item)
-				.map(SingleAnnotation::fromXmlNode)
+				.map(TextModelIntegration::parseSingleAnnotation)
 				.collect(Collectors.toList());
+	}
+
+	static SingleAnnotation parseSingleAnnotation(Node node) {
+		NamedNodeMap attributes = node.getAttributes();
+		NodeList childs = node.getChildNodes();
+
+		SingleAnnotation annotation = new SingleAnnotation(
+				attributes.getNamedItem("id").getTextContent(),
+				Integer.parseInt(attributes.getNamedItem("offset").getTextContent()),
+				Integer.parseInt(attributes.getNamedItem("length").getTextContent()),
+				attributes.getNamedItem("annotation").getTextContent(),
+				new String[] {}
+		);
+
+		for (int i = 0; i < childs.getLength(); i++) {
+			Node child = childs.item(i);
+			if (child.getNodeName().equals("metadata")) {
+				annotation.putMetaDataEntry(child.getAttributes().getNamedItem("name").getTextContent(), child.getTextContent());
+			}
+		}
+
+		return annotation;
 	}
 
 	static String parseProfileName(String rawSource) throws IOException, SAXException, ParserConfigurationException {
@@ -101,7 +123,6 @@ public class TextModelIntegration {
 		profileEl.setAttribute("name", textModelData.getProfileName());
 		root.appendChild(profileEl);
 
-		// TODO !!!!! store meta data in child elements, not in attributes!
 		textModelData.getAnnotations().stream().forEach(annotation -> {
 			Element annotationEl = doc.createElement("annotation");
 			annotationEl.setAttribute("id", annotation.getId());
@@ -109,8 +130,10 @@ public class TextModelIntegration {
 			annotationEl.setAttribute("length", "" + annotation.getLength());
 			annotationEl.setAttribute("annotation", annotation.getAnnotationIdentifier());
 			annotation.streamMetaData().forEach(metaDataEntry -> {
-				System.out.println("data-" + metaDataEntry.xmlKey);
-				annotationEl.setAttribute("data-" + metaDataEntry.xmlKey, metaDataEntry.value);
+				Element metaDataEl = doc.createElement("metadata");
+				metaDataEl.setTextContent(metaDataEntry.value);
+				metaDataEl.setAttribute("name", metaDataEntry.key);
+				annotationEl.appendChild(metaDataEl);
 			});
 			root.appendChild(annotationEl);
 		});

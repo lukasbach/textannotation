@@ -2,19 +2,16 @@ package edu.kit.textannotation.annotationplugin.views;
 
 import java.util.function.Consumer;
 
-import com.sun.corba.se.spi.oa.ObjectAdapter;
 import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationMetaDataKey;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.*;
 
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
@@ -85,25 +82,13 @@ public class AnnotationInfoView extends ViewPart {
         hoveringAnnotation.streamMetaData().forEach(metaDataEntry -> {
             addLine(
                     parent,
-                    metaDataEntry.readableKey,
+                    metaDataEntry.key,
                     metaDataEntry.value,
-                    v -> {
-                        try {
-                            hoveringAnnotation.putMetaDataEntry(metaDataEntry.xmlKey, v);
-                        } catch (InvalidAnnotationMetaDataKey invalidAnnotationMetaDataKey) {
-                            // TODO should not happen
-                            invalidAnnotationMetaDataKey.printStackTrace();
-                        }
-                    },
+                    v -> hoveringAnnotation.putMetaDataEntry(metaDataEntry.key, v),
                     "delete",
                     () -> {
-                        try {
-                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.xmlKey);
-                            rebuildContent(parent, hoveringAnnotation);
-                        } catch (InvalidAnnotationMetaDataKey invalidAnnotationMetaDataKey) {
-                            // TODO should not happen
-                            invalidAnnotationMetaDataKey.printStackTrace();
-                        }
+                        hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
+                        rebuildContent(parent, hoveringAnnotation);
                     }
             );
         });
@@ -113,10 +98,8 @@ public class AnnotationInfoView extends ViewPart {
         addEntry.setLayoutData(lu.gridData().withHorizontalSpan(3).withExcessHorizontalSpace(true)
                 .withHorizontalAlignment(SWT.FILL).get());
         addEntry.addListener(SWT.Selection, e -> {
-            try {
-                hoveringAnnotation.putMetaDataEntry("New Key", "");
-                rebuildContent(parent, hoveringAnnotation);
-            } catch (InvalidAnnotationMetaDataKey ignored) {}
+        hoveringAnnotation.putMetaDataEntry("New Key", "");
+        rebuildContent(parent, hoveringAnnotation);
         });
         // TODO allow editing the key
 
