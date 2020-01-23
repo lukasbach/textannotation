@@ -30,21 +30,70 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 // TODO refactor visibilities, static methods, add internal state etc
+@SuppressWarnings("FieldCanBeLocal")
 public class TextModelIntegration {
 	private IDocument document;
-	
+
+	/** The element name of the root element of an annotated file. */
+	private static final String KEY_ANNOTATEDFILE_ELEMENT = "annotated";
+
+	/** The element name of the content element in a annotated file. Child of an annotated tag. */
+	private static final String KEY_ANNOTATIONDATA_CONTENT = "content";
+
+	/** The element name of the element that references the used profile in an annotated file. Child of an annotated tag. */
+	private static final String KEY_ANNOTATEDFILE_PROFILE_ELEMENT = "annotationprofile";
+
+	/** The attribute key of the name of a profile in the annotationprofile tag which references the used profile in an annotated file. */
+	private static final String KEY_ANNOTATEDFILE_PROFILE_ATTR_NAME = "name";
+
+	/** The element name of the element that describes a specific annotation. Child of an annotated tag. */
+	private static final String KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT = "annotation";
+
+	/** The attribute key of an annotations ID in a annotation element. */
+	private static final String KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ID = "id";
+
+	/** The attribute key of an annotations offset in a annotation element. */
+	private static final String KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET = "offset";
+
+	/** The attribute key of an annotations length in a annotation element. */
+	private static final String KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH = "length";
+
+	/** The attribute key of an annotation class in a annotation element. */
+	private static final String KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER = "annotation";
+
+	/** The element name of the element that describes a key-value pair of metadata for one annotation. Child of an annotation element. */
+	private static final String KEY_ANNOTATIONDATA_METADATA_ELEMENT = "metadata";
+
+	/** The attribute key of the metadata key in a metadata element. */
+	private static final String KEY_ANNOTATIONDATA_METADATA_ATTR_NAME = "name";
+
+	/** The element name of the root element in a profile file. */
+	private static final String KEY_PROFILE_ELEMENT = "annotationprofile";
+
+	/** The attribute key of a profiles name on the root element in a profile file. */
+	private static final String KEY_PROFILE_ATTR_NAME = "name";
+
+	/** The element name of an annotation class in a profile file. Child of an annotationprofile element. */
+	private static final String KEY_PROFILE_ANNOTATIONCLASS_ELEMENT = "annotationclass";
+
+	/** The attribute key of an annotation classes name in an annotationclass element. */
+	private static final String KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME = "name";
+
+	/** The attribute key of an annotation classes color in an annotationclass element. */
+	private static final String KEY_PROFILE_ANNOTATIONCLASS_ATTR_COLOR = "color";
+
 	public TextModelIntegration(IDocument document) {
 		this.document = document;
 	}
 
 	public static String parseContent(String rawSource) throws IOException, SAXException, ParserConfigurationException {
 		Element root = parseXmlFile(rawSource);
-		return root.getElementsByTagName("content").item(0).getTextContent();
+		return root.getElementsByTagName(KEY_ANNOTATIONDATA_CONTENT).item(0).getTextContent();
 	}
 
 	public static List<SingleAnnotation> parseAnnotationData(String rawSource) throws ParserConfigurationException, IOException, SAXException {
 		Element root = parseXmlFile(rawSource);
-		NodeList annotationElements = root.getElementsByTagName("annotation");
+		NodeList annotationElements = root.getElementsByTagName(KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT);
 
 		return IntStream
 				.rangeClosed(0, annotationElements.getLength() - 1)
@@ -61,17 +110,18 @@ public class TextModelIntegration {
 		NodeList childs = node.getChildNodes();
 
 		SingleAnnotation annotation = new SingleAnnotation(
-				attributes.getNamedItem("id").getTextContent(),
-				Integer.parseInt(attributes.getNamedItem("offset").getTextContent()),
-				Integer.parseInt(attributes.getNamedItem("length").getTextContent()),
-				attributes.getNamedItem("annotation").getTextContent(),
+				attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ID).getTextContent(),
+				Integer.parseInt(attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET).getTextContent()),
+				Integer.parseInt(attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH).getTextContent()),
+				attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER).getTextContent(),
 				new String[] {}
 		);
 
 		for (int i = 0; i < childs.getLength(); i++) {
 			Node child = childs.item(i);
-			if (child.getNodeName().equals("metadata")) {
-				annotation.putMetaDataEntry(child.getAttributes().getNamedItem("name").getTextContent(), child.getTextContent());
+			if (child.getNodeName().equals(KEY_ANNOTATIONDATA_METADATA_ELEMENT)) {
+				annotation.putMetaDataEntry(child.getAttributes().getNamedItem(KEY_ANNOTATIONDATA_METADATA_ATTR_NAME)
+						.getTextContent(), child.getTextContent());
 			}
 		}
 
@@ -80,24 +130,24 @@ public class TextModelIntegration {
 
 	static String parseProfileName(String rawSource) throws IOException, SAXException, ParserConfigurationException {
 		return parseXmlFile(rawSource)
-				.getElementsByTagName("annotationprofile")
+				.getElementsByTagName(KEY_PROFILE_ELEMENT)
 				.item(0)
 				.getAttributes()
-				.getNamedItem("name")
+				.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME)
 				.getNodeValue();
 	}
 
 	public static AnnotationProfile parseAnnotationProfile(String rawSource) throws IOException, SAXException, ParserConfigurationException {
 		Element root = parseXmlFile(rawSource);
-		if (!root.getTagName().equals("annotationprofile")) {
+		if (!root.getTagName().equals(KEY_PROFILE_ELEMENT)) {
 			throw new ParserConfigurationException(""); // TODO
 		}
 
-		Node annotationProfileElement = root; // TODO
-		NodeList annotationClassElements = root.getElementsByTagName("annotationclass");
-		NamedNodeMap annotationProfileAttributes = annotationProfileElement.getAttributes();
+		NodeList annotationClassElements = root.getElementsByTagName(KEY_PROFILE_ANNOTATIONCLASS_ELEMENT);
+		NamedNodeMap annotationProfileAttributes = root.getAttributes();
 
-		AnnotationProfile profile = new AnnotationProfile(annotationProfileAttributes.getNamedItem("name").getTextContent());
+		AnnotationProfile profile = new AnnotationProfile(
+				annotationProfileAttributes.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME).getTextContent());
 
 		IntStream
 			.rangeClosed(0, annotationClassElements.getLength() - 1)
@@ -116,29 +166,29 @@ public class TextModelIntegration {
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.newDocument();
 
-		Element root = doc.createElement("annotated");
+		Element root = doc.createElement(KEY_ANNOTATEDFILE_ELEMENT);
 		doc.appendChild(root);
 
-		Element profileEl = doc.createElement("annotationprofile");
-		profileEl.setAttribute("name", textModelData.getProfileName());
+		Element profileEl = doc.createElement(KEY_ANNOTATEDFILE_PROFILE_ELEMENT);
+		profileEl.setAttribute(KEY_ANNOTATEDFILE_PROFILE_ATTR_NAME, textModelData.getProfileName());
 		root.appendChild(profileEl);
 
 		textModelData.getAnnotations().stream().forEach(annotation -> {
-			Element annotationEl = doc.createElement("annotation");
-			annotationEl.setAttribute("id", annotation.getId());
-			annotationEl.setAttribute("offset", "" + annotation.getOffset());
-			annotationEl.setAttribute("length", "" + annotation.getLength());
-			annotationEl.setAttribute("annotation", annotation.getAnnotationIdentifier());
+			Element annotationEl = doc.createElement(KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT);
+			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ID, annotation.getId());
+			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET, "" + annotation.getOffset());
+			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH, "" + annotation.getLength());
+			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER, annotation.getAnnotationIdentifier());
 			annotation.streamMetaData().forEach(metaDataEntry -> {
-				Element metaDataEl = doc.createElement("metadata");
+				Element metaDataEl = doc.createElement(KEY_ANNOTATIONDATA_METADATA_ELEMENT);
 				metaDataEl.setTextContent(metaDataEntry.value);
-				metaDataEl.setAttribute("name", metaDataEntry.key);
+				metaDataEl.setAttribute(KEY_ANNOTATIONDATA_METADATA_ATTR_NAME, metaDataEntry.key);
 				annotationEl.appendChild(metaDataEl);
 			});
 			root.appendChild(annotationEl);
 		});
 
-		Element contentEl = doc.createElement("content");
+		Element contentEl = doc.createElement(KEY_ANNOTATIONDATA_CONTENT);
 		contentEl.setTextContent(textModelData.getDocument().get());
 		root.appendChild(contentEl);
 
@@ -154,13 +204,13 @@ public class TextModelIntegration {
 	}
 
 	private static Element buildProfileElement(AnnotationProfile profile, Document doc) {
-		Element profileElement = doc.createElement("annotationprofile");
-		profileElement.setAttribute("name", profile.getName());
+		Element profileElement = doc.createElement(KEY_PROFILE_ELEMENT);
+		profileElement.setAttribute(KEY_PROFILE_ATTR_NAME, profile.getName());
 
 		profile.getAnnotationClasses().forEach(annotationClass -> {
-			Element classEl = doc.createElement("annotationclass");
-			classEl.setAttribute("name", annotationClass.getName());
-			classEl.setAttribute("color", annotationClass.getColorAsTextModelString());
+			Element classEl = doc.createElement(KEY_PROFILE_ANNOTATIONCLASS_ELEMENT);
+			classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME, annotationClass.getName());
+			classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_COLOR, annotationClass.getColorAsTextModelString());
 			profileElement.appendChild(classEl);
 		});
 
