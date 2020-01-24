@@ -122,8 +122,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		textModelData.getAnnotations().addAnnotation(annotation);
 		
 		// Trigger rehighlight
-		IDocument doc = sourceViewer.getDocument();
-		doc.set(doc.get());
+		markDocumentAsDirty();
 	}
 	
 	public String getId() {
@@ -155,5 +154,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
 	public String getAnnotationContent(SingleAnnotation annotation) {
 		return textModelData.getAnnotationContent(annotation);
+	}
+
+	public void markDocumentAsDirty() {
+		IDocument doc = sourceViewer.getDocument();
+		doc.set(doc.get());
 	}
 }

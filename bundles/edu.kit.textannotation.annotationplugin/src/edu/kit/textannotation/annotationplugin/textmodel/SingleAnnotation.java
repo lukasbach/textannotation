@@ -108,6 +108,10 @@ public class SingleAnnotation {
 				.map(key -> new MetaDataEntry(key, metaData.get(key)));
 	}
 
+	public boolean containsMetaDataEntry(String key) {
+		return metaData.containsKey(key);
+	}
+
 	public void clearMetaData() {
 		metaData.clear();
 		onMetaDataChange.fire(new EventManager.EmptyEvent());
