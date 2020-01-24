@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.views;
 
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
@@ -20,6 +21,9 @@ import javax.inject.Inject;
 
 public class AnnotationInfoView extends ViewPart {
     public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationInfoView";
+
+    public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("infoview:changedmeta");
+
     private AnnotationProfileRegistry registry;
     private AnnotationTextEditor editor;
     private LayoutUtilities lu = new LayoutUtilities();
@@ -38,10 +42,13 @@ public class AnnotationInfoView extends ViewPart {
             e.onClickOutsideOfAnnotation.addListener(onUnHover);
             editor = e;
         });
+
         finder.annotationEditorDeactivated.addListener(editor -> {
             editor.onClickAnnotation.removeListener(onHover);
             editor.onClickOutsideOfAnnotation.removeListener(onUnHover);
         });
+
+        onChangedMetaData.addListener(e -> editor.markDocumentAsDirty());
     }
 
     @Override
@@ -77,65 +84,131 @@ public class AnnotationInfoView extends ViewPart {
         addLine(parent, "Marked Text:", editor.getAnnotationContent(hoveringAnnotation));
         addLine(parent, "Annotated Class:", hoveringAnnotation.getAnnotationIdentifier());
         addLine(parent, "Location:", String.format("%s:%s", hoveringAnnotation.getOffset(), hoveringAnnotation.getLength()));
-        addLine(parent, "References:", "TODO");
+        // addLine(parent, "References:", "TODO");
 
-        hoveringAnnotation.streamMetaData().forEach(metaDataEntry -> {
-            addLine(
-                    parent,
-                    metaDataEntry.key,
-                    metaDataEntry.value,
-                    v -> hoveringAnnotation.putMetaDataEntry(metaDataEntry.key, v),
-                    "delete",
-                    () -> {
-                        hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
-                        rebuildContent(parent, hoveringAnnotation);
-                    }
-            );
-        });
+        hoveringAnnotation
+                .streamMetaData()
+                .sorted(Comparator.comparing(a -> a.key))
+                .forEach(metaDataEntry -> addLine2(
+                        parent,
+                        metaDataEntry.key,
+                        metaDataEntry.value,
+                        true,
+                        true,
+                        true,
+                        e -> {
+                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
+                            hoveringAnnotation.putMetaDataEntry(e[0], e[1]);
+                            rebuildContent(parent, hoveringAnnotation);
+                            onChangedMetaData.fire(new EventManager.EmptyEvent());
+                        },
+                        e -> {
+                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
+                            rebuildContent(parent, hoveringAnnotation);
+                            onChangedMetaData.fire(new EventManager.EmptyEvent());
+                        }
+                ));
 
         Button addEntry = new Button(parent, SWT.NONE);
         addEntry.setText("Add meta data entry");
         addEntry.setLayoutData(lu.gridData().withHorizontalSpan(3).withExcessHorizontalSpace(true)
                 .withHorizontalAlignment(SWT.FILL).get());
         addEntry.addListener(SWT.Selection, e -> {
-        hoveringAnnotation.putMetaDataEntry("New Key", "");
-        rebuildContent(parent, hoveringAnnotation);
+            hoveringAnnotation.putMetaDataEntry(getNewMetaDataKey(hoveringAnnotation), "Meta data value");
+            rebuildContent(parent, hoveringAnnotation);
+            onChangedMetaData.fire(new EventManager.EmptyEvent());
         });
-        // TODO allow editing the key
 
         parent.layout();
     }
 
     private void addLine(Composite parent, String label, String value) {
-        addLine(parent, label, value, null, null, null);
+        addLine2(parent, label, value, false, false, false, null, null);
     }
 
-    private void addLine(Composite parent, String label, String value, @Nullable Consumer<String> onChange) {
-        addLine(parent, label, value, onChange, null, null);
-    }
-
-    private void addLine(Composite parent, String label, String value, @Nullable Consumer<String> onChange, 
-                         @Nullable String buttonText, @Nullable Runnable onButtonClick) {
+    /**
+     * Add a form line with the option to open an window for the line where the values
+     * can be edited.
+     * @param parent of the form line
+     * @param label initial value of the label
+     * @param value initial value for the field
+     * @param canEditLabel specifies if the label can be changed in the edit window
+     * @param canEditValue specifies if the value can be changed in the edit window
+     * @param canRemove specifies if the label-value pair can be removed
+     * @param onChange triggers after changes where applied. Returns with an array of two strings, the first
+     *                 one specifies the current label, the second one specifies the current value.
+     * @param onRemove triggers if the user attempts to remove the label-value pair.
+     */
+    private void addLine2(Composite parent, String label, String value, boolean canEditLabel, boolean canEditValue,
+                          boolean canRemove, @Nullable Consumer<String[]> onChange, @Nullable Listener onRemove) {
         Label l = new Label(parent, SWT.NULL);
         l.setText(label);
 
         Text t = new Text(parent, SWT.BORDER | SWT.SINGLE);
-        t.setLayoutData(lu.gridData().withHorizontalAlignment(SWT.FILL).withExcessHorizontalSpace(true).get());
+        t.setLayoutData(lu.horizontalFillingGridData());
         t.setText(value);
-        t.setEditable(onChange != null);
-        if (onChange != null) {
-            t.addModifyListener(e -> onChange.accept(t.getText()));
-        }
+        t.setEditable(false);
 
-        if (buttonText != null) {
-            Button b = new Button(parent, SWT.NONE);
-            b.setText(buttonText);
-            b.setLayoutData(lu.horizontalFillingGridData());
-            if (onButtonClick != null) {
-                b.addListener(SWT.Selection, e -> onButtonClick.run());
-            }
-        } else {
-            new Text(parent, SWT.NONE);
-        }
+
+        Button b = new Button(parent, SWT.PUSH);
+        b.setText("Edit");
+        b.setEnabled(canEditLabel || canEditValue || canRemove);
+        b.addListener(SWT.Selection, e -> {
+            Shell editWindow = new Shell(Display.getCurrent());
+            editWindow.open();
+            editWindow.setLayout(lu.gridLayout().withNumCols(2).get());
+
+            Label keyLabel = new Label(editWindow, SWT.NULL);
+            keyLabel.setText("Label:");
+
+            Text keyText = new Text(editWindow, SWT.BORDER | SWT.SINGLE);
+            keyText.setLayoutData(lu.horizontalFillingGridData());
+            keyText.setEditable(canEditLabel);
+            keyText.setText(label);
+
+            Label valueLabel = new Label(editWindow, SWT.NULL);
+            valueLabel.setText("Value:");
+
+            Text valueText = new Text(editWindow, SWT.BORDER | SWT.SINGLE);
+            valueText.setLayoutData(lu.horizontalFillingGridData());
+            valueText.setEditable(canEditValue);
+            valueText.setText(value);
+
+            Button buttonRemove = new Button(editWindow, SWT.PUSH);
+            buttonRemove.setText("Remove field");
+            buttonRemove.setEnabled(canRemove);
+            buttonRemove.addListener(SWT.Selection, ignored -> {
+                onRemove.handleEvent(ignored);
+                editWindow.close();
+            });
+            buttonRemove.setLayoutData(lu.verticallyFillingGridData());
+
+            Button buttonApply = new Button(editWindow, SWT.PUSH);
+            buttonApply.setText("Apply");
+            buttonApply.addListener(SWT.Selection, ignored -> {
+                onChange.accept(new String[] {keyText.getText(), valueText.getText()});
+                editWindow.close();
+            });
+            buttonApply.setLayoutData(lu.completelyFillingGridData());
+
+            editWindow.pack();
+            editWindow.layout();
+
+            editWindow.setActive();
+            editWindow.setMinimumSize(200, 120);
+            editWindow.setSize(280, 140);
+            editWindow.setText("Edit field");
+        });
+    }
+
+    private String getNewMetaDataKey(SingleAnnotation annotation) {
+        String key = "";
+        int i = 1;
+
+        do {
+            key = String.format("New Metadata entry %s", i++);
+        } while (annotation.containsMetaDataEntry(key));
+
+        return key;
     }
 }
