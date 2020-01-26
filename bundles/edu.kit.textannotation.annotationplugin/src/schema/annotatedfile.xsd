@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="annotated">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The name of an annotated text file.</xs:documentation>
+        </xs:annotation>
+
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="annotationprofile" minOccurs="1" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            A reference to an annotation profile, by its name. The name is supplied
+                            as attribute. Note that all used annotation classes in this annotated
+                            document must be defined in the used profile.
+                        </xs:documentation>
+                    </xs:annotation>
+
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    The name of the referenced annotation profile.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="annotation" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            Information about one specific annotation instance within the document,
+                            e.g. this annotation instance contains information about the line/column/length
+                            of the annotation as well as meta information.
+                        </xs:documentation>
+                    </xs:annotation>
+
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="metadata" minOccurs="0" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">
+                                        A key-value pair of metadata information attached with this annotation.
+                                        The value is supplied as child text for this element, while the key is
+                                        supplied as attribute. Metadata can be edited in the info view and shown
+                                        in the hover container.
+                                    </xs:documentation>
+                                </xs:annotation>
+
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="name" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation xml:lang="en">
+                                                        The key of the metadata field.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+
+                        <xs:attribute name="annotation" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    The name of the annotation class used by this annotation instance.
+                                    This class must be defined by the referenced annotation profile.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+
+                        <xs:attribute name="id" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    A unique ID for this annotation instance. Value can be anything, but it
+                                    must not be used as ID by any other annotation instance within this
+                                    document.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+
+                        <xs:attribute name="offset" type="xs:nonNegativeInteger" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    The offset of the annotation, in characters starting from the beginning
+                                    of the document.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+
+                        <xs:attribute name="length" type="xs:nonNegativeInteger" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    The length of the annotation, in characters.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="content" minOccurs="1" maxOccurs="1" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The plain-text content of the annotated text file.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
