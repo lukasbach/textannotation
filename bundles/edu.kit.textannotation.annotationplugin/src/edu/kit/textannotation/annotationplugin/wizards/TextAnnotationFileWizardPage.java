@@ -29,6 +29,8 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 
 	private Text fileText;
 
+	private Text templateFileText;
+
 	private ISelection selection;
 
 	private Combo profile;
@@ -52,6 +54,8 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		container.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
+
+		// Specify folder
 		Label label = new Label(container, SWT.NULL);
 		label.setText("&Container:");
 
@@ -64,9 +68,11 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBrowse();
+				handleBrowseContainer(containerText, "Select new file container");
 			}
 		});
+
+		// Define file name
 		label = new Label(container, SWT.NULL);
 		label.setText("&File name:");
 
@@ -78,6 +84,7 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		label = new Label(container, SWT.NULL);
 		label.setText("&");
 
+		// Use existing annotation profile
 		label = new Label(container, SWT.NULL);
 		label.setText("&Annotation Profile:");
 
@@ -86,6 +93,26 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		profile.setLayoutData(gd);
 		ComboSelectionListener.create(profile, v -> dialogChanged());
+
+		label = new Label(container, SWT.NULL);
+		label.setText("&");
+
+		// Init from existing text file
+		label = new Label(container, SWT.NULL);
+		label.setText("&Initialize from existing text file:");
+
+		templateFileText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		templateFileText.setLayoutData(gd);
+		templateFileText.addModifyListener(e -> dialogChanged());
+
+		button = new Button(container, SWT.PUSH);
+		button.setText("Browse...");
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowseFile(templateFileText, "Select existing text file");
+			}
+		});
 
 		initialize();
 		dialogChanged();
@@ -120,16 +147,24 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 	 * the container field.
 	 */
 
-	private void handleBrowse() {
+	private void handleBrowseContainer(Text target, String message) {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new file container");
+				message);
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
+				target.setText(((Path) result[0]).toString());
 			}
 		}
+	}
+
+	private void handleBrowseFile(Text target, String message) {
+		FileDialog dialog = new FileDialog(getShell());
+		dialog.setText(message);
+		// dialog.setFilterExtensions(new String[] {"txt", "md", "xml"});
+		String result = dialog.open();
+		target.setText(result);
 	}
 
 	/**
@@ -139,6 +174,8 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
+		IResource templateFile = (getContainerName().length() != 0) ? ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(new Path(getContainerName())) : null;
 		String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {
@@ -152,6 +189,10 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		}
 		if (!container.isAccessible()) {
 			updateStatus("Project must be writable");
+			return;
+		}
+		if (templateFile == null || !templateFile.isAccessible()) {
+			updateStatus("Text file does not exist");
 			return;
 		}
 		if (fileName.length() == 0) {
@@ -184,6 +225,10 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 
 	String getContainerName() {
 		return containerText.getText();
+	}
+
+	String getTemplateFileName() {
+		return templateFileText.getText();
 	}
 
 	String getFileName() {
