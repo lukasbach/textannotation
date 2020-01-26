@@ -2,8 +2,11 @@ package edu.kit.textannotation.annotationplugin.textmodel;
 
 import java.io.IOException;
 
+import edu.kit.textannotation.annotationplugin.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
@@ -47,7 +50,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 		boolean result = super.setDocumentContent(document, editorInput, encoding);
 		
 		if (result) {
-			tmi = new TextModelIntegration(document);
+			tmi = new TextModelIntegration();
 
 			try {
 				textModelData = new TextModelData(
@@ -60,8 +63,9 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				textModelData.onChangeProfile.addListener(profile -> document.set(document.get()));
 
 				document.set(TextModelIntegration.parseContent(document.get()));
-			} catch (ParserConfigurationException | IOException | SAXException e) {
+			} catch (SchemaValidator.InvalidFileFormatException e) {
 				e.printStackTrace();
+				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
 			}
 
 			initializeEvent.fire(new InitializeEvent(textModelData));

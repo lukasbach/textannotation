@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="annotationprofile">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The root element for an annotation profile.</xs:documentation>
+        </xs:annotation>
+
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="annotationclass" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            Data about one specific annotation class. An annotation class contains information
+                            such as a name and color data, and is used by all annotation instances in one document.
+                            The annotation class is stored alongside the annotation profile while annotation
+                            instances are stored within the annotated document.
+                        </xs:documentation>
+                    </xs:annotation>
+
+                    <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">The name of the annotation class.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+
+                        <xs:attribute name="color" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    The color of the annotation class. Follows a format such as
+                                    "123, 123, 123", where the three blocks of numbers range between
+                                    0 and 255 and respectively describe the red, green and blue color
+                                    value.
+                                </xs:documentation>
+                            </xs:annotation>
+
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:pattern value="([0-9]{1,3},\s*)([0-9]{1,3},\s*)([0-9]{1,3}\s*)" />
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">The name of the annotation profile.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
