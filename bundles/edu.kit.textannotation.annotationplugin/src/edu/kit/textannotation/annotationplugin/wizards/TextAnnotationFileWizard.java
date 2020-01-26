@@ -1,7 +1,10 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
+import edu.kit.textannotation.annotationplugin.Activator;
+import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSet;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -14,6 +17,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
@@ -61,9 +67,10 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String profileName = page.getProfile();
+		final String templateFile = page.getTemplateFileName();
 		IRunnableWithProgress op = monitor -> {
 			try {
-				doFinish(containerName, fileName, profileName, monitor);
+				doFinish(containerName, fileName, profileName, templateFile, monitor);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			} finally {
@@ -92,6 +99,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 		String containerName,
 		String fileName,
 		String profileName,
+		String templateFile,
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
@@ -104,7 +112,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream(profileName);
+			InputStream stream = openContentStream(profileName, templateFile);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -127,14 +135,23 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 	}
 	
 	/**
-	 * We will initialize file contents with a sample text.
+	 * We will initialize file contents with either a template file or empty content.
 	 */
-
-	private InputStream openContentStream(String profileName) throws CoreException {
+	private InputStream openContentStream(String profileName, String templateFile) throws CoreException {
 		String content = "";
+		String template = "";
+
+		if (templateFile.length() != 0) {
+			try {
+				template = new String(Files.readAllBytes(Paths.get(templateFile)));
+			} catch (IOException e) {
+				throwCoreException("Can't read template at " + templateFile);
+			}
+		}
 
 		try {
-			content = TextModelIntegration.buildAnnotationXml(new TextModelData(profileName));
+			content = TextModelIntegration.buildAnnotationXml(
+					new TextModelData(new AnnotationSet(), profileName, new Document(template)));
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 			throwCoreException("Could not create initial file.");
@@ -145,7 +162,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 
 	private void throwCoreException(String message) throws CoreException {
 		IStatus status =
-			new Status(IStatus.ERROR, "edu.kit.textannotation.annotationplugin", IStatus.OK, message, null);
+			new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
