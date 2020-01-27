@@ -133,7 +133,7 @@ public class TextModelIntegration {
 		for (int i = 0; i < childs.getLength(); i++) {
 			Node child = childs.item(i);
 			if (child.getNodeName().equals(KEY_ANNOTATIONDATA_METADATA_ELEMENT)) {
-				annotation.putMetaDataEntry(child.getAttributes().getNamedItem(KEY_ANNOTATIONDATA_METADATA_ATTR_NAME)
+				annotation.metaData.put(child.getAttributes().getNamedItem(KEY_ANNOTATIONDATA_METADATA_ATTR_NAME)
 						.getTextContent(), child.getTextContent());
 			}
 		}
@@ -204,7 +204,7 @@ public class TextModelIntegration {
 			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET, "" + annotation.getOffset());
 			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH, "" + annotation.getLength());
 			annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER, annotation.getAnnotationIdentifier());
-			annotation.streamMetaData().forEach(metaDataEntry -> {
+			annotation.metaData.stream().forEach(metaDataEntry -> {
 				Element metaDataEl = doc.createElement(KEY_ANNOTATIONDATA_METADATA_ELEMENT);
 				metaDataEl.setTextContent(metaDataEntry.value);
 				metaDataEl.setAttribute(KEY_ANNOTATIONDATA_METADATA_ATTR_NAME, metaDataEntry.key);
