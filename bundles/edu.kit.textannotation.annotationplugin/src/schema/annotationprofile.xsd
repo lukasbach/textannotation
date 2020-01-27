@@ -18,6 +18,42 @@
                     </xs:annotation>
 
                     <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="metadata" minOccurs="0" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">
+                                        A key-value pair of metadata information attached with this annotation.
+                                        The value is supplied as child text for this element, while the key is
+                                        supplied as attribute. Metadata can be edited in the info view and shown
+                                        in the hover container.
+                                    </xs:documentation>
+                                </xs:annotation>
+
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="name" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation xml:lang="en">
+                                                        The key of the metadata field.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">
+                                        A textual description of the annotation class. Appears in the details
+                                        view and in the hover box.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+
                         <xs:attribute name="name" type="xs:string" use="required">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">The name of the annotation class.</xs:documentation>

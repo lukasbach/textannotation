@@ -1,5 +1,7 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,15 +10,10 @@ import java.util.stream.Collectors;
 public class AnnotationProfile {
 	private List<AnnotationClass> annotationClasses;
 	private String name;
-	
+
 	public AnnotationProfile(String name) {
 		this.setName(name);
 		this.annotationClasses = new LinkedList<AnnotationClass>();
-	}
-	
-	public AnnotationProfile(AnnotationClass[] annotationClasses) {
-		this.setName("--internalProfile");
-		this.annotationClasses = Arrays.asList(annotationClasses);
 	}
 	
 	public void addAnnotationClass(AnnotationClass ac) {
