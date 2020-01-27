@@ -86,8 +86,7 @@ public class AnnotationInfoView extends ViewPart {
         addLine(parent, "Location:", String.format("%s:%s", hoveringAnnotation.getOffset(), hoveringAnnotation.getLength()));
         // addLine(parent, "References:", "TODO");
 
-        hoveringAnnotation
-                .streamMetaData()
+        hoveringAnnotation.metaData.stream()
                 .sorted(Comparator.comparing(a -> a.key))
                 .forEach(metaDataEntry -> addLine2(
                         parent,
@@ -97,13 +96,13 @@ public class AnnotationInfoView extends ViewPart {
                         true,
                         true,
                         e -> {
-                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
-                            hoveringAnnotation.putMetaDataEntry(e[0], e[1]);
+                            hoveringAnnotation.metaData.remove(metaDataEntry.key);
+                            hoveringAnnotation.metaData.put(e[0], e[1]);
                             rebuildContent(parent, hoveringAnnotation);
                             onChangedMetaData.fire(new EventManager.EmptyEvent());
                         },
                         e -> {
-                            hoveringAnnotation.removeMetaDataEntry(metaDataEntry.key);
+                            hoveringAnnotation.metaData.remove(metaDataEntry.key);
                             rebuildContent(parent, hoveringAnnotation);
                             onChangedMetaData.fire(new EventManager.EmptyEvent());
                         }
@@ -114,7 +113,7 @@ public class AnnotationInfoView extends ViewPart {
         addEntry.setLayoutData(lu.gridData().withHorizontalSpan(3).withExcessHorizontalSpace(true)
                 .withHorizontalAlignment(SWT.FILL).get());
         addEntry.addListener(SWT.Selection, e -> {
-            hoveringAnnotation.putMetaDataEntry(getNewMetaDataKey(hoveringAnnotation), "Meta data value");
+            hoveringAnnotation.metaData.put(getNewMetaDataKey(hoveringAnnotation), "Meta data value");
             rebuildContent(parent, hoveringAnnotation);
             onChangedMetaData.fire(new EventManager.EmptyEvent());
         });
@@ -207,7 +206,7 @@ public class AnnotationInfoView extends ViewPart {
 
         do {
             key = String.format("New Metadata entry %s", i++);
-        } while (annotation.containsMetaDataEntry(key));
+        } while (annotation.metaData.contains(key));
 
         return key;
     }

@@ -1,6 +1,7 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
 import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,20 +13,11 @@ public class SingleAnnotation {
 	private int length;
 	private String annotationIdentifier;
 	private String[] references;
-	private Map<String, String> metaData;
 
-	public EventManager<EventManager.EmptyEvent> onMetaDataChange = new EventManager<>("singleAnnotation:metaDataChange");
-	public EventManager<EventManager.EmptyEvent> onLocationChange = new EventManager<>("singleAnnotation:locationChange");
+	public final EventManager<EventManager.EmptyEvent> onLocationChange =
+			new EventManager<>("singleAnnotation:locationChange");
+	public final MetaDataContainer metaData = new MetaDataContainer();
 
-	public class MetaDataEntry {
-		public String key;
-		public String value;
-
-		MetaDataEntry(String xmlKey, String value) {
-			this.key = xmlKey;
-			this.value = value;
-		}
-	}
 
 	public SingleAnnotation(String id, int offset, int length, String annotationIdentifier, String[] references) {
 		this.id = id;
@@ -33,7 +25,6 @@ public class SingleAnnotation {
 		this.length = length;
 		this.annotationIdentifier = annotationIdentifier;
 		this.references = references;
-		this.metaData = new HashMap<>();
 	}
 
 	public String getId() {
@@ -92,30 +83,6 @@ public class SingleAnnotation {
 		return getOffset() + getLength() - 1;
 	}
 
-	public void putMetaDataEntry(String key, String value) {
-		metaData.put(key, value);
-		onMetaDataChange.fire(new EventManager.EmptyEvent());
-	}
-
-	public void removeMetaDataEntry(String key) {
-		metaData.remove(key);
-		onMetaDataChange.fire(new EventManager.EmptyEvent());
-	}
-
-	public Stream<MetaDataEntry> streamMetaData() {
-		return metaData.keySet()
-				.stream()
-				.map(key -> new MetaDataEntry(key, metaData.get(key)));
-	}
-
-	public boolean containsMetaDataEntry(String key) {
-		return metaData.containsKey(key);
-	}
-
-	public void clearMetaData() {
-		metaData.clear();
-		onMetaDataChange.fire(new EventManager.EmptyEvent());
-	}
 
 	public String getAnnotationIdentifier() {
 		return annotationIdentifier;
