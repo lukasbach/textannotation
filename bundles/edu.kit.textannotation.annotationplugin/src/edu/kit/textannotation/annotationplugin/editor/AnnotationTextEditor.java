@@ -3,6 +3,7 @@ package edu.kit.textannotation.annotationplugin.editor;
 import java.util.UUID;
 
 import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import org.eclipse.jface.text.*;
@@ -159,5 +160,14 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	public void markDocumentAsDirty() {
 		IDocument doc = sourceViewer.getDocument();
 		doc.set(doc.get());
+	}
+
+	public AnnotationProfile getAnnotationProfile() {
+		try {
+			return getAnnotationProfileRegistry().findProfile(textModelData.getProfileName());
+		} catch (ProfileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

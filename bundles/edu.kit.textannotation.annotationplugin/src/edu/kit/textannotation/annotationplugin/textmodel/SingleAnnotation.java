@@ -23,7 +23,7 @@ public class SingleAnnotation {
 		this.id = id;
 		this.offset = offset;
 		this.length = length;
-		this.annotationIdentifier = annotationIdentifier;
+		this.annotationIdentifier = annotationIdentifier; // TODO rename to annotationclass
 		this.references = references;
 	}
 

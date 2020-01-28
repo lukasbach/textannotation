@@ -38,6 +38,10 @@ public class EventManager<T> {
 		log(String.format("listener fired with payload \"%s\"", payload.toString()));
 	}
 
+	public void attach(EventManager<T> otherEventManager) {
+		otherEventManager.addListener(otherEventManager::fire);
+	}
+
 	private void log(String line) {
 		if (name != null) {
 			System.out.println(String.format("Eventmanager(%s): %s", name, line));
