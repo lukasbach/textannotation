@@ -24,6 +24,15 @@ public class MetaDataContainer {
         this.metaData = new HashMap<>(8);
     }
 
+    public static MetaDataContainer fromEmpty() {
+        return new MetaDataContainer();
+    }
+
+    public MetaDataContainer withEntry(String key, String value) {
+        put(key, value);
+        return this;
+    }
+
     public void put(String key, String value) {
         metaData.put(key, value);
         onChange.fire(new EventManager.EmptyEvent());
