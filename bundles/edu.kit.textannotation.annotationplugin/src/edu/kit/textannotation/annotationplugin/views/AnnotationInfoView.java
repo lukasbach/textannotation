@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
@@ -66,9 +67,11 @@ public class AnnotationInfoView extends ViewPart {
     }
 
     private void rebuildContent(Composite parent, @Nullable SingleAnnotation hoveringAnnotation) {
-        for (Control child: parent.getChildren()) {
-            child.dispose();
+        if (parent.isDisposed()) {
+            return;
         }
+
+        EclipseUtils.clearChildren(parent);
 
         if (hoveringAnnotation == null) {
             parent.layout();

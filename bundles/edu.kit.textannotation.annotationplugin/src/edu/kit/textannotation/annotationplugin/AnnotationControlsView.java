@@ -55,12 +55,14 @@ public class AnnotationControlsView extends ViewPart {
 	}
 	
 	private void rebuildContent(Composite parent, TextModelData textModelData) {
+		if (parent.isDisposed()) {
+			return;
+		}
+
 		editor = finder.getAnnotationEditor();
 		registry = editor.getAnnotationProfileRegistry();
 
-		for (Control child: parent.getChildren()) {
-			child.dispose();
-		}
+		EclipseUtils.clearChildren(parent);
 		
 		layout = new GridLayout(1, false);
 		parent.setLayout(layout);

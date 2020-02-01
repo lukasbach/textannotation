@@ -9,17 +9,19 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.Workbench;
 import org.osgi.framework.Bundle;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
 public class EclipseUtils {
+    public static void clearChildren(Composite parent) {
+        for (Control child: parent.getChildren()) {
+            child.dispose();
+        }
+    }
+
     public static IFile getFileForEditor(IEditorPart editor) {
         IFile file = null;
         if (editor != null
