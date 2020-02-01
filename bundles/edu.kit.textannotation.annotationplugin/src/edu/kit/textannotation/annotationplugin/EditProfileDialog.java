@@ -80,6 +80,8 @@ public class EditProfileDialog extends Shell {
 	}
 
 	private void rebuildContent(Composite parent) {
+		EclipseUtils.clearChildren(parent);
+
 		// Composite mainContainer = new Composite(parent, SWT.NONE);
 		parent.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
 

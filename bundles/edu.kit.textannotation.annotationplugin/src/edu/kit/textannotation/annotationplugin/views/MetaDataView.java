@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.views;
 
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
@@ -39,9 +40,7 @@ public class MetaDataView {
     }
 
     private void rebuildContent() {
-        for (Control child: parent.getChildren()) {
-            child.dispose();
-        }
+        EclipseUtils.clearChildren(parent);
 
         GridLayout layout = new GridLayout();
         // TODO LayoutUtilities
