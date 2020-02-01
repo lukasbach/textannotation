@@ -1,7 +1,5 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import java.io.IOException;
-
 import edu.kit.textannotation.annotationplugin.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,7 +11,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 import edu.kit.textannotation.annotationplugin.EventManager;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -60,7 +57,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				);
 
 				// Mark document as dirty after changing the profile
-				textModelData.onChangeProfile.addListener(profile -> document.set(document.get()));
+				textModelData.onChangeProfileName.addListener(profile -> document.set(document.get()));
 
 				document.set(TextModelIntegration.parseContent(document.get()));
 			} catch (SchemaValidator.InvalidFileFormatException e) {

@@ -48,11 +48,15 @@ public class EditProfileDialog extends Shell {
 			"241, 196, 15"
 	};
 	
-	public static void openWindow(AnnotationProfileRegistry registry, String profileName) {
+	public static void openWindow(AnnotationProfileRegistry registry, String profileName,
+								  Consumer<AnnotationProfile> onProfileChange) {
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			AnnotationProfile profile = registry.findProfile(profileName);
-			EditProfileDialog shell = new EditProfileDialog(display, profile, registry::overwriteProfile);
+			EditProfileDialog shell = new EditProfileDialog(display, profile, p -> {
+				registry.overwriteProfile(p);
+				onProfileChange.accept(p);
+			});
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
