@@ -9,7 +9,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 public class TextModelData {
-	final EventManager<String> onChangeProfile = new EventManager<>("textmodeldata:changeprofile");
+	public final EventManager<String> onChangeProfileName = new EventManager<>("textmodeldata:changeprofile");
 
 	private AnnotationSet annotations;
 	private String profileName;
@@ -43,7 +43,7 @@ public class TextModelData {
 
 	public void setProfileName(String profileName) {
 		this.profileName = profileName;
-		onChangeProfile.fire(profileName);
+		onChangeProfileName.fire(profileName);
 	}
 
 	public AnnotationSet getAnnotations() {

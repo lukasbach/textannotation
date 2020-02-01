@@ -1,6 +1,7 @@
 package edu.kit.textannotation.annotationplugin;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
@@ -9,14 +10,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.*;
@@ -38,6 +37,7 @@ public class AnnotationControlsView extends ViewPart {
 	
 	@Override
 	public void createPartControl(Composite parent) {
+		// TODO maybe checking ever 10-or-so seconds for profile updates might not be a bad idea
 		finder = new AnnotationEditorFinder(workbench);
 		finder.annotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getTextModelData()));
 		if (finder.getAnnotationEditor() != null) {
@@ -85,7 +85,7 @@ public class AnnotationControlsView extends ViewPart {
 		buttonNewProfile.setText("New Profile");
 		
 		buttonEditProfile.addListener(SWT.Selection, event -> {
-			EditProfileDialog.openWindow(registry, textModelData.getProfileName());
+			EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> rebuildContent(parent, textModelData));
 		});
 		
 		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
@@ -93,7 +93,9 @@ public class AnnotationControlsView extends ViewPart {
 		}
 
 		try {
-			for (AnnotationClass a: registry.findProfile(textModelData.getProfileName()).getAnnotationClasses()) {
+			AnnotationProfile profile = registry.findProfile(textModelData.getProfileName());
+
+			for (AnnotationClass a: profile.getAnnotationClasses()) {
 				Button b = new Button(parent, SWT.PUSH | SWT.FILL);
 				b.setText(a.getName());
 				b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
