@@ -42,6 +42,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	public final EventManager<SingleAnnotation> onHoverAnnotation = new EventManager<>("editor:hover");
 	public final EventManager<SingleAnnotation> onClickAnnotation = new EventManager<>("editor:click");
 	public final EventManager<EventManager.EmptyEvent> onClickOutsideOfAnnotation = new EventManager<>("editor:clickoutside");
+	public final EventManager<AnnotationProfile> onProfileChange = new EventManager<>("editor:profilechange");
 	
 	public AnnotationTextEditor() {
 		id = UUID.randomUUID().toString();
@@ -54,6 +55,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			} catch (ProfileNotFoundException ex) {
 				ex.printStackTrace();
 			}
+		});
+
+		onProfileChange.addListener(p -> {
+			presentationReconciler.setAnnotationInformation(p, textModelData.getAnnotations());
 		});
 		
         setDocumentProvider(documentProvider);

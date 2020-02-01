@@ -85,7 +85,10 @@ public class AnnotationControlsView extends ViewPart {
 		buttonNewProfile.setText("New Profile");
 		
 		buttonEditProfile.addListener(SWT.Selection, event -> {
-			EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> rebuildContent(parent, textModelData));
+			EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> {
+				rebuildContent(parent, textModelData);
+				editor.onProfileChange.fire(p);
+			});
 		});
 		
 		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
