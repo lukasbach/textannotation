@@ -1,15 +1,32 @@
 language: java
+
 os:
-  - linux
-  - osx
+- linux
+- osx
+
 jdk:
-  - openjdk11
+- openjdk11
+
 cache:
   directories:
-   - $HOME/.m2
+  - "$HOME/.m2"
 
 before_install:
-    - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
-    - . /tmp/BuildUtilities/travis-ci/setupenvironment.sh
+- git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
+- ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
 
 script: mvn clean verify
+
+addons:
+  sonarcloud:
+    organization: "lukasbach-github"
+    token:
+      secure: FcpH9oEka7w6Aw6jbsHfaWrGP8iBb8XbbNXh/ACohdkFxAmF21SH5PZN/NmsOeQMzYK7P61oh1o1QBqZ0VAqWSzDcRDswqtWGuOC4KtWJrbhPUrDrwijElTjb8Yp0j3sqOinRqCdiZ2ohpA0II4abw7f6MXzHseaTK4Z5OVzNG3M/pFIvwCSRhxP9q8USmKuLKonTNodhiCO7ZaFYzlh0PHwkq8BAi7AJHbCG+AFbCcgcOfo1hugh5s09x6RP30Sw90zqdGPJDfKsTzVMs2xCHpPpZLNDLMBK4XsKS8G62l4YxBDvv1BCkpsyoB8KggP2XltWfahE4YNUVEP/YhHJKYhbCr3CB9PrIZRLAKhD3/SXXQSRE+WLng1c/aa1QmUzxeWTv0OWykErVPx3VnQiwGraEVVyxUMvwHoZK50/PEg24k4UoIX/5Sf80hnjkIWi81J70TZtAyWRF00Pf5nYpravlDzEl2A3HPRZAsuFyM2yXyF9MJmz4CeB6LpjaM5/rxeSkDZyu1FTh66AiDxvaIwpwhQmbRuue+cvDEzkDUS5NXxVVqieoNO7vTy3MqlIy3vP0ECTLnB/bj7Wejt2zvqxCx5F6igsHK9k1CFPD3uoJ3qZWK0zDuEkPvoOEaG72y5yDfckxkeCPtxC0An5+VuhrCdPneMTQe8j7vOm4M=
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+
+env:
+  global:
+    secure: FcpH9oEka7w6Aw6jbsHfaWrGP8iBb8XbbNXh/ACohdkFxAmF21SH5PZN/NmsOeQMzYK7P61oh1o1QBqZ0VAqWSzDcRDswqtWGuOC4KtWJrbhPUrDrwijElTjb8Yp0j3sqOinRqCdiZ2ohpA0II4abw7f6MXzHseaTK4Z5OVzNG3M/pFIvwCSRhxP9q8USmKuLKonTNodhiCO7ZaFYzlh0PHwkq8BAi7AJHbCG+AFbCcgcOfo1hugh5s09x6RP30Sw90zqdGPJDfKsTzVMs2xCHpPpZLNDLMBK4XsKS8G62l4YxBDvv1BCkpsyoB8KggP2XltWfahE4YNUVEP/YhHJKYhbCr3CB9PrIZRLAKhD3/SXXQSRE+WLng1c/aa1QmUzxeWTv0OWykErVPx3VnQiwGraEVVyxUMvwHoZK50/PEg24k4UoIX/5Sf80hnjkIWi81J70TZtAyWRF00Pf5nYpravlDzEl2A3HPRZAsuFyM2yXyF9MJmz4CeB6LpjaM5/rxeSkDZyu1FTh66AiDxvaIwpwhQmbRuue+cvDEzkDUS5NXxVVqieoNO7vTy3MqlIy3vP0ECTLnB/bj7Wejt2zvqxCx5F6igsHK9k1CFPD3uoJ3qZWK0zDuEkPvoOEaG72y5yDfckxkeCPtxC0An5+VuhrCdPneMTQe8j7vOm4M=
