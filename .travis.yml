@@ -1,5 +1,11 @@
 language: java
 
+addons:
+  sonarcloud:
+    organization: "lukasbach-github"
+    token:
+      secure: "qOvgagzq/KsRrDH1xZHKhao6fQBApzgcdZXBetgbMu2DEgiFaGiCPcbtWhnJw4mxyGeM2QVD/Bo5k/dR9ELh6Wg/j6SsVoxmIsFiBFCD+GVSPBPuorO3ORXKtSvQSW5Jqx1186vK0iNAlyI/Iyt0n1s7WM/u+DIOeN2tB+KCWeabke8USBdc9cnAEtjnXKvyOzQvTzRL1Rv/+UcSuqTeuxE7B5KDKoQaTOzQQe0AH+pAiFR2SAGqVpEl1XhPbqhnMBe7d/kTtcqeIu8nL8ld2KAGVRNcWoWrr0fSX+pu1TX4/OeKWiZ6/buHoxwzrPPGyHFLCxwmVJ4BCa70wY5gBtmSLquub/xoiIvzroJB6yffpv8lwMC4hm8EVZviUO0hUno/dqdaS9U2jenYckbZaZssFwMTI5ROK2KzZfS240+HRNBNkXulQd/JzNP8+9vWpVTZAN94+5ggVyhN01DiT/npQes4SO5GsCmliABl1kjU4hMK+IBsNADYvdbHKmHiOIbCGNGkIEBCwcO3MAwCj00hSEm/uhJhgAfGRV6Gx0xSZQXX99nL8AArhBkeovp+bc50SXZ6hD3/MZ5Joe6lTT98JVspH0A6uDZE/T3jcTp1e7dBxNdcHpPgNiGY09naFp3VHzP3FcK9lI+2l76ppWKLoxThMGb5GtmZAeKKIDQ="
+
 os:
 - linux
 - osx
@@ -10,23 +16,12 @@ jdk:
 cache:
   directories:
   - "$HOME/.m2"
+  - '$HOME/.sonar/cache'
 
 before_install:
 - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
 - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
 
-script: mvn clean verify
-
-addons:
-  sonarcloud:
-    organization: "lukasbach-github"
-    token:
-      secure: FcpH9oEka7w6Aw6jbsHfaWrGP8iBb8XbbNXh/ACohdkFxAmF21SH5PZN/NmsOeQMzYK7P61oh1o1QBqZ0VAqWSzDcRDswqtWGuOC4KtWJrbhPUrDrwijElTjb8Yp0j3sqOinRqCdiZ2ohpA0II4abw7f6MXzHseaTK4Z5OVzNG3M/pFIvwCSRhxP9q8USmKuLKonTNodhiCO7ZaFYzlh0PHwkq8BAi7AJHbCG+AFbCcgcOfo1hugh5s09x6RP30Sw90zqdGPJDfKsTzVMs2xCHpPpZLNDLMBK4XsKS8G62l4YxBDvv1BCkpsyoB8KggP2XltWfahE4YNUVEP/YhHJKYhbCr3CB9PrIZRLAKhD3/SXXQSRE+WLng1c/aa1QmUzxeWTv0OWykErVPx3VnQiwGraEVVyxUMvwHoZK50/PEg24k4UoIX/5Sf80hnjkIWi81J70TZtAyWRF00Pf5nYpravlDzEl2A3HPRZAsuFyM2yXyF9MJmz4CeB6LpjaM5/rxeSkDZyu1FTh66AiDxvaIwpwhQmbRuue+cvDEzkDUS5NXxVVqieoNO7vTy3MqlIy3vP0ECTLnB/bj7Wejt2zvqxCx5F6igsHK9k1CFPD3uoJ3qZWK0zDuEkPvoOEaG72y5yDfckxkeCPtxC0An5+VuhrCdPneMTQe8j7vOm4M=
-
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
-
-env:
-  global:
-    secure: FcpH9oEka7w6Aw6jbsHfaWrGP8iBb8XbbNXh/ACohdkFxAmF21SH5PZN/NmsOeQMzYK7P61oh1o1QBqZ0VAqWSzDcRDswqtWGuOC4KtWJrbhPUrDrwijElTjb8Yp0j3sqOinRqCdiZ2ohpA0II4abw7f6MXzHseaTK4Z5OVzNG3M/pFIvwCSRhxP9q8USmKuLKonTNodhiCO7ZaFYzlh0PHwkq8BAi7AJHbCG+AFbCcgcOfo1hugh5s09x6RP30Sw90zqdGPJDfKsTzVMs2xCHpPpZLNDLMBK4XsKS8G62l4YxBDvv1BCkpsyoB8KggP2XltWfahE4YNUVEP/YhHJKYhbCr3CB9PrIZRLAKhD3/SXXQSRE+WLng1c/aa1QmUzxeWTv0OWykErVPx3VnQiwGraEVVyxUMvwHoZK50/PEg24k4UoIX/5Sf80hnjkIWi81J70TZtAyWRF00Pf5nYpravlDzEl2A3HPRZAsuFyM2yXyF9MJmz4CeB6LpjaM5/rxeSkDZyu1FTh66AiDxvaIwpwhQmbRuue+cvDEzkDUS5NXxVVqieoNO7vTy3MqlIy3vP0ECTLnB/bj7Wejt2zvqxCx5F6igsHK9k1CFPD3uoJ3qZWK0zDuEkPvoOEaG72y5yDfckxkeCPtxC0An5+VuhrCdPneMTQe8j7vOm4M=
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=lukasbach_textannotation
