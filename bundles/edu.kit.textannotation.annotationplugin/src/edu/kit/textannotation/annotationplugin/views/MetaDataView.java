@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public class MetaDataView {
     public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("metadataview:changedmeta");
+    public EventManager<EventManager.EmptyEvent> onShouldResize = new EventManager<>("metadataview:changedmeta");
 
     private final LayoutUtilities lu;
     private final Composite parent;
@@ -81,6 +82,7 @@ public class MetaDataView {
             addEntry.addListener(SWT.Selection, e -> {
                 metaData.put(getNewMetaDataKey(), "Meta data value");
                 rebuildContent();
+                onShouldResize.fire(new EventManager.EmptyEvent());
                 onChangedMetaData.fire(new EventManager.EmptyEvent());
             });
         }

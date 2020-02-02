@@ -189,6 +189,14 @@ public class TextModelIntegration {
 			Element classEl = doc.createElement(KEY_PROFILE_ANNOTATIONCLASS_ELEMENT);
 			classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME, annotationClass.getName());
 			classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_COLOR, annotationClass.getColorAsTextModelString());
+
+			annotationClass.metaData.stream().forEach(entry -> {
+				Element metaDataEL = doc.createElement(KEY_PROFILE_ANNOTATIONCLASS_METADATA_ELEMENT);
+				metaDataEL.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_METADATA_ATTR_NAME, entry.key);
+				metaDataEL.setTextContent(entry.value);
+				classEl.appendChild(metaDataEL);
+			});
+
 			profileElement.appendChild(classEl);
 		});
 

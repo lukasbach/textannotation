@@ -1,25 +1,19 @@
 package edu.kit.textannotation.annotationplugin;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.views.Header;
+import edu.kit.textannotation.annotationplugin.views.MetaDataView;
+import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -131,13 +125,31 @@ public class EditProfileDialog extends Shell {
 		// canBeMatchedWithList.setItems("Verb", "Objective", "Something", "Else");
 		// canBeMatchedWithList.setLayoutData(lu.gridData().withVerticalAlignment(SWT.FILL).get());
 		// canBeMatchedWithList.setLayoutData(lu.completelyFillingGridData());
+		Label seperator;
+
+		if (selectedAnnotationClass != null) {
+			seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+			seperator.setLayoutData(lu.horizontalFillingGridData());
+
+			Label metaDataInfo = new Label(rightContainer, SWT.NONE);
+			metaDataInfo.setText(String.format("%s meta data entries", selectedAnnotationClass.metaData.size()));
+			metaDataInfo.setLayoutData(lu.horizontalFillingGridData());
+
+			Button editMetaData = new Button(rightContainer, SWT.NONE);
+			editMetaData.setLayoutData(lu.horizontalFillingGridData());
+			editMetaData.setText("Edit meta data");
+			editMetaData.addListener(SWT.Selection, e -> editAnnotationMetaData(selectedAnnotationClass));
+		}
+
+		seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(lu.horizontalFillingGridData());
 
 		Button btnRemoveClass = new Button(rightContainer, SWT.NONE);
 		btnRemoveClass.setLayoutData(lu.horizontalFillingGridData());
 		btnRemoveClass.setText("Remove selected Class");
 		btnRemoveClass.addListener(SWT.Selection, e -> removeCurrentClass());
 
-		Label seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+	    seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator.setLayoutData(lu.horizontalFillingGridData());
 
 		Button btnAddClass = new Button(rightContainer, SWT.NONE);
@@ -164,6 +176,7 @@ public class EditProfileDialog extends Shell {
 	private void selectAnnotationClass(String annotationClassName) {
 		try {
 			selectedAnnotationClass = profile.getAnnotationClass(annotationClassName);
+			rebuildContent(this);
 			colorDisplay.setBackground(selectedAnnotationClass.getColor());
 			colorSelector.setText(selectedAnnotationClass.getColorAsTextModelString());
 			itemName.setText(annotationClassName);
@@ -206,6 +219,44 @@ public class EditProfileDialog extends Shell {
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
 		annotationClassesList.setSelection(new String[]{newClass.getName()});
 		selectAnnotationClass(newClass.getName());
+	}
+
+	private void editAnnotationMetaData(AnnotationClass annotationClass) {
+		Shell editWindow = new Shell(Display.getCurrent());
+		editWindow.open();
+		editWindow.setLayout(lu.gridLayout().withNumCols(1).get());
+
+		EventManager<EventManager.EmptyEvent> relayout = new EventManager<>();
+		Composite contentContainer = lu.createVerticalScrollComposite(editWindow, relayout);
+
+		Header.withTitle("Edit Annotation Class Metadata")
+				.withSubTitle("You are editing the metadata for the annotation class " + annotationClass.getName())
+				.render(contentContainer);
+
+		MetaDataView mdview = new MetaDataView(contentContainer, annotationClass.metaData, true, true, true, true);
+		mdview.onChangedMetaData.addListener(e -> {
+			onSave.run();
+
+			// Refresh edit window
+			selectAnnotationClass(selectedAnnotationClass.getName());
+		});
+		mdview.onShouldResize.addListener(e -> {
+			relayout.fire(new EventManager.EmptyEvent());
+
+			contentContainer.layout();
+			editWindow.layout();
+		});
+
+		relayout.fire(new EventManager.EmptyEvent());
+		editWindow.pack();
+		contentContainer.pack();
+		contentContainer.layout();
+		editWindow.layout();
+
+		editWindow.setActive();
+		editWindow.setMinimumSize(400, 200);
+		editWindow.setSize(400, 280);
+		editWindow.setText("Edit metadata");
 	}
 
 	@Override

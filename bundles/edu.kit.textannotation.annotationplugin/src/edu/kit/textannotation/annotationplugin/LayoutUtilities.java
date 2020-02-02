@@ -2,9 +2,11 @@ package edu.kit.textannotation.annotationplugin;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 
 public class LayoutUtilities {
     public LayoutUtilities() {}
@@ -130,5 +132,36 @@ public class LayoutUtilities {
 
     public GridData verticallyFillingGridData() {
         return gridData().withVerticalAlignment(SWT.FILL).withExcessVerticalSpace(true).get();
+    }
+
+    /**
+     * Create a composite inside the given parent which contains a vertical scrollbar if the child is too large.
+     * When the childs contents get resized, the supplied relayout eventhandler should be fired to notify the
+     * scrolled component to update its sizing. The relayout eventhandler should also be initially fired after
+     * its contents where created.
+     *
+     * @param parent which should contain the scrolled composite.
+     * @param onReLayout can be fired to update the scrolled component's sizings.
+     * @return a container where scrollable contents can be placed into.
+     */
+    public Composite createVerticalScrollComposite(Composite parent,
+                                                   EventManager<EventManager.EmptyEvent> onReLayout) {
+        ScrolledComposite scrollContainer = new ScrolledComposite(parent, SWT.V_SCROLL);
+        scrollContainer.setLayout(gridLayout().withNumCols(1).get());
+        scrollContainer.setLayoutData(completelyFillingGridData());
+        scrollContainer.setExpandVertical(true);
+        scrollContainer.setExpandHorizontal(true);
+
+        Composite contentContainer = new Composite(scrollContainer, SWT.NULL);
+        contentContainer.setLayout(gridLayout().withNumCols(1).get());
+        contentContainer.setLayoutData(completelyFillingGridData());
+
+        scrollContainer.setMinHeight(200);
+
+        onReLayout.addListener(e -> scrollContainer.setMinSize(contentContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT)));
+
+        scrollContainer.setContent(contentContainer);
+
+        return contentContainer;
     }
 }

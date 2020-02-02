@@ -57,4 +57,8 @@ public class MetaDataContainer {
         metaData.clear();
         onChange.fire(new EventManager.EmptyEvent());
     }
+
+    public int size() {
+        return metaData.size();
+    }
 }
