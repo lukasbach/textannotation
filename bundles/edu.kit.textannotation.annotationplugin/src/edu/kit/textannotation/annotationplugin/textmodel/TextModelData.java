@@ -32,11 +32,6 @@ public class TextModelData {
 		return String.format("AnnotationData(%s, %s)", getAnnotations().toString(), getProfileName());
 	}
 
-
-	private AnnotationProfile getProfile(AnnotationProfileRegistry registry) throws ProfileNotFoundException {
-		return registry.findProfile(getProfileName());
-	}
-
 	public String getProfileName() {
 		return profileName;
 	}

@@ -1,11 +1,14 @@
 package edu.kit.textannotation.annotationplugin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
+import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -20,6 +23,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import javax.inject.Inject;
 
 
@@ -61,6 +66,15 @@ public class AnnotationControlsView extends ViewPart {
 
 		editor = finder.getAnnotationEditor();
 		registry = editor.getAnnotationProfileRegistry();
+		List<AnnotationProfile> profiles;
+
+		try {
+			profiles = registry.getProfiles();
+		} catch (InvalidAnnotationProfileFormatException e) {
+			e.printStackTrace();
+			EclipseUtils.reportError("Invalid profile format: " + e.getMessage());
+			return;
+		}
 
 		EclipseUtils.clearChildren(parent);
 		
@@ -71,8 +85,8 @@ public class AnnotationControlsView extends ViewPart {
 		selectorComposite.setLayout(new GridLayout(3, false));
 
 		profileSelector = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.BORDER);
-		registry.getProfiles().forEach(p -> profileSelector.add(p.getName()));
-		profileSelector.select(registry.getProfiles().indexOf(new AnnotationProfile(textModelData.getProfileName())));
+		profiles.forEach(p -> profileSelector.add(p.getName()));
+		profileSelector.select(profiles.indexOf(new AnnotationProfile(textModelData.getProfileName())));
 		ComboSelectionListener.create(profileSelector, (value) -> {
 			textModelData.setProfileName(value);
 			rebuildContent(parent, textModelData);
@@ -105,14 +119,13 @@ public class AnnotationControlsView extends ViewPart {
 				b.addListener(SWT.Selection, event -> new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a));
 			}
 		} catch (ProfileNotFoundException e) {
-			// TODO
+			EclipseUtils.reportError("Profile " + textModelData.getProfileName() + " was not found.");
+			e.printStackTrace();
+		} catch (InvalidAnnotationProfileFormatException e) {
+			EclipseUtils.reportError("Profile " + textModelData.getProfileName() + " has an invalid format. " + e.getMessage());
 			e.printStackTrace();
 		}
 
-		// TODO how to properly redraw parent s.t. widths are properly aligned?
-		// parent.pack();
 		parent.layout();
-		// parent.redraw();
-		// parent.update();
 	}
 }

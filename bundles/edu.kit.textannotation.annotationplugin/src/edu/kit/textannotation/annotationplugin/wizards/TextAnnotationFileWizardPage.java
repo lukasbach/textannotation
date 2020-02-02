@@ -1,7 +1,11 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
 import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
+import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -89,7 +93,12 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		label.setText("&Annotation Profile:");
 
 		profile = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
-		registry.getProfiles().forEach(p -> profile.add(p.getName()));
+		try {
+			registry.getProfiles().forEach(p -> profile.add(p.getName()));
+		} catch (InvalidAnnotationProfileFormatException e) {
+			e.printStackTrace();
+			EclipseUtils.reportError("Profile is not properly formatted.");
+		}
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		profile.setLayoutData(gd);
 		ComboSelectionListener.create(profile, v -> dialogChanged());
@@ -139,7 +148,7 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("newAnnotationFile.project");
+		fileText.setText("newAnnotationFile." + PluginConfig.ANNOTATABLE_FILE_EXTENSION);
 	}
 
 	/**
@@ -203,15 +212,15 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
-		if (getProfile() == null) {
+		if (getProfile() == null || getProfile().length() == 0) {
 			updateStatus("Profile must be specified.");
 			return;
 		}
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
-			if (!ext.equalsIgnoreCase("project")) {
-				updateStatus("File extension must be \"project\"");
+			if (!ext.equalsIgnoreCase(PluginConfig.ANNOTATABLE_FILE_EXTENSION)) {
+				updateStatus("File extension must be \"" + PluginConfig.ANNOTATABLE_FILE_EXTENSION + "\"");
 				return;
 			}
 		}

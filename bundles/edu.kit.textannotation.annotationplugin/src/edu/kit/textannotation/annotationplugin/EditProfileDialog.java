@@ -59,6 +59,7 @@ public class EditProfileDialog extends Shell {
 				}
 			}
 		} catch (Exception e) {
+			EclipseUtils.reportError(e.getMessage());
 			e.printStackTrace();
 		}
 	}

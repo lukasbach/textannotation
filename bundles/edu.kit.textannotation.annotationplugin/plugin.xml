@@ -5,10 +5,16 @@
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-            id="edu.kit.textannotation.annotationplugin.project"
-            name="edu.kit.textannotation.annotationplugin.project"
+            id="edu.kit.textannotation.annotationplugin.annotatabletextfile"
+            name="Annotatable Text File"
             base-type="org.eclipse.core.runtime.text"
-            file-extensions="project">
+            file-extensions="taf">
+      </content-type>
+      <content-type
+              id="edu.kit.textannotation.annotationplugin.annotationprofile"
+              name="Text Annotation Profile"
+              base-type="org.eclipse.core.runtime.text"
+              file-extensions="tap">
       </content-type>
    </extension>
    <extension
@@ -137,7 +143,7 @@
             name="textannotationeditor">
       </editor>
       <editorContentTypeBinding
-            contentTypeId="edu.kit.textannotation.annotationplugin.project"
+            contentTypeId="edu.kit.textannotation.annotationplugin.annotatabletextfile"
             editorId="edu.kit.textannotation.annotationplugin.editor">
       </editorContentTypeBinding>
    </extension>

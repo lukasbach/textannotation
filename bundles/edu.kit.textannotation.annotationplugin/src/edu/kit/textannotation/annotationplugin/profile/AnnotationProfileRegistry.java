@@ -1,10 +1,11 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
 import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.PluginConfig;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
+import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.part.EditorPart;
 import org.osgi.framework.Bundle;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,7 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class AnnotationProfileRegistry {
@@ -43,7 +44,7 @@ public class AnnotationProfileRegistry {
         return new AnnotationProfileRegistry(paths);
     }
 
-    public AnnotationProfile findProfile(String profileName) throws ProfileNotFoundException {
+    public AnnotationProfile findProfile(String profileName) throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
         readProfiles();
         return profiles
                 .stream()
@@ -52,7 +53,7 @@ public class AnnotationProfileRegistry {
                 .orElseThrow(() -> new ProfileNotFoundException(profileName, this));
     }
 
-    public List<AnnotationProfile> getProfiles() {
+    public List<AnnotationProfile> getProfiles() throws InvalidAnnotationProfileFormatException {
         readProfiles();
         return profiles;
     }
@@ -76,9 +77,11 @@ public class AnnotationProfileRegistry {
         }
     }
 
-    private void readProfiles() {
+    private void readProfiles() throws InvalidAnnotationProfileFormatException {
         profiles.clear();
         profilePathMap.clear();
+
+        AtomicReference<String> error = new AtomicReference<>(null);
 
         for (String registryPath: registryPaths) {
             try {
@@ -87,7 +90,8 @@ public class AnnotationProfileRegistry {
 
                 paths
                     .filter(Files::isRegularFile)
-                    .filter(f -> f.getFileName().toString().toLowerCase().endsWith(".xml"))
+                    .filter(f -> f.getFileName().toString().toLowerCase()
+                            .endsWith("." + PluginConfig.ANNOTATION_PROFILE_EXTENSION))
                     .forEach(f -> {
                         try {
                             String s = new String(Files.readAllBytes(f));
@@ -97,13 +101,16 @@ public class AnnotationProfileRegistry {
                             profiles.add(profile);
                             profilePathMap.put(profile.getName(), f);
                         } catch (Exception e) {
-                            // Genuinely don't care what the problem is, if there is a problem with reading/parsing
-                            // the file, it probably is not a annotation profile.
+                            error.set(e.getMessage());
                         }
                     });
             } catch (IOException e) {
                 System.out.println(String.format("Skipping annotation profiles in %s.", registryPath));
             }
+        }
+
+        if (error.get() != null) {
+            throw new InvalidAnnotationProfileFormatException(error.get());
         }
     }
 }

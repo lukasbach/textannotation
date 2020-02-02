@@ -18,48 +18,12 @@ public class SchemaValidator {
         AnnotationProfile,
     }
 
-    public class InvalidFileFormatException extends Exception {}
-
-    public class InvalidAnnotatedFileFormatException extends InvalidFileFormatException {
-        private String message;
-
-        public InvalidAnnotatedFileFormatException(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
-    }
-
-    public class InvalidAnnotationProfileFormatException extends InvalidFileFormatException {
-        private String message;
-
-        public InvalidAnnotationProfileFormatException(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
-    }
-
     public void validateAnnotatedFile(String xml) throws InvalidFileFormatException {
         validate(SchemaName.AnnotatedFile, xml);
     }
 
     public void validateAnnotationProfile(String xml) throws InvalidFileFormatException {
         validate(SchemaName.AnnotationProfile, xml);
-    }
-
-    public void throwInvalidAnnotatedFileFormatException() throws InvalidFileFormatException {
-        throw new InvalidAnnotatedFileFormatException("anonymous annotated file format exception");
-    }
-
-    public void throwInvalidAnnotationProfileFileFormatException() throws InvalidFileFormatException {
-        throw new InvalidAnnotationProfileFormatException("anonymous profile format exception");
     }
 
     private void validate(SchemaName schema, String xml) throws InvalidFileFormatException {

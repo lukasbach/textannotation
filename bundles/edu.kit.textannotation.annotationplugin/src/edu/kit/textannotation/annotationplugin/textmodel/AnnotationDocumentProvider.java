@@ -1,10 +1,8 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.Activator;
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
@@ -15,7 +13,6 @@ import edu.kit.textannotation.annotationplugin.EventManager;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class AnnotationDocumentProvider extends FileDocumentProvider {
-	private TextModelIntegration tmi;
 	private TextModelData textModelData;
 
 	public static class InitializeEvent {
@@ -47,8 +44,6 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 		boolean result = super.setDocumentContent(document, editorInput, encoding);
 		
 		if (result) {
-			tmi = new TextModelIntegration();
-
 			try {
 				textModelData = new TextModelData(
 						new AnnotationSet(TextModelIntegration.parseAnnotationData(document.get())),
@@ -60,12 +55,11 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				textModelData.onChangeProfileName.addListener(profile -> document.set(document.get()));
 
 				document.set(TextModelIntegration.parseContent(document.get()));
-			} catch (SchemaValidator.InvalidFileFormatException e) {
+				initializeEvent.fire(new InitializeEvent(textModelData));
+			} catch (InvalidFileFormatException e) {
 				e.printStackTrace();
-				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
+				EclipseUtils.reportError("File not properly formatted. " + e.getMessage());
 			}
-
-			initializeEvent.fire(new InitializeEvent(textModelData));
 			
 			return true;
 		} else {

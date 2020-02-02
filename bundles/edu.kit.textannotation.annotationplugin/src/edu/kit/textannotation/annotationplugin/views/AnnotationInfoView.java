@@ -12,6 +12,7 @@ import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -111,9 +112,15 @@ public class AnnotationInfoView extends ViewPart {
                     false,
                     false
             );
+        } catch (InvalidAnnotationProfileFormatException e) {
+            Header.withTitle("Error")
+                    .withSubTitle("The profile is not properly formatted.").render(container);
+        } catch (ProfileNotFoundException e) {
+            Header.withTitle("Error")
+                    .withSubTitle("The profile could not be found..").render(container);
         } catch (Exception e) {
-            // If problem with profile occurs, it's ok to not show that view.
-            e.printStackTrace();
+            Header.withTitle("Error")
+                    .withSubTitle(e.getMessage()).render(container);
         }
 
         Header.withTitle("Annotation meta data")

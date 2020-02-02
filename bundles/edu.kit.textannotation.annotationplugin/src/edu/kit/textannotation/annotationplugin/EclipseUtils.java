@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 public class EclipseUtils {
@@ -20,6 +21,11 @@ public class EclipseUtils {
         for (Control child: parent.getChildren()) {
             child.dispose();
         }
+    }
+
+    public static void reportError(String message) {
+        StatusManager.getManager().handle(new Status(IStatus.ERROR, PluginConfig.PLUGIN_ID, message),
+                StatusManager.SHOW);
     }
 
     public static IFile getFileForEditor(IEditorPart editor) {

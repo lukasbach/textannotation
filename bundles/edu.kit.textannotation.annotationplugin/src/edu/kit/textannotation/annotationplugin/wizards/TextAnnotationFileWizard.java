@@ -1,6 +1,7 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
 import edu.kit.textannotation.annotationplugin.Activator;
+import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSet;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
@@ -162,7 +163,7 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 
 	private void throwCoreException(String message) throws CoreException {
 		IStatus status =
-			new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.OK, message, null);
+			new Status(IStatus.ERROR, PluginConfig.PLUGIN_ID, IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 

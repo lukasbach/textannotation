@@ -35,20 +35,20 @@ public class TextModelIntegration {
 	private static SchemaValidator validator = new SchemaValidator();
 
 
-	public static String parseContent(String rawSource) throws SchemaValidator.InvalidFileFormatException {
+	public static String parseContent(String rawSource) throws InvalidFileFormatException {
 		validator.validateAnnotatedFile(rawSource);
 		Element root = null;
 
 		try {
 			root = parseXmlFile(rawSource);
 		} catch (ParserConfigurationException | IOException | SAXException e) {
-			validator.throwInvalidAnnotatedFileFormatException();
+			throw new InvalidAnnotatedFileFormatException(e.getMessage());
 		}
 
 		return root.getElementsByTagName(KEY_ANNOTATIONDATA_CONTENT).item(0).getTextContent();
 	}
 
-	public static List<SingleAnnotation> parseAnnotationData(String rawSource) throws SchemaValidator.InvalidFileFormatException {
+	public static List<SingleAnnotation> parseAnnotationData(String rawSource) throws InvalidFileFormatException {
 		validator.validateAnnotatedFile(rawSource);
 
 		Element root = null;
@@ -56,7 +56,7 @@ public class TextModelIntegration {
 		try {
 			root = parseXmlFile(rawSource);
 		} catch (ParserConfigurationException | IOException | SAXException e) {
-			validator.throwInvalidAnnotatedFileFormatException();
+			throw new InvalidAnnotatedFileFormatException(e.getMessage());
 		}
 
 		NodeList annotationElements = root.getElementsByTagName(KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT);
@@ -94,7 +94,7 @@ public class TextModelIntegration {
 		return annotation;
 	}
 
-	static String parseProfileName(String rawSource) throws SchemaValidator.InvalidFileFormatException {
+	static String parseProfileName(String rawSource) throws InvalidFileFormatException {
 		try {
 			return parseXmlFile(rawSource)
 					.getElementsByTagName(KEY_PROFILE_ELEMENT)
@@ -103,22 +103,18 @@ public class TextModelIntegration {
 					.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME)
 					.getNodeValue();
 		} catch (ParserConfigurationException | IOException | SAXException e) {
-			validator.throwInvalidAnnotatedFileFormatException();
-			return ""; // TODO
+			throw new InvalidAnnotatedFileFormatException(e.getMessage());
 		}
 	}
 
-	public static AnnotationProfile parseAnnotationProfile(String rawSource) throws SchemaValidator.InvalidFileFormatException {
+	public static AnnotationProfile parseAnnotationProfile(String rawSource) throws InvalidFileFormatException {
 		validator.validateAnnotationProfile(rawSource);
 
 		Element root = null;
 		try {
 			root = parseXmlFile(rawSource);
-		} catch (ParserConfigurationException | SAXException e) {
-			validator.throwInvalidAnnotationProfileFileFormatException();
-		} catch (IOException e) {
-			// TODO should not occur
-			// e.printStackTrace();
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			throw new InvalidAnnotationProfileFormatException(e.getMessage());
 		}
 
 		NodeList annotationClassElements = root.getElementsByTagName(KEY_PROFILE_ANNOTATIONCLASS_ELEMENT);

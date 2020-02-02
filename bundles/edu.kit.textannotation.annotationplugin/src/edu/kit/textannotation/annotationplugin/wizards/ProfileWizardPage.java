@@ -1,11 +1,13 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
 import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
+import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -109,7 +111,7 @@ public class ProfileWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("newProfile.xml");
+		fileText.setText("newProfile." + PluginConfig.ANNOTATION_PROFILE_EXTENSION);
 	}
 
 	/**
@@ -159,15 +161,15 @@ public class ProfileWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
-		if (getProfile() == null) {
+		if (getProfile() == null || getProfile().length() == 0) {
 			updateStatus("Profile must be specified.");
 			return;
 		}
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
-			if (!ext.equalsIgnoreCase("xml")) {
-				updateStatus("File extension must be \"xml\"");
+			if (!ext.equalsIgnoreCase(PluginConfig.ANNOTATION_PROFILE_EXTENSION)) {
+				updateStatus("File extension must be \"" + PluginConfig.ANNOTATION_PROFILE_EXTENSION + "\"");
 				return;
 			}
 		}

@@ -2,10 +2,12 @@ package edu.kit.textannotation.annotationplugin.editor;
 
 import java.util.UUID;
 
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.textmodel.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -20,11 +22,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
-import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationDocumentProvider;
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSetFixer;
-import edu.kit.textannotation.annotationplugin.textmodel.ProjectPresentationReconciler;
-import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -54,6 +51,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileName()), e.textModelData.getAnnotations());
 			} catch (ProfileNotFoundException ex) {
 				ex.printStackTrace();
+				EclipseUtils.reportError("Profile not found.");
+			} catch (InvalidAnnotationProfileFormatException ex) {
+				ex.printStackTrace();
+				EclipseUtils.reportError("Profile not properly formatted. " + ex.getMessage());
 			}
 		});
 
@@ -167,12 +168,8 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		doc.set(doc.get());
 	}
 
-	public AnnotationProfile getAnnotationProfile() {
-		try {
-			return getAnnotationProfileRegistry().findProfile(textModelData.getProfileName());
-		} catch (ProfileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public AnnotationProfile getAnnotationProfile()
+			throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
+		return getAnnotationProfileRegistry().findProfile(textModelData.getProfileName());
 	}
 }
