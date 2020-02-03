@@ -100,7 +100,22 @@ public class AnnotationInfoView extends ViewPart {
                     .getAnnotationClass(hoveringAnnotation.getAnnotationIdentifier()).metaData;
 
             Header.withTitle("Profile meta data")
-                    .withSubTitle("You can edit this data in the profile editor").render(container);
+                    .withSubTitle("You can edit this data in the profile editor")
+                    .withButton("Edit Profile", () -> {
+                        AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
+                        AnnotationTextEditor editor = finder.getAnnotationEditor();
+                        AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
+                        try {
+                            EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getName(), profile -> {
+                                rebuildContent(parent, hoveringAnnotation);
+                            });
+                        } catch (ProfileNotFoundException e) {
+                            EclipseUtils.reportError("Profile could not be found.");
+                        } catch (InvalidAnnotationProfileFormatException e) {
+                            EclipseUtils.reportError("Profile is not properly formatted: " + e.getMessage());
+                        }
+                    })
+                    .render(container);
 
             MetaDataView profileMetaDataForm = new MetaDataView(
                     container,
