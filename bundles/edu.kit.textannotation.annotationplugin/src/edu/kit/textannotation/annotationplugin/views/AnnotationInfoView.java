@@ -3,10 +3,7 @@ package edu.kit.textannotation.annotationplugin.views;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
-import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
-import edu.kit.textannotation.annotationplugin.EventManager;
-import edu.kit.textannotation.annotationplugin.LayoutUtilities;
+import edu.kit.textannotation.annotationplugin.*;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
@@ -79,7 +76,8 @@ public class AnnotationInfoView extends ViewPart {
             return;
         }
 
-        Composite container = new Composite(parent, SWT.NULL); // TODO ScrollComposite
+        EventManager<EventManager.EmptyEvent> relayout = new EventManager<>();
+        Composite container = lu.createVerticalScrollComposite(parent, relayout);
         container.setLayout(lu.gridLayout().withNumCols(1).get());
         container.setLayoutData(lu.completelyFillingGridData());
 
@@ -135,12 +133,16 @@ public class AnnotationInfoView extends ViewPart {
                 true
         );
 
+        annotationMetaDataForm.onShouldResize.attach(relayout);
         hoveringAnnotation.metaData.onChange.attach(onChangedMetaData);
+
         annotationDataForm.onChangedMetaData.addListener(e -> {
+            relayout.fire(new EventManager.EmptyEvent());
             container.layout();
             parent.layout();
         });
 
+        relayout.fire(new EventManager.EmptyEvent());
         container.layout();
         parent.layout();
     }
