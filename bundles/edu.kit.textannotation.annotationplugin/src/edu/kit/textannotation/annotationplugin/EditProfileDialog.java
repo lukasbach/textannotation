@@ -3,7 +3,6 @@ package edu.kit.textannotation.annotationplugin;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.views.Header;
 import edu.kit.textannotation.annotationplugin.views.MetaDataView;
-import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;

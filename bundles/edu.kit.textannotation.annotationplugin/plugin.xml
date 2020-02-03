@@ -118,18 +118,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="edu.kit.textannotation.annotationplugin.SampleView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.ProblemView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.help.contexts">
       <contexts
             file="contexts.xml">
@@ -153,6 +141,13 @@
             class="edu.kit.textannotation.annotationplugin.editor.HoverProvider"
             contentType="edu.kit.textannotation.annotationplugin.project">
       </hoverProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+	   <perspective
+	         name="Text Annotation Perspective"
+	         class="edu.kit.textannotation.annotationplugin.views.AnnotationPerspective"
+	         id="edu.kit.textannotation.annotationplugin.views.AnnotationPerspective" />
    </extension>
 
 </plugin>

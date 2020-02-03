@@ -8,6 +8,8 @@ import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import edu.kit.textannotation.annotationplugin.textmodel.*;
+import edu.kit.textannotation.annotationplugin.views.AnnotationPerspective;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -15,10 +17,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jgit.annotations.Nullable;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
@@ -64,7 +63,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		
         setDocumentProvider(documentProvider);
         
-        this.presentationReconciler = new ProjectPresentationReconciler();
+        presentationReconciler = new ProjectPresentationReconciler();
 
 		bundle = FrameworkUtil.getBundle(this.getClass());
 		bundleContext = bundle.getBundleContext();
@@ -91,6 +90,8 @@ public class AnnotationTextEditor extends AbstractTextEditor {
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
     	super.init(site, input);
         setInput(input);
+
+		openTextAnnotationPerspective(site);
 
         HoverProvider hover = new HoverProvider(textModelData);
         hover.onHover.addListener(onClickAnnotation::fire);
@@ -171,5 +172,14 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	public AnnotationProfile getAnnotationProfile()
 			throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
 		return getAnnotationProfileRegistry().findProfile(textModelData.getProfileName());
+	}
+
+	private void openTextAnnotationPerspective(IEditorSite site) {
+		site.getWorkbenchWindow().getActivePage().setPerspective(new IPerspectiveDescriptor() {
+			@Override public String getDescription() { return ""; }
+			@Override public String getId() { return AnnotationPerspective.ID; }
+			@Override public ImageDescriptor getImageDescriptor() { return null; }
+			@Override public String getLabel() { return ""; }
+		});
 	}
 }
