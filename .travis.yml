@@ -6,13 +6,8 @@ addons:
     token:
       secure: "qOvgagzq/KsRrDH1xZHKhao6fQBApzgcdZXBetgbMu2DEgiFaGiCPcbtWhnJw4mxyGeM2QVD/Bo5k/dR9ELh6Wg/j6SsVoxmIsFiBFCD+GVSPBPuorO3ORXKtSvQSW5Jqx1186vK0iNAlyI/Iyt0n1s7WM/u+DIOeN2tB+KCWeabke8USBdc9cnAEtjnXKvyOzQvTzRL1Rv/+UcSuqTeuxE7B5KDKoQaTOzQQe0AH+pAiFR2SAGqVpEl1XhPbqhnMBe7d/kTtcqeIu8nL8ld2KAGVRNcWoWrr0fSX+pu1TX4/OeKWiZ6/buHoxwzrPPGyHFLCxwmVJ4BCa70wY5gBtmSLquub/xoiIvzroJB6yffpv8lwMC4hm8EVZviUO0hUno/dqdaS9U2jenYckbZaZssFwMTI5ROK2KzZfS240+HRNBNkXulQd/JzNP8+9vWpVTZAN94+5ggVyhN01DiT/npQes4SO5GsCmliABl1kjU4hMK+IBsNADYvdbHKmHiOIbCGNGkIEBCwcO3MAwCj00hSEm/uhJhgAfGRV6Gx0xSZQXX99nL8AArhBkeovp+bc50SXZ6hD3/MZ5Joe6lTT98JVspH0A6uDZE/T3jcTp1e7dBxNdcHpPgNiGY09naFp3VHzP3FcK9lI+2l76ppWKLoxThMGb5GtmZAeKKIDQ="
 
-os:
-- linux
-- osx
-
-jdk:
-- openjdk11
-
+os: linux
+jdk: openjdk11
 env: DISPLAY=:99.0 # tests need a display to test against
 install: true
 
@@ -23,9 +18,17 @@ cache:
 
 before_install:
 - sudo apt-get update
+- sudo apt-get install gnome-themes-standard
+- sudo apt-get install metacity
+- sudo apt-get install libwebkit-dev
 - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
 - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
 
+before_script:
+ - sh -e /etc/init.d/xvfb start
+ - sleep 10 # give xvfb some time to start
+ - metacity --sm-disable --replace &
+ - sleep 10 # give metacity some time to start
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
