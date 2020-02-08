@@ -13,14 +13,19 @@ os:
 jdk:
 - openjdk11
 
+env: DISPLAY=:99.0 # tests need a display to test against
+install: true
+
 cache:
   directories:
   - "$HOME/.m2"
   - '$HOME/.sonar/cache'
 
 before_install:
+- sudo apt-get update
 - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
 - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
+
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
