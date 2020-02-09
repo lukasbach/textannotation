@@ -6,13 +6,13 @@
   <packaging>pom</packaging>
 
   <parent>
-      <groupId>edu.kit.textannotation</groupId>
-      <artifactId>edu.kit.textannotation.root</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
+    <groupId>edu.kit.textannotation</groupId>
+    <artifactId>edu.kit.textannotation.root</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <modules>
-      <module>edu.kit.textannotation.annotationplugin.tests</module>
+    <module>edu.kit.textannotation.annotationplugin.tests</module>
   </modules>
 </project>
