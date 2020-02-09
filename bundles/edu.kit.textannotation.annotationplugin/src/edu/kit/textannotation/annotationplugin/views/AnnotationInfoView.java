@@ -147,11 +147,9 @@ public class AnnotationInfoView extends ViewPart {
                 true,
                 true
         );
-
-        annotationMetaDataForm.onShouldResize.attach(relayout);
         hoveringAnnotation.metaData.onChange.attach(onChangedMetaData);
 
-        annotationDataForm.onChangedMetaData.addListener(e -> {
+        annotationMetaDataForm.onShouldResize.addListener(e -> {
             relayout.fire(new EventManager.EmptyEvent());
             container.layout();
             parent.layout();
