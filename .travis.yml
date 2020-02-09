@@ -32,4 +32,4 @@ script:
   - mvn clean install test verify
   - curl https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.5/org.jacoco.cli-0.8.5-nodeps.jar --output jacococli.jar
   - java -jar jacococli.jar report tests/edu.kit.textannotation.annotationplugin.tests/target/coverage-reports/jacoco.exec --classfiles bundles/edu.kit.textannotation.annotationplugin/target/classes --html $HOME/coverage --xml $HOME/jacoco.xml
-  - mvn sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.java.source=1.8 -Dsonar.coverage.jacoco.xmlReportPaths=$HOME/jacoco.xml -Dsonar.junit.reportPaths=tests/edu.kit.textannotation.annotationplugin.tests/target/surefire-reports
+  - mvn sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.java.source=1.8 -Dsonar.coverage.jacoco.xmlReportPaths=$HOME/jacoco.xml -Dsonar.junit.reportPaths=target/surefire-reports
