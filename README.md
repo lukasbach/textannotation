@@ -14,5 +14,7 @@
 
 For now the plugin has to be installed manually. Download the latest ``edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar`` file from the most recent [release](https://github.com/lukasbach/textannotation/releases) and place it in ``%eclipse-install-dir%/dropins/plugins``. The ``plugins`` subdirectory might not exist yet and has to be created in this case.
 
+Then start eclipse with the ``-clean`` option for it to load the plugin.
+
 ## About
 (TODO)
