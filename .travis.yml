@@ -26,4 +26,4 @@ before_install:
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=lukasbach_textannotation
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.junit.reportPaths=tests/edu.kit.textannotation.annotationplugin.tests/target/surefire-reports
