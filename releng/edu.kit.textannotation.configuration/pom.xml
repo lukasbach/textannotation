@@ -9,6 +9,7 @@
         <tycho.version>1.4.0</tycho.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eclipse-repo.url>http://download.eclipse.org/releases/2020-03</eclipse-repo.url>
+        <jacoco.data.file>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.data.file>
     </properties>
 
     <repositories>
@@ -17,7 +18,6 @@
             <url>${eclipse-repo.url}</url>
             <layout>p2</layout>
         </repository>
-
     </repositories>
 
     <build>
@@ -102,13 +102,71 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.5</version>
+                <configuration>
+                    <!--<destFile>${jacoco.data.file}</destFile>-->
+                    <append>true</append>
+                    <!--<dataFile>${jacoco.data.file}</dataFile>
+                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>-->
+                </configuration>
                 <executions>
+                    <!-- correctly generates merged jacoco.exec 
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
                             <goal>report</goal>
+                            <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <append>true</append>
+                            <destFile>${jacoco.data.file}</destFile>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>jacoco-init</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                                <append>true</append>
+                                <destFile>${jacoco.data.file}</destFile>
+                        </configuration>
                     </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                                <goal>report</goal>
+                                <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                                <destFile>${jacoco.data.file}</destFile>
+                        </configuration>
+                    </execution>
+
+
+
+                    <!--<execution>
+                        <id>assa</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <append>true</append>
+                            <destFile>${jacoco.data.file}</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>asfdasdfasdf</id>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${jacoco.data.file}</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                        </configuration>
+                    </execution>-->
                 </executions>
             </plugin>
 
