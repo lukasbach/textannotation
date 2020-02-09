@@ -68,7 +68,7 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
-                    <!--<argLine>-Xmx1024M ${argLine}</argLine> -->
+                    <argLine>${tycho.testArgLine}</argLine>
                 </configuration>
             </plugin>
 
@@ -135,15 +135,13 @@
                         <id>jacoco-site</id>
                         <phase>verify</phase>
                         <goals>
-                                <goal>report</goal>
+                                <!--<goal>report</goal>-->
                                 <goal>report-aggregate</goal>
                         </goals>
                         <configuration>
                                 <destFile>${jacoco.data.file}</destFile>
                         </configuration>
                     </execution>
-
-
 
                     <!--<execution>
                         <id>assa</id>
