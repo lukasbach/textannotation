@@ -109,4 +109,12 @@ public class AnnotationClass {
 	public String toString() {
 		return String.format("AnnotationClass(%s, %s)", name, this.getColorAsTextModelString());
 	}
+
+	public String getDescription() {
+		return description == null ? "" : description;
+	}
+
+	public void setDescription(@Nullable String description) {
+		this.description = description;
+	}
 }

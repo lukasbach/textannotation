@@ -93,7 +93,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
 		openTextAnnotationPerspective(site);
 
-        HoverProvider hover = new HoverProvider(textModelData);
+        HoverProvider hover = new HoverProvider(textModelData, this);
         hover.onHover.addListener(onClickAnnotation::fire);
 
         handleCursorPositionChanged();

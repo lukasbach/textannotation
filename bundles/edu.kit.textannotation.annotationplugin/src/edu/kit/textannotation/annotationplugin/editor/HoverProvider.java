@@ -1,6 +1,9 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
+import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
+import edu.kit.textannotation.annotationplugin.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.internal.ui.text.java.hover.AbstractAnnotationHover;
@@ -8,17 +11,21 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.ui.IWorkbench;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 class HoverProvider extends AbstractAnnotationHover {
 	private TextModelData textModelData;
+	private AnnotationTextEditor editor;
 
 	final EventManager<SingleAnnotation> onHover = new EventManager<>("hoverprovider:hover");
 
-	HoverProvider(TextModelData textModelData) {
+	HoverProvider(TextModelData textModelData, AnnotationTextEditor editor) {
 		super(true);
 		this.textModelData = textModelData;
+		this.editor = editor;
 	}
 
 	@Override
@@ -56,6 +63,7 @@ class HoverProvider extends AbstractAnnotationHover {
 		this.onHover.fire(ann);
 
 		String content = "";
+		AnnotationClass acl;
 
 		try {
 			content = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
@@ -63,8 +71,16 @@ class HoverProvider extends AbstractAnnotationHover {
 			e.printStackTrace();
 		}
 
+		try {
+			acl = editor.getAnnotationProfile().getAnnotationClass(ann.getAnnotationIdentifier());
+		} catch (Exception e) {
+			e.printStackTrace();
+			EclipseUtils.reportError("Could not get annotationclass data");
+			return null;
+		}
+
 		return new AnnotationInfo(
-				new SingleAnnotationEclipseAnnotation(content, ann),
+				new SingleAnnotationEclipseAnnotation(content, ann, acl),
 				new Position(hoverRegion.getOffset(), hoverRegion.getLength()),
 				textViewer
 		);

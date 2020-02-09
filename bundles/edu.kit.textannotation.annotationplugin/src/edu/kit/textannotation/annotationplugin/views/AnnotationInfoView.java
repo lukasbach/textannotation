@@ -5,13 +5,12 @@ import java.util.function.Consumer;
 
 import edu.kit.textannotation.annotationplugin.*;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
-import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.profile.*;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.*;
@@ -76,12 +75,34 @@ public class AnnotationInfoView extends ViewPart {
             return;
         }
 
+        AnnotationClass annotationClass;
+
         EventManager<EventManager.EmptyEvent> relayout = new EventManager<>();
         Composite container = lu.createVerticalScrollComposite(parent, relayout);
         container.setLayout(lu.gridLayout().withNumCols(1).get());
         container.setLayoutData(lu.completelyFillingGridData());
 
-        Header.withTitle("Annotation information").render(container);
+        try {
+            annotationClass = editor.getAnnotationProfile().getAnnotationClass(hoveringAnnotation.getAnnotationIdentifier());
+        } catch (InvalidAnnotationProfileFormatException e) {
+            Header.withTitle("Error")
+                    .withSubTitle("The profile is not properly formatted.").render(container);
+            return;
+        } catch (ProfileNotFoundException e) {
+            Header.withTitle("Error")
+                    .withSubTitle("The profile could not be found..").render(container);
+            return;
+        } catch (Exception e) {
+            Header.withTitle("Error")
+                    .withSubTitle(e.getMessage()).render(container);
+            return;
+        }
+
+        MetaDataContainer profileMetaData = annotationClass.metaData;
+
+        Header.withTitle(annotationClass.getName())
+                .withSubTitle(annotationClass.getDescription())
+                .render(container);
 
         MetaDataView annotationDataForm = new MetaDataView(
                 container,
@@ -95,46 +116,32 @@ public class AnnotationInfoView extends ViewPart {
                 false
         );
 
-        try {
-            MetaDataContainer profileMetaData = editor.getAnnotationProfile()
-                    .getAnnotationClass(hoveringAnnotation.getAnnotationIdentifier()).metaData;
+        Header.withTitle("Profile meta data")
+                .withSubTitle("You can edit this data in the profile editor")
+                .withButton("Edit Profile", () -> {
+                    AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
+                    AnnotationTextEditor editor = finder.getAnnotationEditor();
+                    AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
+                    try {
+                        EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getName(), profile -> {
+                            rebuildContent(parent, hoveringAnnotation);
+                        });
+                    } catch (ProfileNotFoundException e) {
+                        EclipseUtils.reportError("Profile could not be found.");
+                    } catch (InvalidAnnotationProfileFormatException e) {
+                        EclipseUtils.reportError("Profile is not properly formatted: " + e.getMessage());
+                    }
+                })
+                .render(container);
 
-            Header.withTitle("Profile meta data")
-                    .withSubTitle("You can edit this data in the profile editor")
-                    .withButton("Edit Profile", () -> {
-                        AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
-                        AnnotationTextEditor editor = finder.getAnnotationEditor();
-                        AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
-                        try {
-                            EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getName(), profile -> {
-                                rebuildContent(parent, hoveringAnnotation);
-                            });
-                        } catch (ProfileNotFoundException e) {
-                            EclipseUtils.reportError("Profile could not be found.");
-                        } catch (InvalidAnnotationProfileFormatException e) {
-                            EclipseUtils.reportError("Profile is not properly formatted: " + e.getMessage());
-                        }
-                    })
-                    .render(container);
-
-            MetaDataView profileMetaDataForm = new MetaDataView(
-                    container,
-                    profileMetaData,
-                    false,
-                    false,
-                    false,
-                    false
-            );
-        } catch (InvalidAnnotationProfileFormatException e) {
-            Header.withTitle("Error")
-                    .withSubTitle("The profile is not properly formatted.").render(container);
-        } catch (ProfileNotFoundException e) {
-            Header.withTitle("Error")
-                    .withSubTitle("The profile could not be found..").render(container);
-        } catch (Exception e) {
-            Header.withTitle("Error")
-                    .withSubTitle(e.getMessage()).render(container);
-        }
+        MetaDataView profileMetaDataForm = new MetaDataView(
+                container,
+                profileMetaData,
+                false,
+                false,
+                false,
+                false
+        );
 
         Header.withTitle("Annotation meta data")
                 .withSubTitle("This annotation data is attached with the specific annotation").render(container);

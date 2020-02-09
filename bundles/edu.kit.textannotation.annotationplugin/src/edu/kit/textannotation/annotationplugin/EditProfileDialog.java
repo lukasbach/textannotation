@@ -3,6 +3,8 @@ package edu.kit.textannotation.annotationplugin;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.views.Header;
 import edu.kit.textannotation.annotationplugin.views.MetaDataView;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;
@@ -139,6 +141,20 @@ public class EditProfileDialog extends Shell {
 			editMetaData.setLayoutData(lu.horizontalFillingGridData());
 			editMetaData.setText("Edit meta data");
 			editMetaData.addListener(SWT.Selection, e -> editAnnotationMetaData(selectedAnnotationClass));
+
+			Button editDescription = new Button(rightContainer, SWT.NONE);
+			editDescription.setLayoutData(lu.horizontalFillingGridData());
+			editDescription.setText("Edit Description");
+			editDescription.addListener(SWT.Selection, e -> {
+				InputDialog dialog = new InputDialog(getShell(), "Edit Description",
+						"Edit Annotation Class Description", selectedAnnotationClass.getDescription(),
+						t -> null);
+
+				if (dialog.open() == Window.OK) {
+					selectedAnnotationClass.setDescription(dialog.getValue());
+					onSave.run();
+				}
+			});
 		}
 
 		seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);

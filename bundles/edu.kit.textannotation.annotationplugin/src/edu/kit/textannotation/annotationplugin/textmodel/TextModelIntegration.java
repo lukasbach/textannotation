@@ -193,6 +193,12 @@ public class TextModelIntegration {
 				classEl.appendChild(metaDataEL);
 			});
 
+			if (annotationClass.getDescription().length() > 0) {
+				Element descriptionEl = doc.createElement(KEY_PROFILE_ANNOTATIONCLASS_DESCRIPTION_ELEMENT);
+				descriptionEl.setTextContent(annotationClass.getDescription());
+				classEl.appendChild(descriptionEl);
+			}
+
 			profileElement.appendChild(classEl);
 		});
 
