@@ -45,9 +45,9 @@ public class SchemaValidator {
     private InputStream getSchemaPath(SchemaName schema) {
         switch (schema) {
             case AnnotatedFile:
-                return SchemaValidator.class.getResourceAsStream("../../../../../schema/annotatedfile.xsd");
+                return this.getClass().getClassLoader().getResourceAsStream("schema/annotatedfile.xsd");
             case AnnotationProfile:
-                return SchemaValidator.class.getResourceAsStream("../../../../../schema/annotationprofile.xsd");
+                return this.getClass().getClassLoader().getResourceAsStream("schema/annotationprofile.xsd");
         }
 
         return null;

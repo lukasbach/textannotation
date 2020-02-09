@@ -21,6 +21,12 @@
     </repositories>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/schema</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>

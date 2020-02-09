@@ -21,12 +21,14 @@ public class ParserTests {
 	
 	@Before
 	public void setup() {
+		
 		profileXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
 				"<annotationprofile name=\"Profilename\">\r\n" + 
 				"  <annotationclass color=\"1, 2, 3\" name=\"Subject\"/>\r\n" + 
 				"  <annotationclass color=\"4, 5, 6\" name=\"Object\"/>\r\n" + 
 				"  <annotationclass color=\"7, 8, 9\" name=\"Verb\">\r\n" + 
 				"    <metadata name=\"metadatakey\">metadatavalue</metadata>\\r\\n" +
+				"  </annotationclass>\r\n" + 
 				"</annotationprofile>\r\n";
 		
 		annotationFileXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
@@ -41,26 +43,26 @@ public class ParserTests {
 				"</annotated>\r\n";
 	}
 	
-	@Test @Ignore
+	@Test
 	public void testParseAnnotationProfile() throws InvalidFileFormatException {
 		AnnotationProfile profile = TextModelIntegration.parseAnnotationProfile(profileXml);
 		assertEquals(profile.getName(), "Profilename");
 		assertEquals(profile.getAnnotationClasses().size(), 3);
 		assertArrayEquals(profile.getAnnotationClassNames(), new String[] {"Subject", "Object", "Verb"});
 		assertEquals(profile.getAnnotationClasses().get(0).getColorAsTextModelString(), "1, 2, 3");
-		assertTrue(profile.getAnnotationClasses().get(3).metaData.contains("metadatakey"));
-		assertEquals(profile.getAnnotationClasses().get(3).metaData.stream()
-				.filter(e -> e.key.equals("metadatakey")).findAny().orElse(null), "metadatavalue");
+		assertTrue(profile.getAnnotationClasses().get(2).metaData.contains("metadatakey"));
+		assertEquals(profile.getAnnotationClasses().get(2).metaData.stream()
+				.filter(e -> e.key.equals("metadatakey")).findAny().orElse(null).value, "metadatavalue");
 		
 	}
 	
-	@Test @Ignore
+	@Test
 	public void testParseAnnotationFileContent() throws InvalidFileFormatException {
 		String content = TextModelIntegration.parseContent(annotationFileXml);
 		assertEquals(content, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor");
 	}
 	
-	@Test @Ignore
+	@Test
 	public void testParseAnnotationFileAnnotationData() throws InvalidFileFormatException {
 		List<SingleAnnotation> annotations = TextModelIntegration.parseAnnotationData(annotationFileXml);
 		assertEquals(annotations.get(0).getAnnotationIdentifier(), "Object");
@@ -71,9 +73,9 @@ public class ParserTests {
 		assertEquals(annotations.get(0).getLength(), 2);
 		assertEquals(annotations.get(0).getOffset(), 0);
 		
-		assertTrue(annotations.get(3).metaData.contains("metadatakey"));
-		assertEquals(annotations.get(3).metaData.stream()
-				.filter(e -> e.key.equals("metadatakey")).findAny().orElse(null), "metadatavalue");
+		assertTrue(annotations.get(2).metaData.contains("metadatakey"));
+		assertEquals(annotations.get(2).metaData.stream()
+				.filter(e -> e.key.equals("metadatakey")).findAny().orElse(null).value, "metadatavalue");
 	}
 	
 	
