@@ -44,21 +44,6 @@
                 </executions>
             </plugin>
 
-            <!--<plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.8</version>
-                <configuration>
-                    <destFile>./target/jacoco.exec</destFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-surefire-plugin</artifactId>
@@ -71,7 +56,6 @@
                     <argLine>${tycho.testArgLine}</argLine>
                 </configuration>
             </plugin>
-
 
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
@@ -103,24 +87,9 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.5</version>
                 <configuration>
-                    <!--<destFile>${jacoco.data.file}</destFile>-->
                     <append>true</append>
-                    <!--<dataFile>${jacoco.data.file}</dataFile>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>-->
                 </configuration>
                 <executions>
-                    <!-- correctly generates merged jacoco.exec 
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                            <goal>report</goal>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                        <configuration>
-                            <append>true</append>
-                            <destFile>${jacoco.data.file}</destFile>
-                        </configuration>
-                    </execution>-->
                     <execution>
                         <id>jacoco-init</id>
                         <goals>
@@ -142,29 +111,6 @@
                                 <destFile>${jacoco.data.file}</destFile>
                         </configuration>
                     </execution>
-
-                    <!--<execution>
-                        <id>assa</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <append>true</append>
-                            <destFile>${jacoco.data.file}</destFile>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>asfdasdfasdf</id>
-                        <goals>
-                            <goal>report</goal>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${jacoco.data.file}</dataFile>
-                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                        </configuration>
-                    </execution>-->
                 </executions>
             </plugin>
 
