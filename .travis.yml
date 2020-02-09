@@ -1,3 +1,4 @@
+dist: xenial
 language: java
 
 addons:
@@ -11,24 +12,17 @@ jdk: openjdk11
 env: DISPLAY=:99.0 # tests need a display to test against
 install: true
 
+services:
+  - xvfb
+
 cache:
   directories:
   - "$HOME/.m2"
   - '$HOME/.sonar/cache'
 
 before_install:
-- sudo apt-get update
-- sudo apt-get install gnome-themes-standard
-- sudo apt-get install metacity
-- sudo apt-get install libwebkit-dev
 - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
 - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
-
-before_script:
- - sh -e /etc/init.d/xvfb start
- - sleep 10 # give xvfb some time to start
- - metacity --sm-disable --replace &
- - sleep 10 # give metacity some time to start
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
