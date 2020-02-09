@@ -46,11 +46,12 @@ deploy:
   # deploy jar files to github releases
   provider: releases
   file: 
-    - "features/edu.kit.textannotation.feature/edu.kit.textannotation.feature-1.0.0-SNAPSHOT.jar"
-    - "bundles/edu.kit.textannotation.annotationplugin/edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar"
+    - features/edu.kit.textannotation.feature/target/edu.kit.textannotation.feature-1.0.0-SNAPSHOT.jar
+    - bundles/edu.kit.textannotation.annotationplugin/target/edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar
   skip_cleanup: true
   draft: false
-  release_notes_file: CHANGELOG.md
+  release_notes_file: "CHANGELOG.md"
+  edge: true
   on:
     tags: true
   api_key:
