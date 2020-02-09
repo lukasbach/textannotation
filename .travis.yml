@@ -3,9 +3,9 @@ language: java
 
 addons:
   sonarcloud:
-    organization: "lukasbach-github"
+    organization: lukasbach-github
     token:
-      secure: "qOvgagzq/KsRrDH1xZHKhao6fQBApzgcdZXBetgbMu2DEgiFaGiCPcbtWhnJw4mxyGeM2QVD/Bo5k/dR9ELh6Wg/j6SsVoxmIsFiBFCD+GVSPBPuorO3ORXKtSvQSW5Jqx1186vK0iNAlyI/Iyt0n1s7WM/u+DIOeN2tB+KCWeabke8USBdc9cnAEtjnXKvyOzQvTzRL1Rv/+UcSuqTeuxE7B5KDKoQaTOzQQe0AH+pAiFR2SAGqVpEl1XhPbqhnMBe7d/kTtcqeIu8nL8ld2KAGVRNcWoWrr0fSX+pu1TX4/OeKWiZ6/buHoxwzrPPGyHFLCxwmVJ4BCa70wY5gBtmSLquub/xoiIvzroJB6yffpv8lwMC4hm8EVZviUO0hUno/dqdaS9U2jenYckbZaZssFwMTI5ROK2KzZfS240+HRNBNkXulQd/JzNP8+9vWpVTZAN94+5ggVyhN01DiT/npQes4SO5GsCmliABl1kjU4hMK+IBsNADYvdbHKmHiOIbCGNGkIEBCwcO3MAwCj00hSEm/uhJhgAfGRV6Gx0xSZQXX99nL8AArhBkeovp+bc50SXZ6hD3/MZ5Joe6lTT98JVspH0A6uDZE/T3jcTp1e7dBxNdcHpPgNiGY09naFp3VHzP3FcK9lI+2l76ppWKLoxThMGb5GtmZAeKKIDQ="
+      secure: qOvgagzq/KsRrDH1xZHKhao6fQBApzgcdZXBetgbMu2DEgiFaGiCPcbtWhnJw4mxyGeM2QVD/Bo5k/dR9ELh6Wg/j6SsVoxmIsFiBFCD+GVSPBPuorO3ORXKtSvQSW5Jqx1186vK0iNAlyI/Iyt0n1s7WM/u+DIOeN2tB+KCWeabke8USBdc9cnAEtjnXKvyOzQvTzRL1Rv/+UcSuqTeuxE7B5KDKoQaTOzQQe0AH+pAiFR2SAGqVpEl1XhPbqhnMBe7d/kTtcqeIu8nL8ld2KAGVRNcWoWrr0fSX+pu1TX4/OeKWiZ6/buHoxwzrPPGyHFLCxwmVJ4BCa70wY5gBtmSLquub/xoiIvzroJB6yffpv8lwMC4hm8EVZviUO0hUno/dqdaS9U2jenYckbZaZssFwMTI5ROK2KzZfS240+HRNBNkXulQd/JzNP8+9vWpVTZAN94+5ggVyhN01DiT/npQes4SO5GsCmliABl1kjU4hMK+IBsNADYvdbHKmHiOIbCGNGkIEBCwcO3MAwCj00hSEm/uhJhgAfGRV6Gx0xSZQXX99nL8AArhBkeovp+bc50SXZ6hD3/MZ5Joe6lTT98JVspH0A6uDZE/T3jcTp1e7dBxNdcHpPgNiGY09naFp3VHzP3FcK9lI+2l76ppWKLoxThMGb5GtmZAeKKIDQ=
 
 os: linux
 jdk: openjdk11
@@ -13,16 +13,21 @@ env: DISPLAY=:99.0 # tests need a display to test against
 install: true
 
 services:
-  - xvfb # tests need virtual framebuffer to test against
+# tests need virtual framebuffer to test against
+- xvfb
 
 cache:
   directories:
   - "$HOME/.m2"
-  - '$HOME/.sonar/cache'
+  - "$HOME/.sonar/cache"
 
 before_install:
-- git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
-- ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
+  - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
+  - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
+
+before_deploy:
+  # generate changelog to be appended as release description
+  - npx standard-version --skip.bump --skip.commit --skip.tag
 
 script:
   # Build, run tests and generate binary jacoco output
@@ -36,3 +41,17 @@ script:
 
   # Run sonar scanner
   - mvn sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.java.source=1.8 -Dsonar.coverage.jacoco.xmlReportPaths=$HOME/jacoco.xml -Dsonar.junit.reportPaths=target/surefire-reports
+
+deploy:
+  # deploy jar files to github releases
+  provider: releases
+  file: 
+    - "features/edu.kit.textannotation.feature/edu.kit.textannotation.feature-1.0.0-SNAPSHOT.jar"
+    - "bundles/edu.kit.textannotation.annotationplugin/edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar"
+  skip_cleanup: true
+  draft: false
+  release_notes_file: CHANGELOG.md
+  on:
+    tags: true
+  api_key:
+    secure: c9H+tZ9Yu5j1tfIgmxliV6fjgp+f++YIc1psQDXcEOlcVcMFxiLPJk7+EGfUJvgXed7xlhfYzEptoiwtwB1ahVK8cnTovSSBJHlb1aKFNb2TNcxdWMkEx+HcEl2uHd94x0lkp0TgO9uCwfhSPPbalLJAmNCLOYAFnGHpwdpBihUGN8OQj5wCT6BP931vpiicqQ6Di7eiYS4Nm9jqKA5JvACXtQPnG/M4aRXjkREGtG+AEGY0za1eyf6uOdxshJ80Lm6a2G5eVvpp7qCnijq69Kv11jP13w2yp07yCFGEd68bZ5IMxDfPYgYKGO2qZxwRatPsK78jEFl4GQoi4m9av4/RGoZMI5mKwHUZia4DhFPBlxz4nhNp2ACkmZlPnjgr9HsJY+uO5lnA2iZljzNaWNG3wwPxJFTp6Y1yyArdipgDtqzelzS5a1mWM3sm/UFBrbvIw4RNqZ5TJtj3u85g/cF5xceUhbSVxk0vrvoluFC8KdxLHMl6c19YJuHroTqzz2pCJxdqLtltmO4ERq+FIBu/Y3/bzQNdlIZEj2Igcsr7+tMf20oh1k4ps/uYGflPEPtdEcGfJvTjwTVI5/y/bu8+8u8LPDY+YSq5Ezqqy4/qAbfoVmFIB/Y2434CF44TLOLZIUnBscGP8LdMBQAhz5EB80rls6pgmcpbLGzUisQ=
