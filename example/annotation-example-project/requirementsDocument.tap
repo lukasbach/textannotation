@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<annotationprofile name="Requirements Document">
+  <annotationclass color="46, 204, 113" name="Stakeholder"/>
+  <annotationclass color="230, 126, 34" name="Goal"/>
+  <annotationclass color="52, 152, 219" name="Functional Requirement"/>
+</annotationprofile>
