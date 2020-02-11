@@ -1,18 +1,10 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.editor;
 
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
-
-import edu.kit.textannotation.annotationplugin.EventManager.EmptyEvent;
-import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 
 public class AnnotationEditorFinder {
 	private IWorkbench workbench;

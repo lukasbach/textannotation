@@ -1,9 +1,10 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidFileFormatException;
+import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.AnnotationProfileXmlInterface;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
-import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -20,8 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class AnnotationProfileRegistry {
+    private AnnotationProfileXmlInterface annotationProfileXmlInterface = new AnnotationProfileXmlInterface();
     private List<String> registryPaths;
-
     private List<AnnotationProfile> profiles;
 
     /** Maps profile names to their paths */
@@ -60,19 +61,14 @@ public class AnnotationProfileRegistry {
     public void overwriteProfile(AnnotationProfile profile) {
         try {
             Path path = profilePathMap.get(profile.getName());
-            String fileContent = TextModelIntegration.buildProfileXml(profile);
+            String fileContent = annotationProfileXmlInterface.buildXml(profile);
             File file = new File(path.toString());
             FileOutputStream writeStream = new FileOutputStream(file, false);
             writeStream.write(fileContent.getBytes());
             writeStream.close();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            // TODO
-            e.printStackTrace();
         } catch (IOException e) {
-            // TODO
             e.printStackTrace();
+            EclipseUtils.reportError("Could not save profile data: " + e.getMessage());
         }
     }
 
@@ -94,13 +90,17 @@ public class AnnotationProfileRegistry {
                     .forEach(f -> {
                         try {
                             String s = new String(Files.readAllBytes(f));
-                            AnnotationProfile profile = TextModelIntegration.parseAnnotationProfile(s);
+                            AnnotationProfile profile = annotationProfileXmlInterface.parseXml(s);
                             System.out.println(String.format("Parsed '%s' from '%s'", profile.getName(), f.toString()));
 
                             profiles.add(profile);
                             profilePathMap.put(profile.getName(), f);
-                        } catch (Exception e) {
-                            error.set(e.getMessage());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            EclipseUtils.reportError("Could not read profile: " + e.getMessage());
+                        } catch (InvalidFileFormatException e) {
+                            e.printStackTrace();
+                            EclipseUtils.reportError("Profile is improperly formatted: " + e.getMessage());
                         }
                     });
             } catch (IOException e) {

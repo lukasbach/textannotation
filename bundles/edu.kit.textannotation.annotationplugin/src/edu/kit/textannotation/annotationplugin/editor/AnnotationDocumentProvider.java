@@ -1,5 +1,9 @@
-package edu.kit.textannotation.annotationplugin.textmodel;
+package edu.kit.textannotation.annotationplugin.editor;
 
+import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSet;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidFileFormatException;
+import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
+import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.TextModelDataXmlInterface;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -14,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class AnnotationDocumentProvider extends FileDocumentProvider {
 	private TextModelData textModelData;
+	private TextModelDataXmlInterface textModelDataXmlInterface = new TextModelDataXmlInterface();
 
 	public static class InitializeEvent {
 		public TextModelData textModelData;
@@ -30,12 +35,8 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 			throws CoreException {
 		System.out.println("doSaveDocument: " + element.toString() + ", document: " + document.get());
 
-		try {
-			String saveData = TextModelIntegration.buildAnnotationXml(textModelData);
-			super.doSaveDocument(monitor, element, new Document(saveData), overwrite);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
+		String saveData = textModelDataXmlInterface.buildXml(textModelData);
+		super.doSaveDocument(monitor, element, new Document(saveData), overwrite);
 	}
 	
 
@@ -45,16 +46,12 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 		
 		if (result) {
 			try {
-				textModelData = new TextModelData(
-						new AnnotationSet(TextModelIntegration.parseAnnotationData(document.get())),
-						TextModelIntegration.parseProfileName(document.get()),
-						document
-				);
+				textModelData = textModelDataXmlInterface.parseXml(document.get());
 
 				// Mark document as dirty after changing the profile
 				textModelData.onChangeProfileName.addListener(profile -> document.set(document.get()));
 
-				document.set(TextModelIntegration.parseContent(document.get()));
+				document.set(textModelData.getDocument().get());
 				initializeEvent.fire(new InitializeEvent(textModelData));
 			} catch (InvalidFileFormatException e) {
 				e.printStackTrace();

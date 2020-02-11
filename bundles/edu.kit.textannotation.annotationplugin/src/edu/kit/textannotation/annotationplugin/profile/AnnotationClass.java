@@ -39,35 +39,6 @@ public class AnnotationClass {
 		this.possibleMatchings = new LinkedList<>();
 		this.metaData = new MetaDataContainer();
 	}
-
-	public static AnnotationClass fromXml(Node node) {
-		XmlNodeWrapper wrappedNode = new XmlNodeWrapper(node);
-		NamedNodeMap attributes = node.getAttributes();
-		List<Integer> rgb = Arrays.stream(attributes.getNamedItem("color")
-				.getTextContent().replace(" ", "").split(","))
-				.map(Integer::parseInt).collect(Collectors.toList());
-		Color color = new Color(Display.getCurrent(), rgb.get(0), rgb.get(1), rgb.get(2));
-
-		String description = wrappedNode.findChild(KEY_PROFILE_ANNOTATIONCLASS_DESCRIPTION_ELEMENT)
-				.map(Node::getTextContent).orElse(null);
-
-		AnnotationClass annotationClass = new AnnotationClass(
-				attributes.getNamedItem("name").getTextContent(),
-				color,
-				description,
-				new LinkedList<>()
-		);
-
-		wrappedNode.forEach(n -> {
-			if (n.getNodeName().equals(KEY_PROFILE_ANNOTATIONCLASS_METADATA_ELEMENT)) {
-				annotationClass.metaData.put(n.getAttributes()
-						.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_METADATA_ATTR_NAME)
-						.getTextContent(), n.getTextContent());
-			}
-		});
-
-		return annotationClass;
-	}
 	
 	public String getName() {
 		return name;

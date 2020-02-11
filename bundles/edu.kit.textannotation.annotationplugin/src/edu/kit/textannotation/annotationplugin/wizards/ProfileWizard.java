@@ -1,8 +1,7 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
-import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
-import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
+import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.AnnotationProfileXmlInterface;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -11,7 +10,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.*;
-import org.eclipse.ui.ide.IDE;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
@@ -133,12 +131,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	private InputStream openContentStream(String profileName) throws CoreException {
 		String content = "";
 
-		try {
-			content = TextModelIntegration.buildProfileXml(new AnnotationProfile(profileName));
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throwCoreException("Could not create initial file.");
-		}
+		content = (new AnnotationProfileXmlInterface()).buildXml(new AnnotationProfile(profileName));
 
 		return new ByteArrayInputStream(content.getBytes());
 	}

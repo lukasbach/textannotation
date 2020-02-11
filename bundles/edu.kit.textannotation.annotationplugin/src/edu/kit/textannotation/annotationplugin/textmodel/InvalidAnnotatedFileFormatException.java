@@ -4,6 +4,7 @@ public class InvalidAnnotatedFileFormatException extends InvalidFileFormatExcept
     private String message;
 
     public InvalidAnnotatedFileFormatException(String message) {
+        super(message);
         this.message = message;
     }
 

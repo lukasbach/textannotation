@@ -1,10 +1,9 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
-import edu.kit.textannotation.annotationplugin.Activator;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSet;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
-import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
+import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.TextModelDataXmlInterface;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -150,13 +149,8 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 			}
 		}
 
-		try {
-			content = TextModelIntegration.buildAnnotationXml(
-					new TextModelData(new AnnotationSet(), profileName, new Document(template)));
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throwCoreException("Could not create initial file.");
-		}
+		content = (new TextModelDataXmlInterface()).buildXml(
+				new TextModelData(new AnnotationSet(), profileName, new Document(template)));
 
 		return new ByteArrayInputStream(content.getBytes());
 	}

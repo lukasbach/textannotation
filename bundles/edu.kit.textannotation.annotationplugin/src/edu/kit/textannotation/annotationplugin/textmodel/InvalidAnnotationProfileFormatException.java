@@ -4,6 +4,7 @@ public class InvalidAnnotationProfileFormatException extends InvalidFileFormatEx
     private String message;
 
     public InvalidAnnotationProfileFormatException(String message) {
+        super(message);
         this.message = message;
     }
 
