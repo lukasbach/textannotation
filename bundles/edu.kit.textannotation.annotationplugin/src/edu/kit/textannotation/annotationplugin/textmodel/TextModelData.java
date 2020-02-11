@@ -1,9 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.EventManager;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;

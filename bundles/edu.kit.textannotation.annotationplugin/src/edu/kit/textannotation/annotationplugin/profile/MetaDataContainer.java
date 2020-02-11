@@ -1,6 +1,6 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
-import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 
 import java.util.HashMap;
 import java.util.Map;

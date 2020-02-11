@@ -1,13 +1,10 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
-import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
-import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -18,7 +15,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well

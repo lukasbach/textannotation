@@ -1,12 +1,7 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.EventManager;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.*;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
@@ -15,14 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.MultiLineRule;
-import org.eclipse.jface.text.rules.Token;
-
-public class ProjectPresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
+public class AnnotatedTextPresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
 	
 	private AnnotationProfile profile;
 	private AnnotationSet annotations;
@@ -51,7 +39,7 @@ public class ProjectPresentationReconciler implements IPresentationReconciler, I
 		}
 	}
 
-	public ProjectPresentationReconciler() {}
+	public AnnotatedTextPresentationReconciler() {}
 
 	@Override
 	public void install(ITextViewer viewer) {

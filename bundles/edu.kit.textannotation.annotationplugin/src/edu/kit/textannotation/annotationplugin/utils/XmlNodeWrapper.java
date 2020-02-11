@@ -1,4 +1,4 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.utils;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

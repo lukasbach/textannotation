@@ -1,9 +1,8 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
-import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelIntegration;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;

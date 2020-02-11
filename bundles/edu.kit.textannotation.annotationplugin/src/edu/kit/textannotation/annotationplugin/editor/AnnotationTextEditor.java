@@ -2,8 +2,8 @@ package edu.kit.textannotation.annotationplugin.editor;
 
 import java.util.UUID;
 
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
-import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
@@ -15,7 +15,6 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -26,7 +25,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 public class AnnotationTextEditor extends AbstractTextEditor {
-	private ProjectPresentationReconciler presentationReconciler;
+	private AnnotatedTextPresentationReconciler presentationReconciler;
 	private AnnotationDocumentProvider documentProvider;
 	private TextModelData textModelData;
 	private AnnotationSetFixer annotationFixer;
@@ -63,7 +62,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		
         setDocumentProvider(documentProvider);
         
-        presentationReconciler = new ProjectPresentationReconciler();
+        presentationReconciler = new AnnotatedTextPresentationReconciler();
 
 		bundle = FrameworkUtil.getBundle(this.getClass());
 		bundleContext = bundle.getBundleContext();

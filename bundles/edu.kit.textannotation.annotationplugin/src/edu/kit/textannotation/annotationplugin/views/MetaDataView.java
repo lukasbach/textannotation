@@ -1,8 +1,8 @@
 package edu.kit.textannotation.annotationplugin.views;
 
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
-import edu.kit.textannotation.annotationplugin.EventManager;
-import edu.kit.textannotation.annotationplugin.LayoutUtilities;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;

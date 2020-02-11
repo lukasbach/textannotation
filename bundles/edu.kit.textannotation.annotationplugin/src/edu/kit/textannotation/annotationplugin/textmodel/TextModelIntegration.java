@@ -94,7 +94,7 @@ public class TextModelIntegration {
 		return annotation;
 	}
 
-	static String parseProfileName(String rawSource) throws InvalidFileFormatException {
+	public static String parseProfileName(String rawSource) throws InvalidFileFormatException {
 		try {
 			return parseXmlFile(rawSource)
 					.getElementsByTagName(KEY_PROFILE_ELEMENT)

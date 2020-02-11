@@ -1,6 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Document;
@@ -8,7 +8,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
-import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 
 import javax.xml.parsers.ParserConfigurationException;
 

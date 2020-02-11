@@ -1,14 +1,15 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.views;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
+import edu.kit.textannotation.annotationplugin.editor.AnnotationEditorFinder;
+import edu.kit.textannotation.annotationplugin.utils.ComboSelectionListener;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
-import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -23,13 +24,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import javax.inject.Inject;
 
 
 public class AnnotationControlsView extends ViewPart {
-	public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationControlsView";
+	public static final String ID = "edu.kit.textannotation.annotationplugin.views.AnnotationControlsView";
 	private GridLayout layout;
 	private Combo profileSelector;
 	private Button buttonEditProfile;

@@ -1,11 +1,10 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
-import edu.kit.textannotation.annotationplugin.ComboSelectionListener;
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.ComboSelectionListener;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
-import edu.kit.textannotation.annotationplugin.textmodel.SchemaValidator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;

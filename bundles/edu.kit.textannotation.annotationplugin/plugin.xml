@@ -102,9 +102,9 @@
       </category>
       <view
             category="edu.kit.textannotation.annotationplugin"
-            class="edu.kit.textannotation.annotationplugin.AnnotationControlsView"
+            class="edu.kit.textannotation.annotationplugin.views.AnnotationControlsView"
             icon="icons/sample.png"
-            id="edu.kit.textannotation.annotationplugin.AnnotationControlsView"
+            id="edu.kit.textannotation.annotationplugin.views.AnnotationControlsView"
             inject="true"
             name="Text Annotation Controls">
       </view>

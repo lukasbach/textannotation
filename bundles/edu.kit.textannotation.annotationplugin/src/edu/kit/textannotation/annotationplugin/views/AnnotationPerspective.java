@@ -15,7 +15,7 @@ public class AnnotationPerspective implements IPerspectiveFactory {
         left.addView("org.eclipse.jdt.ui.PackageExplorer");
 
         IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, .75f, editorArea);
-        right.addView("edu.kit.textannotation.annotationplugin.AnnotationControlsView");
+        right.addView("edu.kit.textannotation.annotationplugin.views.AnnotationControlsView");
 
         IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, .75f, editorArea);
         bottom.addView("edu.kit.textannotation.annotationplugin.views.AnnotationInfoView");
@@ -24,7 +24,7 @@ public class AnnotationPerspective implements IPerspectiveFactory {
         layout.addNewWizardShortcut("edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard");
         layout.addNewWizardShortcut("edu.kit.textannotation.annotationplugin.wizards.ProfileWizard");
 
-        layout.addShowViewShortcut("edu.kit.textannotation.annotationplugin.AnnotationControlsView");
+        layout.addShowViewShortcut("edu.kit.textannotation.annotationplugin.views.AnnotationControlsView");
         layout.addShowViewShortcut("edu.kit.textannotation.annotationplugin.views.AnnotationInfoView");
     }
 }

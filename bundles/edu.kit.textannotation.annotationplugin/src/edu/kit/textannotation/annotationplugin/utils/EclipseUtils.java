@@ -1,5 +1,6 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.utils;
 
+import edu.kit.textannotation.annotationplugin.PluginConfig;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

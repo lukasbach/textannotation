@@ -1,24 +1,20 @@
 package edu.kit.textannotation.annotationplugin.views;
 
-import java.util.Comparator;
 import java.util.function.Consumer;
 
-import edu.kit.textannotation.annotationplugin.*;
+import edu.kit.textannotation.annotationplugin.editor.AnnotationEditorFinder;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.*;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.*;
 
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.*;
-import org.eclipse.swt.SWT;
-import org.osgi.framework.FrameworkUtil;
 
 import javax.inject.Inject;
 

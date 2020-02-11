@@ -1,8 +1,7 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
-import edu.kit.textannotation.annotationplugin.AnnotationEditorFinder;
-import edu.kit.textannotation.annotationplugin.EclipseUtils;
-import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.SingleAnnotation;
@@ -11,9 +10,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
-import org.eclipse.ui.IWorkbench;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
 class HoverProvider extends AbstractAnnotationHover {

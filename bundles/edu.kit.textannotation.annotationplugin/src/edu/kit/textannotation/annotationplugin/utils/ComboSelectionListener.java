@@ -1,4 +1,4 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.utils;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;

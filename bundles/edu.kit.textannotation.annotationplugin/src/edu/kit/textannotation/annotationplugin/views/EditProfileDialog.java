@@ -1,8 +1,9 @@
-package edu.kit.textannotation.annotationplugin;
+package edu.kit.textannotation.annotationplugin.views;
 
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import edu.kit.textannotation.annotationplugin.views.Header;
-import edu.kit.textannotation.annotationplugin.views.MetaDataView;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;

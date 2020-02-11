@@ -1,11 +1,7 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.EventManager;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.MetaDataContainer;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public class SingleAnnotation {
 	private String id;

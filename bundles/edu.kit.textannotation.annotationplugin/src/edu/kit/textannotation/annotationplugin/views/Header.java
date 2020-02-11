@@ -1,10 +1,9 @@
 package edu.kit.textannotation.annotationplugin.views;
 
-import edu.kit.textannotation.annotationplugin.LayoutUtilities;
+import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;

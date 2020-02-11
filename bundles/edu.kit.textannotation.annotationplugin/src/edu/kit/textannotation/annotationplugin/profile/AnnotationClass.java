@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.kit.textannotation.annotationplugin.XmlNodeWrapper;
+import edu.kit.textannotation.annotationplugin.utils.XmlNodeWrapper;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;

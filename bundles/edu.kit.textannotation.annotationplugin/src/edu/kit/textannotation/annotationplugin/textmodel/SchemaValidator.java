@@ -1,7 +1,5 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import org.xml.sax.InputSource;
-
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -9,7 +7,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
 public class SchemaValidator {
