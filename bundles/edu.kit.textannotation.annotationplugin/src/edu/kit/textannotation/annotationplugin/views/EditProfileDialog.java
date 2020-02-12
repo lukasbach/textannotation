@@ -99,27 +99,6 @@ public class EditProfileDialog extends Shell {
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
 		annotationClassesList.addListener(SWT.Selection, e -> selectAnnotationClass(annotationClassesList.getSelection()[0]));
 
-		itemName = new Text(rightContainer, SWT.BORDER);
-		itemName.setLayoutData(lu.horizontalFillingGridData());
-		itemName.setText("Selected Item Name");
-		itemName.addModifyListener(e -> changeAnnotationClassName(itemName.getText()));
-
-		Composite colorSelectorContainer = new Composite(rightContainer, SWT.NONE);
-		colorSelectorContainer.setLayoutData(lu.horizontalFillingGridData());
-		colorSelectorContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
-
-		colorSelector = new CCombo(colorSelectorContainer, SWT.BORDER);
-		colorSelector.setLayoutData(lu.horizontalFillingGridData());
-		colorSelector.setText("#abcdef");
-		colorSelector.setLayoutData(lu.gridData().withExcessHorizontalSpace(true).withHorizontalAlignment(SWT.FILL).get());
-		colorSelector.addModifyListener(e -> changeAnnotationColor(colorSelector.getText()));
-		colorSelector.setItems(defaultColors);
-
-		colorDisplay = new StyledText(colorSelectorContainer, SWT.BORDER);
-		// colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		int i = colorSelector.getItemHeight();
-		colorDisplay.setLayoutData(lu.gridData().withWidthHint(i).withHeightHint(i).get());
-		colorDisplay.setEditable(false);
 
 		// CLabel canBeMatchedWithLabel = new CLabel(rightContainer, SWT.NONE);
 		// canBeMatchedWithLabel.setText("Can be matched with:");
@@ -131,6 +110,28 @@ public class EditProfileDialog extends Shell {
 		Label seperator;
 
 		if (selectedAnnotationClass != null) {
+			itemName = new Text(rightContainer, SWT.BORDER);
+			itemName.setLayoutData(lu.horizontalFillingGridData());
+			itemName.setText("Selected Item Name");
+			itemName.addModifyListener(e -> changeAnnotationClassName(itemName.getText()));
+
+			Composite colorSelectorContainer = new Composite(rightContainer, SWT.NONE);
+			colorSelectorContainer.setLayoutData(lu.horizontalFillingGridData());
+			colorSelectorContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+
+			colorSelector = new CCombo(colorSelectorContainer, SWT.BORDER);
+			colorSelector.setLayoutData(lu.horizontalFillingGridData());
+			colorSelector.setText("#abcdef");
+			colorSelector.setLayoutData(lu.gridData().withExcessHorizontalSpace(true).withHorizontalAlignment(SWT.FILL).get());
+			colorSelector.addModifyListener(e -> changeAnnotationColor(colorSelector.getText()));
+			colorSelector.setItems(defaultColors);
+
+			colorDisplay = new StyledText(colorSelectorContainer, SWT.BORDER);
+			// colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+			int i = colorSelector.getItemHeight();
+			colorDisplay.setLayoutData(lu.gridData().withWidthHint(i).withHeightHint(i).get());
+			colorDisplay.setEditable(false);
+
 			seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
 			seperator.setLayoutData(lu.horizontalFillingGridData());
 
@@ -156,18 +157,18 @@ public class EditProfileDialog extends Shell {
 					onSave.run();
 				}
 			});
+
+			seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+			seperator.setLayoutData(lu.horizontalFillingGridData());
+
+			Button btnRemoveClass = new Button(rightContainer, SWT.NONE);
+			btnRemoveClass.setLayoutData(lu.horizontalFillingGridData());
+			btnRemoveClass.setText("Remove selected Class");
+			btnRemoveClass.addListener(SWT.Selection, e -> removeCurrentClass());
+
+			seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
+			seperator.setLayoutData(lu.horizontalFillingGridData());
 		}
-
-		seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		seperator.setLayoutData(lu.horizontalFillingGridData());
-
-		Button btnRemoveClass = new Button(rightContainer, SWT.NONE);
-		btnRemoveClass.setLayoutData(lu.horizontalFillingGridData());
-		btnRemoveClass.setText("Remove selected Class");
-		btnRemoveClass.addListener(SWT.Selection, e -> removeCurrentClass());
-
-	    seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		seperator.setLayoutData(lu.horizontalFillingGridData());
 
 		Button btnAddClass = new Button(rightContainer, SWT.NONE);
 		btnAddClass.setLayoutData(lu.horizontalFillingGridData());
@@ -225,8 +226,10 @@ public class EditProfileDialog extends Shell {
 
 	private void removeCurrentClass() {
 		profile.removeAnnotationClass(selectedAnnotationClass);
+		selectedAnnotationClass = null;
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
-		annotationClassesList.setSelection(0);
+		annotationClassesList.deselectAll();
+		rebuildContent(this);
 	}
 
 	private void addNewClass() {
