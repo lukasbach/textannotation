@@ -180,11 +180,15 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	}
 
 	private void openTextAnnotationPerspective(IEditorSite site) {
-		site.getWorkbenchWindow().getActivePage().setPerspective(new IPerspectiveDescriptor() {
-			@Override public String getDescription() { return ""; }
-			@Override public String getId() { return AnnotationPerspective.ID; }
-			@Override public ImageDescriptor getImageDescriptor() { return null; }
-			@Override public String getLabel() { return ""; }
-		});
+		try {
+			site.getWorkbenchWindow().getActivePage().setPerspective(new IPerspectiveDescriptor() {
+				@Override public String getDescription() { return ""; }
+				@Override public String getId() { return AnnotationPerspective.ID; }
+				@Override public ImageDescriptor getImageDescriptor() { return null; }
+				@Override public String getLabel() { return ""; }
+			});
+		} catch(Exception e) {
+			// If automatic perspective opening fails, don't attempt it.
+		}
 	}
 }
