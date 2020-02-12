@@ -10,16 +10,20 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.osgi.framework.Bundle;
 
 public class EclipseUtils {
     public static void clearChildren(Composite parent) {
-        for (Control child: parent.getChildren()) {
+        for (Control child : parent.getChildren()) {
             child.dispose();
         }
     }
@@ -104,21 +108,51 @@ public class EclipseUtils {
         ISelection selection = selectionService.getSelection();
 
         IProject project = null;
-        if(selection instanceof IStructuredSelection) {
-            Object element = ((IStructuredSelection)selection).getFirstElement();
+        if (selection instanceof IStructuredSelection) {
+            Object element = ((IStructuredSelection) selection).getFirstElement();
 
             if (element instanceof IResource) {
-                project= ((IResource)element).getProject();
+                project = ((IResource) element).getProject();
             } else if (element instanceof PackageFragmentRootContainer) {
                 IJavaProject jProject =
-                        ((PackageFragmentRootContainer)element).getJavaProject();
+                        ((PackageFragmentRootContainer) element).getJavaProject();
                 project = jProject.getProject();
             } else if (element instanceof IJavaElement) {
-                IJavaProject jProject= ((IJavaElement)element).getJavaProject();
+                IJavaProject jProject = ((IJavaElement) element).getJavaProject();
                 project = jProject.getProject();
             }
         }
 
         return project.getLocation().makeAbsolute();
+    }
+
+    public static void openWizard(String id) {
+        // https://resheim.net/2010/07/invoking-eclipse-wizard.html
+
+        // First see if this is a "new wizard".
+        IWizardDescriptor descriptor = PlatformUI.getWorkbench()
+                .getNewWizardRegistry().findWizard(id);
+        // If not check if it is an "import wizard".
+        if (descriptor == null) {
+            descriptor = PlatformUI.getWorkbench().getImportWizardRegistry()
+                    .findWizard(id);
+        }
+        // Or maybe an export wizard
+        if (descriptor == null) {
+            descriptor = PlatformUI.getWorkbench().getExportWizardRegistry()
+                    .findWizard(id);
+        }
+        try {
+            // Then if we have a wizard, open it.
+            if (descriptor != null) {
+                IWizard wizard = descriptor.createWizard();
+                WizardDialog wd = new WizardDialog(
+                        Display.getDefault().getActiveShell(), wizard);
+                wd.setTitle(wizard.getWindowTitle());
+                wd.open();
+            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
     }
 }

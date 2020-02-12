@@ -104,6 +104,9 @@ public class AnnotationControlsView extends ViewPart {
 				editor.onProfileChange.fire(p);
 			});
 		});
+
+		buttonNewProfile.addListener(SWT.Selection, e ->
+				EclipseUtils.openWizard("edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"));
 		
 		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
 			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
