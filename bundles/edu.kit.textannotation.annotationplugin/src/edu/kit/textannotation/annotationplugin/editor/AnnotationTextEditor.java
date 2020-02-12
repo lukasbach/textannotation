@@ -131,6 +131,12 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		// Trigger rehighlight
 		markDocumentAsDirty();
 	}
+
+	public void deannotate(int offset) {
+		SingleAnnotation annotation = textModelData.getSingleAnnotationAt(offset);
+		textModelData.getAnnotations().removeAnnotation(annotation);
+		markDocumentAsDirty();
+	}
 	
 	public String getId() {
 		return id;

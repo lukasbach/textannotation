@@ -98,6 +98,10 @@ public class AnnotationInfoView extends ViewPart {
 
         Header.withTitle(annotationClass.getName())
                 .withSubTitle(annotationClass.getDescription())
+                .withButton("Remove annotation", () -> {
+                    editor.deannotate(hoveringAnnotation.getOffset());
+                    rebuildContent(parent, null);
+                })
                 .render(container);
 
         MetaDataView annotationDataForm = new MetaDataView(

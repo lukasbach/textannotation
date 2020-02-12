@@ -35,6 +35,10 @@ public class AnnotationSet {
 			this.annotations.add(annotation);
 		}
 	}
+
+	public void removeAnnotation(SingleAnnotation annotation) {
+		this.annotations.remove(annotation);
+	}
 	
 	@Override
 	public String toString() {
