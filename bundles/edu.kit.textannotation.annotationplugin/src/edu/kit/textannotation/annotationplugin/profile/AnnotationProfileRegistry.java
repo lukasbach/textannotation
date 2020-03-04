@@ -20,6 +20,20 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
+/**
+ * The Annotation Profile Registry is used to read profiles from disk and resolve a profile by its name.
+ * This can be used by clients that have an instance of
+ * {@link edu.kit.textannotation.annotationplugin.textmodel.TextModelData}, which contains annotation data and the
+ * name of the profile, but not the profile itself.
+ * <br/><br/>
+ *
+ * The registry resolves profiles which are located in the following paths:
+ *
+ * <ul>
+ *     <li>%eclispeinstallation%/.textannotation</li>
+ *     <li>The workspace directory</li>
+ * </ul>
+ */
 public class AnnotationProfileRegistry {
     private AnnotationProfileXmlInterface annotationProfileXmlInterface = new AnnotationProfileXmlInterface();
     private List<String> registryPaths;
@@ -28,6 +42,13 @@ public class AnnotationProfileRegistry {
     /** Maps profile names to their paths */
     private Map<String, Path> profilePathMap;
 
+    /**
+     * Create a new registry instance with the supplied paths where the registry will look for
+     * profiles. This should usually not be used by clients as this class already implements a
+     * usable selection of default-paths. A reference to an registry object can be obtained via
+     * {@link AnnotationProfileRegistry::createNew}, which uses sensible defaults.
+     * @param registryPaths are paths to where the registry will look for profile files.
+     */
     public AnnotationProfileRegistry(List<String> registryPaths) {
         this.registryPaths = registryPaths;
         this.profiles = new LinkedList<>();
@@ -35,15 +56,32 @@ public class AnnotationProfileRegistry {
         registryPaths.forEach(p -> System.out.println("REGPATH: " + p));
     }
 
+    /**
+     * Create a new registry instance, using sensible lookup defaults.
+     * @param bundle is defined by the Eclipse environment.
+     * @return a registry instance.
+     */
     public static AnnotationProfileRegistry createNew(Bundle bundle) {
         List<String> paths = new ArrayList<>();
-        paths.add(System.getProperty("user.dir") + "/.textannotation"); // userdir/.textannotation
-        paths.add(Platform.getStateLocation(bundle).toString() + "/profiles"); // workspace/.metadata/.textannotation
-        // paths.add(Objects.requireNonNull(EclipseUtils.getCurrentProjectDirectory()).toString()); // workspace/project/
-        paths.add(EclipseUtils.getCurrentWorkspaceDirectory(bundle));
+
+        paths.add(System.getProperty("user.dir") + "/.textannotation"); // eclipseinstalldir/.textannotation
+        paths.add(EclipseUtils.getCurrentWorkspaceDirectory(bundle)); // workspace directory
+        // paths.add(EclipseUtils.get1().toString()); // workspace directory
+        // paths.add(EclipseUtils.getCurrentProjectDirectory().toString()); // workspace directory
+
+        System.out.println("AnnotationProfileRegistry: Reading profiles from the following paths:");
+        paths.forEach(System.out::println);
+
         return new AnnotationProfileRegistry(paths);
     }
 
+    /**
+     * Resolve a profile instance by its name.
+     * @param profileName the name of the profile, which is used for resolvement.
+     * @return a {@link AnnotationProfile} instance if the profile could be resolved.
+     * @throws ProfileNotFoundException if the profile was not found on disk.
+     * @throws InvalidAnnotationProfileFormatException if the profile file was malformed.
+     */
     public AnnotationProfile findProfile(String profileName) throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
         readProfiles();
         return profiles
@@ -53,11 +91,21 @@ public class AnnotationProfileRegistry {
                 .orElseThrow(() -> new ProfileNotFoundException(profileName, this));
     }
 
+    /**
+     * Get a list of all profiles which could be found on disk.
+     * @return a list of the found profiles.
+     * @throws InvalidAnnotationProfileFormatException if one of the profile files was malformed.
+     */
     public List<AnnotationProfile> getProfiles() throws InvalidAnnotationProfileFormatException {
         readProfiles();
         return profiles;
     }
 
+    /**
+     * Find the profile with the same name on disk, and overwrite its file with the supplied
+     * new profile data.
+     * @param profile contains the changed profile name alongside the name of the old profile.
+     */
     public void overwriteProfile(AnnotationProfile profile) {
         try {
             Path path = profilePathMap.get(profile.getName());
