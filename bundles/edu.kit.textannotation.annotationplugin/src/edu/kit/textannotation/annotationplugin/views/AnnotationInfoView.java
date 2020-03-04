@@ -36,13 +36,13 @@ public class AnnotationInfoView extends ViewPart {
         Consumer<SingleAnnotation> onHover = s -> Display.getDefault().syncExec(() -> rebuildContent(parent, s));
         Consumer<EventManager.EmptyEvent> onUnHover = v -> Display.getDefault().syncExec(() -> rebuildContent(parent, null));
 
-        finder.annotationEditorActivated.addListener(e -> {
+        finder.onAnnotationEditorActivated.addListener(e -> {
             e.onClickAnnotation.addListener(onHover);
             e.onClickOutsideOfAnnotation.addListener(onUnHover);
             editor = e;
         });
 
-        finder.annotationEditorDeactivated.addListener(editor -> {
+        finder.onAnnotationEditorDeactivated.addListener(editor -> {
             editor.onClickAnnotation.removeListener(onHover);
             editor.onClickOutsideOfAnnotation.removeListener(onUnHover);
         });

@@ -44,7 +44,7 @@ public class AnnotationControlsView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		// TODO maybe checking ever 10-or-so seconds for profile updates might not be a bad idea
 		finder = new AnnotationEditorFinder(workbench);
-		finder.annotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getTextModelData()));
+		finder.onAnnotationEditorActivated.addListener(editor -> rebuildContent(parent, editor.getTextModelData()));
 		if (finder.getAnnotationEditor() != null) {
 			rebuildContent(parent, finder.getAnnotationEditor().getTextModelData());
 		}

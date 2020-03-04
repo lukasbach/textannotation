@@ -10,13 +10,23 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jgit.annotations.Nullable;
 
-import java.util.Optional;
-
+/**
+ * This class contributes to the plugin by defining hover integration. It implements the interfaces
+ * IJavaEditorTextHover, ITextHoverExtension and ITextHoverExtension2.
+ *
+ * This contribution only works in a {@link AnnotationTextEditor}.
+ *
+ * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover
+ * @see org.eclipse.jface.text.ITextHoverExtension
+ * @see org.eclipse.jface.text.ITextHoverExtension2
+ */
 class HoverProvider extends AbstractAnnotationHover {
 	private TextModelData textModelData;
 	private AnnotationTextEditor editor;
 
+	/** Fires when an annotation is hovered over, and supplies the hovered annotation as payload. */
 	final EventManager<SingleAnnotation> onHover = new EventManager<>("hoverprovider:hover");
 
 	HoverProvider(TextModelData textModelData, AnnotationTextEditor editor) {

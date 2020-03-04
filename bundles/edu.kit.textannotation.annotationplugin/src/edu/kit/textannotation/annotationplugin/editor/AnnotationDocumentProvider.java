@@ -1,6 +1,5 @@
 package edu.kit.textannotation.annotationplugin.editor;
 
-import edu.kit.textannotation.annotationplugin.textmodel.AnnotationSet;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidFileFormatException;
 import edu.kit.textannotation.annotationplugin.textmodel.TextModelData;
 import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.TextModelDataXmlInterface;
@@ -14,12 +13,22 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 
-import javax.xml.parsers.ParserConfigurationException;
-
+/**
+ * Document Provider for Annotatable Text Documents, supposed to used by {@link AnnotationTextEditor}.
+ *
+ * This class implements a Document Provider, but parses Annotated Text data from the file source and
+ * supplies the text editor instance with the parsed annotation data and raw content. Saving the file
+ * causes this provider to regenerate the annotatable text data tree and save that in XML form.
+ *
+ * @see TextModelDataXmlInterface
+ */
 public class AnnotationDocumentProvider extends FileDocumentProvider {
 	private TextModelData textModelData;
 	private TextModelDataXmlInterface textModelDataXmlInterface = new TextModelDataXmlInterface();
 
+	/**
+	 * This models a event that is dispatched when a new document is read causing the editor to initialize.
+	 */
 	public static class InitializeEvent {
 		public TextModelData textModelData;
 
@@ -27,8 +36,11 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 			this.textModelData = textModelData;
 		}
 	}
-	
-	public final EventManager<InitializeEvent> initializeEvent = new EventManager<>();
+
+	/**
+	 * Fires when a new document is read and the editor is initialized with the document.
+	 */
+	public final EventManager<InitializeEvent> onInitialize = new EventManager<>();
 	
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite)
@@ -52,7 +64,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				textModelData.onChangeProfileName.addListener(profile -> document.set(document.get()));
 
 				document.set(textModelData.getDocument().get());
-				initializeEvent.fire(new InitializeEvent(textModelData));
+				onInitialize.fire(new InitializeEvent(textModelData));
 			} catch (InvalidFileFormatException e) {
 				e.printStackTrace();
 				EclipseUtils.reportError("File not properly formatted. " + e.getMessage());
