@@ -27,30 +27,23 @@ class HoverProvider extends AbstractAnnotationHover {
 
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-		System.out.println("getHoverRegion: " + offset);
-		Optional<SingleAnnotation> match = textModelData.getAnnotations()
-				.stream()
-				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
-				.findFirst();
+		@Nullable SingleAnnotation match = textModelData.getSingleAnnotationAt(offset);
 
-		// TODO use getSingleAnnotationAt
+		if (match == null) {
+			return null;
+		} else {
+			return new IRegion() {
+				@Override
+				public int getOffset() {
+					return match.getOffset();
+				}
 
-		IRegion result = match.map(singleAnnotation -> new IRegion() {
-			@Override
-			public int getOffset() {
-				return singleAnnotation.getOffset();
-			}
-
-			@Override
-			public int getLength() {
-				return singleAnnotation.getLength();
-			}
-		}).orElse(null);
-
-		if (result != null) {
-			System.out.println(result.getOffset() + ":" + result.getLength());
+				@Override
+				public int getLength() {
+					return match.getLength();
+				}
+			};
 		}
-		return result;
 	}
 
 	@Override

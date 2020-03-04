@@ -4,6 +4,7 @@ import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jgit.annotations.Nullable;
 
 public class TextModelData {
 	public final EventManager<String> onChangeProfileName = new EventManager<>("textmodeldata:changeprofile");
@@ -63,7 +64,7 @@ public class TextModelData {
 		}
 	}
 
-	public SingleAnnotation getSingleAnnotationAt(int offset) {
+	@Nullable public SingleAnnotation getSingleAnnotationAt(int offset) {
 		return getAnnotations()
 				.stream()
 				.filter(a -> a.getOffset() <= offset && a.getOffset() + a.getLength() > offset)
