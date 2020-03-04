@@ -13,6 +13,12 @@ import java.util.stream.IntStream;
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.*;
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_PROFILE_ANNOTATIONCLASS_DESCRIPTION_ELEMENT;
 
+/**
+ * This Xml Interface allows generating XML code for an annotation profile given its original data structure,
+ * and for parsing an annotation profile instance from a XML string.
+ *
+ * @see AnnotationProfile
+ */
 public class AnnotationProfileXmlInterface implements XmlBuilderInterface<AnnotationProfile>, XmlStringParserInterface<AnnotationProfile> {
     private SchemaValidator validator = new SchemaValidator();
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();

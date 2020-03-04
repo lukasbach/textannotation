@@ -14,6 +14,14 @@ import java.util.stream.Collectors;
 
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.*;
 
+/**
+ * This Xml Interface allows parsing the annotation class instance from a respective XML node. Note that
+ * this node must be the root node for the relevant annotation class, and as such is found within the
+ * XML document of an annotatable text document.
+ *
+ * @see TextModelDataXmlInterface
+ * @see AnnotationClass
+ */
 public class AnnotationClassXmlInterface implements XmlNodeParserInterface<AnnotationClass> {
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();
 

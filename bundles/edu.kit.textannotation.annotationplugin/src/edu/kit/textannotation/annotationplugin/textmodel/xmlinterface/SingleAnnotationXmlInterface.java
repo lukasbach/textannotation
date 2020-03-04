@@ -8,6 +8,14 @@ import org.w3c.dom.NodeList;
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.*;
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_ANNOTATIONDATA_METADATA_ATTR_NAME;
 
+/**
+ * This Xml interface allows for parsing a {@link SingleAnnotation} instance from an XML node. Note that this
+ * node must represent the root of the single annotation substructure.
+ *
+ * @see SingleAnnotation
+ * @see edu.kit.textannotation.annotationplugin.textmodel.TextModelData
+ * @see TextModelDataXmlInterface
+ */
 class SingleAnnotationXmlInterface implements XmlNodeParserInterface<SingleAnnotation> {
     @Override
     public SingleAnnotation parseXml(Node node) {

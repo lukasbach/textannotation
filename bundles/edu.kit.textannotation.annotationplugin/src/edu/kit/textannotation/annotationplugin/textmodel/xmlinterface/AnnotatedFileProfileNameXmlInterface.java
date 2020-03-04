@@ -6,6 +6,9 @@ import edu.kit.textannotation.annotationplugin.textmodel.InvalidFileFormatExcept
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME;
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_PROFILE_ELEMENT;
 
+/**
+ * This Xml Interface allows parsing the profile identifier from a the XML source of an annotated text file.
+ */
 class AnnotatedFileProfileNameXmlInterface implements XmlStringParserInterface<String> {
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();
 

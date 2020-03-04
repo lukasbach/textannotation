@@ -11,6 +11,9 @@ import java.io.IOException;
 
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_ANNOTATIONDATA_CONTENT;
 
+/**
+ * This Xml Interface allows parsing the raw text content from a the XML source of an annotated text file.
+ */
 public class AnnotatedFileContentXmlInterface implements XmlStringParserInterface<String> {
     private SchemaValidator validator = new SchemaValidator();
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();

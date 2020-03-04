@@ -10,6 +10,12 @@ import java.util.List;
 
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.*;
 
+/**
+ * This Xml interface allows for generating an XML string based on a {@link TextModelData} data structure,
+ * as well as parsing a {@link TextModelData} data structure from a given XML string.
+ *
+ * @see TextModelData
+ */
 public class TextModelDataXmlInterface
         implements XmlBuilderInterface<TextModelData>, XmlStringParserInterface<TextModelData> {
     private SchemaValidator validator = new SchemaValidator();

@@ -13,6 +13,13 @@ import java.util.stream.IntStream;
 
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT;
 
+/**
+ * This Xml interface allows for parsing a list of {@link SingleAnnotation} given a raw XML string.
+ *
+ * @see SingleAnnotation
+ * @see TextModelData
+ * @see TextModelDataXmlInterface
+ */
 class SingleAnnotationListXmlInterface implements XmlStringParserInterface<List<SingleAnnotation>> {
     private SchemaValidator validator = new SchemaValidator();
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();

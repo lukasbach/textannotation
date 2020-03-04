@@ -1,6 +1,5 @@
 package edu.kit.textannotation.annotationplugin.textmodel.xmlinterface;
 
-import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidFileFormatException;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import org.w3c.dom.Document;
@@ -21,7 +20,15 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * This class defines utility methods for other XML interfaces defined in this package.
+ */
 class XmlInterfaceUtils {
+    /**
+     * Create a new XML Document and return a reference to it.
+     * @return a new XML document.
+     * @see DocumentBuilderFactory
+     */
     Document getNewDocument() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -34,6 +41,11 @@ class XmlInterfaceUtils {
         }
     }
 
+    /**
+     * Generate a XML string that represents the supplied XML document.
+     * @param doc an XML document that should be used as source.
+     * @return a XML string representing the supplied document.
+     */
     String convertDocumentToString(Document doc) {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
@@ -52,6 +64,13 @@ class XmlInterfaceUtils {
         return "";
     }
 
+    /**
+     * Parse the supplied XML source string into an XML element.
+     * @param source a string containing XML code.
+     * @return a parsed XML element.
+     * @throws InvalidFileFormatException if the XML source string was malformed.
+     * @see DocumentBuilderFactory
+     */
     Element parseXmlFile(String source) throws InvalidFileFormatException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
