@@ -10,6 +10,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class defines how regions in annotatable text files should be highlighted. This is based
+ * on the explicit annotation data available in the annotatable data structure. This class is designed
+ * to be used as a client by {@link edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor},
+ * and as such is instantiated by the Eclipse framework.
+ *
+ * @see TextModelData
+ * @see AnnotationProfile
+ * @see SingleAnnotation
+ */
 public class AnnotatedTextPresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
 	
 	private AnnotationProfile profile;
@@ -39,6 +49,8 @@ public class AnnotatedTextPresentationReconciler implements IPresentationReconci
 		}
 	}
 
+	/** Create a new reconciler instance. This constructor is not supposed to be called manually by clients,
+	 * but is automatically invoked by the Eclipse framework. */
 	public AnnotatedTextPresentationReconciler() {}
 
 	@Override
@@ -67,7 +79,15 @@ public class AnnotatedTextPresentationReconciler implements IPresentationReconci
 	public String getDocumentPartitioning() {
 		return null;
 	}
-    
+
+	/**
+	 * Attach annotation data, i.e. the annotation profile and the set of annotations to this reconciler.
+	 * This is required for highlighting the annotation data, and is invoked by the editor instance.
+	 *
+	 * @see edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor
+	 * @param profile the profile of the currently opened annotatable text file.
+	 * @param annotations the set of annotations in the annotatable text file.
+	 */
     public void setAnnotationInformation(AnnotationProfile profile, AnnotationSet annotations) { // TODO use TextModelData
     	this.profile = profile;
     	this.annotations = annotations;

@@ -1,5 +1,10 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+/**
+ * This class defines all identifiers used by the XML schemas, and is leveraged by
+ * the <tt>xmlinterface</tt> package. When changes are made to the schema files, these changes
+ * can often be applied in this class.
+ */
 public class XmlSchemaVariables {
     /** The element name of the root element of an annotated file. */
     public static final String KEY_ANNOTATEDFILE_ELEMENT = "annotated";

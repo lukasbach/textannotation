@@ -9,16 +9,39 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * <p>This class defines a way for validating XML strings against their respective schemas. Currently
+ * the following types of structures can be validated with this class:</p>
+ *
+ * <ul>
+ *     <li>Annotatable text files, using {@link SchemaValidator::validateAnnotatedFile}</li>
+ *     <li>Annotation profile files, using {@link SchemaValidator::validateAnnotationProfile}</li>
+ * </ul>
+ *
+ * <p>It uses the schema files locates in <tt>src/schema</tt>.</p>
+ */
 public class SchemaValidator {
     private enum SchemaName {
         AnnotatedFile,
         AnnotationProfile,
     }
 
+    /**
+     * Validate an XML string which represents an annotatable text file. This validates it
+     * against the schema file located at <tt>src/schema/annotatedfile.xsd</tt>.
+     * @param xml the XML string which will be validated.
+     * @throws InvalidFileFormatException if the validation fails.
+     */
     public void validateAnnotatedFile(String xml) throws InvalidFileFormatException {
         validate(SchemaName.AnnotatedFile, xml);
     }
 
+    /**
+     * Validate an XML string which represents an annotation profile file. This validates it
+     * against the schema file located at <tt>src/schema/annotationprofile.xsd</tt>.
+     * @param xml the XML string which will be validated.
+     * @throws InvalidFileFormatException if the validation fails.
+     */
     public void validateAnnotationProfile(String xml) throws InvalidFileFormatException {
         validate(SchemaName.AnnotationProfile, xml);
     }

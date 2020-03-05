@@ -1,5 +1,11 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+/**
+ * This exception is thrown if an annotation profile file was read from disk, but is malformed.
+ *
+ * @see InvalidFileFormatException
+ * @see SchemaValidator
+ */
 public class InvalidAnnotationProfileFormatException extends InvalidFileFormatException {
     private String message;
 
