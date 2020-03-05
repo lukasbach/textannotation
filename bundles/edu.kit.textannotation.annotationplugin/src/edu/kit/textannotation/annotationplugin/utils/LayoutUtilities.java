@@ -8,6 +8,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * Utility wrappers for SWT layout logic. This allows for the creation of typical layout and griddata
+ * instances without having to explicitly state them everytime. The utilities also implement convenience
+ * features such as easy chainability.
+ *
+ * @see GridLayout
+ * @see GridData
+ * @see FillLayout
+ */
 public class LayoutUtilities {
     public LayoutUtilities() {}
 

@@ -13,18 +13,33 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.osgi.framework.Bundle;
 
+/**
+ * Utility methods regarding the eclipse framework.
+ */
 public class EclipseUtils {
+    /**
+     * Remove all children from the supplied SWT composite.
+     * @param parent the composite from which all children will be removed.
+     * @see Control::dispose
+     */
     public static void clearChildren(Composite parent) {
         for (Control child : parent.getChildren()) {
             child.dispose();
         }
     }
 
+    /**
+     * Display an error message to the eclipse user.
+     * @param message the error message to display in textual form.
+     */
     public static void reportError(String message) {
         StatusManager.getManager().handle(new Status(IStatus.ERROR, PluginConfig.PLUGIN_ID, message),
                 StatusManager.SHOW);
     }
 
+    /**
+     * Get an file reference on the file currenlty opened by the supplied editor.
+     */
     public static IFile getFileForEditor(IEditorPart editor) {
         IFile file = null;
         if (editor != null
@@ -35,6 +50,11 @@ public class EclipseUtils {
         return file;
     }
 
+    /**
+     * Get the path to the workspace that is currently opened by the eclipse user.
+     * @param bundle the eclipse environment bundle.
+     * @return the path to the workspace in textual form.
+     */
     public static String getCurrentWorkspaceDirectory(Bundle bundle) {
         IPath bundlePath = Platform.getStateLocation(bundle); // workspace/.metadata/.plugins/.textannotation
 
@@ -48,6 +68,11 @@ public class EclipseUtils {
         return result.substring(0, result.length() - 1);
     }
 
+    /**
+     * Open the eclipse create-wizard with the specified ID. The wizard has to be specified as an
+     * contribution by either the eclipse core platform or by some currently loaded plugin.
+     * @param id the ID of the wizard to be opened.
+     */
     public static void openWizard(String id) {
         // https://resheim.net/2010/07/invoking-eclipse-wizard.html
 
