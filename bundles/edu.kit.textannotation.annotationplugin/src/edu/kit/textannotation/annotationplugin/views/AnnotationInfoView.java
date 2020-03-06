@@ -18,10 +18,14 @@ import org.eclipse.ui.*;
 
 import javax.inject.Inject;
 
-
+/**
+ * The info view which is contributed to the plugin. See the plugins documentation for more details on
+ * its contributing views.
+ */
 public class AnnotationInfoView extends ViewPart {
     public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationInfoView";
 
+    /** This event manager fires when the meta data attached to the current annotation changes. */
     public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("infoview:changedmeta");
 
     private AnnotationTextEditor editor;

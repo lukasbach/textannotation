@@ -12,6 +12,15 @@ import org.eclipse.swt.widgets.Label;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This UI component defines a reusable title component, which offers the following subcomponents:
+ *
+ * <ul>
+ *     <li>A primary header text</li>
+ *     <li>A subheader text</li>
+ *     <li>A list of buttons which is displayed to the right of the header texts</li>
+ * </ul>
+ */
 public class Header {
     private LayoutUtilities lu = new LayoutUtilities();
     private String title;
@@ -34,22 +43,43 @@ public class Header {
         buttons = new ArrayList<>(4);
     }
 
+    /**
+     * Create a new header.
+     * @param text the text of the primary header title
+     * @return the Header instance
+     */
     public static Header withTitle(String text) {
         Header h = new Header();
         h.title = text;
         return h;
     }
 
+    /**
+     * Extend an existing header by a subtitle
+     * @param text the text of the subheader title
+     * @return the Header instance for chainability
+     */
     public Header withSubTitle(String text) {
         this.subtitle = text;
         return this;
     }
 
+    /**
+     * Extend an existing header by a button
+     * @param text the displayed text of the button
+     * @param onClick the handler which is invoked when the button is clicked
+     * @return the Header instance for chainability
+     */
     public Header withButton(String text, Runnable onClick) {
         buttons.add(new HeaderButton(text, onClick));
         return this;
     }
 
+    /**
+     * Render the header component into the supplied composite
+     * @param parent the composite in which the header is rendered into
+     * @return the composite which contains solely the header component
+     */
     public Composite render(Composite parent) {
         Composite container = new Composite(parent, SWT.NULL);
         container.setLayoutData(lu.horizontalFillingGridData());

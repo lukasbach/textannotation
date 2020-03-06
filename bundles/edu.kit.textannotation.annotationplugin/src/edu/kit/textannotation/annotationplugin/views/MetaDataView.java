@@ -12,8 +12,15 @@ import org.eclipse.swt.widgets.*;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
+/**
+ * This class defines a reusable class component for displaying and editing a set of metadata. This data
+ * has to be modelled using {@link MetaDataContainer}.
+ */
 public class MetaDataView {
+    /** This manager models events in which metadata fields are changed, e.g. new fields are added or values are changed. */
     public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("metadataview:changedmeta");
+
+    /** This manager models events in which the parent composite should be resized, e.g. because a new field was added. */
     public EventManager<EventManager.EmptyEvent> onShouldResize = new EventManager<>("metadataview:changedmeta");
 
     private final LayoutUtilities lu;
@@ -24,7 +31,15 @@ public class MetaDataView {
     private final boolean canRemoveKeys;
     private final boolean canAddKeys;
 
-
+    /**
+     * Create a new metadata view with the supplied defaults.
+     * @param parent the composite in which the metadata view will be rendered into.
+     * @param metaData the metadata container which contains the fields that are being displayed and editable.
+     * @param canEditKeys a flag determining whether the user can edit keys in metadata fields.
+     * @param canEditValues a flag determining whether the user can edit values in metadata fields.
+     * @param canRemoveKeys a flag determining whether the user can remove fields from the metadata set.
+     * @param canAddKeys a flag determining whether the user can add fields to the metadata set.
+     */
     public MetaDataView(Composite parent, MetaDataContainer metaData, boolean canEditKeys,
                         boolean canEditValues, boolean canRemoveKeys, boolean canAddKeys) {
         this.lu = new LayoutUtilities();

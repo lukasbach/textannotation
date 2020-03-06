@@ -26,22 +26,15 @@ import org.eclipse.ui.ide.IDE;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * This is a sample new wizard. Its role is to create a new file 
- * resource in the provided container. If the container resource
- * (a folder or a project) is selected in the workspace 
- * when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file with the extension
- * "mpe". If a sample multi-page editor (also available
- * as a template) is registered for the same extension, it will
- * be able to open it.
+ * This wizard is responsible for creating new annotatable text files. It is
+ * registered as an direct contribution by the eclipse plugin.
  */
-
 public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 	private TextAnnotationFileWizardPage page;
 	private ISelection selection;
 
 	/**
-	 * Constructor for SampleNewWizard.
+	 * Constructor for TextAnnotationFileWizard.
 	 */
 	public TextAnnotationFileWizard() {
 		super();
@@ -94,7 +87,6 @@ public class TextAnnotationFileWizard extends Wizard implements INewWizard {
 	 * file if missing or just replace its contents, and open
 	 * the editor on the newly created file.
 	 */
-
 	private void doFinish(
 		String containerName,
 		String fileName,

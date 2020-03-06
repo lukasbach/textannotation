@@ -18,14 +18,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * This is a sample new wizard. Its role is to create a new file 
- * resource in the provided container. If the container resource
- * (a folder or a project) is selected in the workspace 
- * when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file with the extension
- * "mpe". If a sample multi-page editor (also available
- * as a template) is registered for the same extension, it will
- * be able to open it.
+ * This wizard is responsible for creating new profile files. It is registered as an direct
+ * contribution by the eclipse plugin, and references {@link ProfileWizardPage} as UI.
  */
 
 public class ProfileWizard extends Wizard implements INewWizard {
@@ -33,7 +27,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	private ISelection selection;
 
 	/**
-	 * Constructor for SampleNewWizard.
+	 * Constructor for ProfileWizard.
 	 */
 	public ProfileWizard() {
 		super();
@@ -84,7 +78,6 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	 * The worker method. It will find the container and create the
 	 * file if missing or just replace its contents.
 	 */
-
 	private void doFinish(
 		String containerName,
 		String fileName,
@@ -127,8 +120,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	/**
 	 * We will initialize file contents with a sample text.
 	 */
-
-	private InputStream openContentStream(String profileName) throws CoreException {
+	private InputStream openContentStream(String profileName) {
 		String content = "";
 
 		content = (new AnnotationProfileXmlInterface()).buildXml(new AnnotationProfile(profileName));

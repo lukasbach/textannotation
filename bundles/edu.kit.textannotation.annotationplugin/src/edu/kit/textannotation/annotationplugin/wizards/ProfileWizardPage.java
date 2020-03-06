@@ -17,22 +17,16 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
- * The "New" wizard page allows setting the container for the new file as well
- * as the file name. The page will only accept file name without the extension
- * OR with the extension that matches the expected one (mpe).
+ * This defines the UI for the {@link ProfileWizard}, and allows the creation of new annotation profile files.
  */
-
 public class ProfileWizardPage extends WizardPage {
 	private Text containerText;
-
 	private Text fileText;
-
 	private ISelection selection;
-
 	private Text profile;
 
 	/**
-	 * Constructor for TextAnnotationFileWizardPage.
+	 * Constructor for ProfileWizardPage.
 	 */
 	public ProfileWizardPage(ISelection selection) {
 		super("wizardPage");
@@ -87,10 +81,6 @@ public class ProfileWizardPage extends WizardPage {
 		setControl(container);
 	}
 
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
-
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
@@ -110,11 +100,6 @@ public class ProfileWizardPage extends WizardPage {
 		fileText.setText("newProfile." + PluginConfig.ANNOTATION_PROFILE_EXTENSION);
 	}
 
-	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
-	 */
-
 	private void handleBrowse() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
@@ -126,10 +111,6 @@ public class ProfileWizardPage extends WizardPage {
 			}
 		}
 	}
-
-	/**
-	 * Ensures that both text fields are set.
-	 */
 
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
@@ -177,14 +158,23 @@ public class ProfileWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
+	/**
+	 * Get the name of the folder in which the profile file should be placed.
+	 */
 	String getContainerName() {
 		return containerText.getText();
 	}
 
+	/**
+	 * Get the filename of the profile file that should be created.
+	 */
 	String getFileName() {
 		return fileText.getText();
 	}
 
+	/**
+	 * Get the profile name of the profile file that should be created.
+	 */
 	String getProfile() {
 		return profile.getText();
 	}

@@ -20,8 +20,12 @@ import org.eclipse.swt.custom.StyledText;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * This class specifies a dialog where a annotation profile can be edited. The profile must exist on disk
+ * and must be discoverable by the {@link AnnotationProfileRegistry}.
+ * The dialog can be opened with the {@link EditProfileDialog::openWindow} method.
+ */
 public class EditProfileDialog extends Shell {
-	private Text txtSelectedItemName;
 	private AnnotationProfile profile;
 	private AnnotationClass selectedAnnotationClass;
 	private Runnable onSave;
@@ -43,7 +47,14 @@ public class EditProfileDialog extends Shell {
 			"243, 156, 18",
 			"241, 196, 15"
 	};
-	
+
+	/**
+	 * Open a new edit profile dialog.
+	 * @param registry an annotation profile registry which is used to resolve the profile class.
+	 * @param profileName the name of the profile which is edited. The profile registry is used to resolve the profile.
+	 * @param onProfileChange a handler that is called when the profile is changed from within the editor, with the
+	 *                        changed profile data as payload.
+	 */
 	public static void openWindow(AnnotationProfileRegistry registry, String profileName,
 								  Consumer<AnnotationProfile> onProfileChange) {
 		try {
@@ -67,8 +78,10 @@ public class EditProfileDialog extends Shell {
 	}
 
 	/**
-	 * Create the shell.
-	 * @param display
+	 * Create the dialog shell.
+	 * @param display the display which is used for the dialog
+	 * @param profile the annotation profile that is being edited
+	 * @param onSave a change handler that is invoked when the profile is changed, with the changed profile as payload
 	 */
 	public EditProfileDialog(Display display, AnnotationProfile profile, Consumer<AnnotationProfile> onSave) {
 		super(display, SWT.SHELL_TRIM);

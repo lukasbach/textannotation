@@ -27,7 +27,10 @@ import org.eclipse.swt.SWT;
 
 import javax.inject.Inject;
 
-
+/**
+ * The control view which is contributed to the plugin. See the plugins documentation for more details on
+ * its contributing views.
+ */
 public class AnnotationControlsView extends ViewPart {
 	public static final String ID = "edu.kit.textannotation.annotationplugin.views.AnnotationControlsView";
 	private GridLayout layout;

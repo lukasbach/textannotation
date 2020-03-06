@@ -22,20 +22,13 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * The "New" wizard page allows setting the container for the new file as well
- * as the file name. The page will only accept file name without the extension
- * OR with the extension that matches the expected one (mpe).
+ * This defines the UI for the {@link TextAnnotationFileWizard}, and allows the creation of new annotatable text files.
  */
-
 public class TextAnnotationFileWizardPage extends WizardPage {
 	private Text containerText;
-
 	private Text fileText;
-
 	private Text templateFileText;
-
 	private ISelection selection;
-
 	private Combo profile;
 
 	/**
@@ -127,10 +120,6 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		setControl(container);
 	}
 
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
-
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
@@ -149,11 +138,6 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		}
 		fileText.setText("newAnnotationFile." + PluginConfig.ANNOTATABLE_FILE_EXTENSION);
 	}
-
-	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
-	 */
 
 	private void handleBrowseContainer(Text target, String message) {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
@@ -174,10 +158,6 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		String result = dialog.open();
 		target.setText(result);
 	}
-
-	/**
-	 * Ensures that both text fields are set.
-	 */
 
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
@@ -231,18 +211,30 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
+	/**
+	 * Get the name of the folder in which the annotatable text file should be placed.
+	 */
 	String getContainerName() {
 		return containerText.getText();
 	}
 
+	/**
+	 * Get the path to the file which should be used as text template.
+	 */
 	String getTemplateFileName() {
 		return templateFileText.getText();
 	}
 
+	/**
+	 * Get the filename of the annotatable text file that should be created.
+	 */
 	String getFileName() {
 		return fileText.getText();
 	}
 
+	/**
+	 * Get the name of the profile that should be referenced by the annotatable text file.
+	 */
 	String getProfile() {
 		return profile.getText();
 	}
