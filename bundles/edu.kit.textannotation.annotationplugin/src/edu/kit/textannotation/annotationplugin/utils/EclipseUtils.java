@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jgit.annotations.Nullable;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -71,9 +72,11 @@ public class EclipseUtils {
     /**
      * Open the eclipse create-wizard with the specified ID. The wizard has to be specified as an
      * contribution by either the eclipse core platform or by some currently loaded plugin.
+     * This call is blocking until the wizard is closed.
      * @param id the ID of the wizard to be opened.
+     * @return a reference on the wizard if it could be found, or null otherwise.
      */
-    public static void openWizard(String id) {
+    @Nullable public static IWizard openWizard(String id) {
         // https://resheim.net/2010/07/invoking-eclipse-wizard.html
 
         // First see if this is a "new wizard".
@@ -97,9 +100,12 @@ public class EclipseUtils {
                         Display.getDefault().getActiveShell(), wizard);
                 wd.setTitle(wizard.getWindowTitle());
                 wd.open();
+                return wizard;
             }
         } catch (CoreException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 }

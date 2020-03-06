@@ -1,9 +1,13 @@
 package edu.kit.textannotation.annotationplugin.views;
 
+import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
+import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
+import edu.kit.textannotation.annotationplugin.utils.ComboSelectionListener;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
+import edu.kit.textannotation.annotationplugin.wizards.ProfileWizard;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -13,10 +17,13 @@ import org.eclipse.swt.widgets.*;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -26,7 +33,9 @@ import java.util.function.Consumer;
  * The dialog can be opened with the {@link EditProfileDialog::openWindow} method.
  */
 public class EditProfileDialog extends Shell {
+	private AnnotationProfileRegistry registry;
 	private AnnotationProfile profile;
+	private java.util.List<AnnotationProfile> allProfiles;
 	private AnnotationClass selectedAnnotationClass;
 	private Runnable onSave;
 	private LayoutUtilities lu = new LayoutUtilities();
@@ -59,8 +68,7 @@ public class EditProfileDialog extends Shell {
 								  Consumer<AnnotationProfile> onProfileChange) {
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
-			AnnotationProfile profile = registry.findProfile(profileName);
-			EditProfileDialog shell = new EditProfileDialog(display, profile, p -> {
+			EditProfileDialog shell = new EditProfileDialog(display, registry, profileName, p -> {
 				registry.overwriteProfile(p);
 				onProfileChange.accept(p);
 			});
@@ -80,30 +88,77 @@ public class EditProfileDialog extends Shell {
 	/**
 	 * Create the dialog shell.
 	 * @param display the display which is used for the dialog
-	 * @param profile the annotation profile that is being edited
+	 * @param editingProfile the name of the profile being edited
+	 * @param registry the profile registry to resolve the profile information and save changes back to disk
 	 * @param onSave a change handler that is invoked when the profile is changed, with the changed profile as payload
 	 */
-	public EditProfileDialog(Display display, AnnotationProfile profile, Consumer<AnnotationProfile> onSave) {
+	public EditProfileDialog(Display display, AnnotationProfileRegistry registry,
+							 String editingProfile, Consumer<AnnotationProfile> onSave) {
 		super(display, SWT.SHELL_TRIM);
-		this.profile = profile;
+
+		this.registry = registry;
+
+		reloadProfiles(editingProfile);
+
 		this.selectedAnnotationClass = null;
 		this.onSave = () -> onSave.accept(profile);
 
-		rebuildContent(this);
 		createContents();
+		rebuildContent(this);
+	}
+
+	private void reloadProfiles(String editingProfile) {
+		try {
+			profile = registry.findProfile(editingProfile);
+			allProfiles = registry.getProfiles();
+		} catch (ProfileNotFoundException | InvalidAnnotationProfileFormatException e) {
+			EclipseUtils.reportError(e.getMessage());
+		}
 	}
 
 	private void rebuildContent(Composite parent) {
 		EclipseUtils.clearChildren(parent);
 
-		// Composite mainContainer = new Composite(parent, SWT.NONE);
-		parent.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+		setText(String.format("Editing Profile \"%s\"", profile.getName()));
 
-		Composite leftContainer = new Composite(parent, SWT.NONE);
+		parent.setLayout(lu.gridLayout().withNumCols(1).get());
+
+		Composite topContainer = new Composite(parent, SWT.NONE);
+		topContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+
+		Combo profileSelector = new Combo(topContainer, SWT.DROP_DOWN | SWT.BORDER);
+		allProfiles.forEach(p -> profileSelector.add(p.getName()));
+		profileSelector.select(allProfiles.indexOf(new AnnotationProfile(profile.getName())));
+		ComboSelectionListener.create(profileSelector, (value) -> {
+			allProfiles
+				.stream()
+				.filter(p -> p.getName().equals(value))
+				.findAny()
+				.ifPresent(newProfile -> {
+					profile = newProfile;
+					rebuildContent(parent);
+				});
+		});
+
+		Button buttonNewProfile = new Button(topContainer, SWT.PUSH);
+		buttonNewProfile.setText("New Profile");
+		buttonNewProfile.addListener(SWT.Selection, e -> {
+			close();
+			String wizardId = "edu.kit.textannotation.annotationplugin.wizards.ProfileWizard";
+			EclipseUtils.openWizard(wizardId); // openwizard is blocking
+			// reloadProfiles(profile.getName());
+			// rebuildContent(parent);
+		});
+
+		Composite bottomContainer = new Composite(parent, SWT.NONE);
+		bottomContainer.setLayoutData(lu.completelyFillingGridData());
+		bottomContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+
+		Composite leftContainer = new Composite(bottomContainer, SWT.NONE);
 		leftContainer.setLayout(lu.gridLayout().withNumCols(1).get());
 		leftContainer.setLayoutData(lu.completelyFillingGridData());
 
-		Composite rightContainer = new Composite(parent, SWT.NONE);
+		Composite rightContainer = new Composite(bottomContainer, SWT.NONE);
 		rightContainer.setLayout(lu.gridLayout().withNumCols(1).get());
 		rightContainer.setLayoutData(lu.verticallyFillingGridData());
 
@@ -112,14 +167,6 @@ public class EditProfileDialog extends Shell {
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
 		annotationClassesList.addListener(SWT.Selection, e -> selectAnnotationClass(annotationClassesList.getSelection()[0]));
 
-
-		// CLabel canBeMatchedWithLabel = new CLabel(rightContainer, SWT.NONE);
-		// canBeMatchedWithLabel.setText("Can be matched with:");
-
-		// List canBeMatchedWithList = new List(rightContainer, SWT.BORDER);
-		// canBeMatchedWithList.setItems("Verb", "Objective", "Something", "Else");
-		// canBeMatchedWithList.setLayoutData(lu.gridData().withVerticalAlignment(SWT.FILL).get());
-		// canBeMatchedWithList.setLayoutData(lu.completelyFillingGridData());
 		Label seperator;
 
 		if (selectedAnnotationClass != null) {
@@ -201,7 +248,8 @@ public class EditProfileDialog extends Shell {
 
 	private void createContents() {
 		setText("Edit Profile");
-		setSize(550, 350);
+		setSize(550, 400);
+		setMinimumSize(550, 400);
 	}
 
 	private void selectAnnotationClass(String annotationClassName) {

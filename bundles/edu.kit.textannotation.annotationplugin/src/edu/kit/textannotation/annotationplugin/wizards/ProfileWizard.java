@@ -1,7 +1,10 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
+import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.AnnotationProfileXmlInterface;
+import edu.kit.textannotation.annotationplugin.utils.EventManager;
+import edu.kit.textannotation.annotationplugin.views.EditProfileDialog;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -9,8 +12,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.helpers.AnnotationRegistry;
+import org.osgi.framework.FrameworkUtil;
 
+import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,6 +32,11 @@ import java.lang.reflect.InvocationTargetException;
 public class ProfileWizard extends Wizard implements INewWizard {
 	private ProfileWizardPage page;
 	private ISelection selection;
+
+	@Inject private	IWorkbench workbench;
+
+	/** This event fires when the wizard finishes and a new profile is created. */
+	public EventManager<EventManager.EmptyEvent> onFinish = new EventManager<>("profilewizard:finish");
 
 	/**
 	 * Constructor for ProfileWizard.
@@ -71,6 +83,14 @@ public class ProfileWizard extends Wizard implements INewWizard {
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
+		onFinish.fire(new EventManager.EmptyEvent());
+
+		Display.getDefault().asyncExec(() -> EditProfileDialog.openWindow(
+				AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass())),
+				profileName,
+				annotationProfile -> {}
+		));
+
 		return true;
 	}
 
