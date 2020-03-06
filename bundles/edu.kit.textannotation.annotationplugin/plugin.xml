@@ -26,14 +26,14 @@
       <wizard
             id="edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard"
             name="Annotatable Text File"
-            icon="icons/sample.png"
+            icon="icons/icon.png"
             class="edu.kit.textannotation.annotationplugin.wizards.TextAnnotationFileWizard"
             category="edu.kit.textannotation.annotationplugin">
       </wizard>
       <wizard
               id="edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"
               name="Text Annotation Profile"
-              icon="icons/sample.png"
+              icon="icons/icon.png"
               class="edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"
               category="edu.kit.textannotation.annotationplugin">
       </wizard>
@@ -47,7 +47,7 @@
       <view
             category="edu.kit.textannotation.annotationplugin"
             class="edu.kit.textannotation.annotationplugin.views.AnnotationControlsView"
-            icon="icons/sample.png"
+            icon="icons/icon.png"
             id="edu.kit.textannotation.annotationplugin.views.AnnotationControlsView"
             inject="true"
             name="Text Annotation Controls">
@@ -55,7 +55,7 @@
       <view
               category="edu.kit.textannotation.annotationplugin"
               class="edu.kit.textannotation.annotationplugin.views.AnnotationInfoView"
-              icon="icons/sample.png"
+              icon="icons/icon.png"
               id="edu.kit.textannotation.annotationplugin.views.AnnotationInfoView"
               inject="true"
               name="Text Annotation Details">

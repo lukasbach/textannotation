@@ -28,3 +28,5 @@ The plugin adds a custom perspective that provides all necessary views for using
 
 ## About
 (TODO)
+
+The icon used in the plugin is part of the Silk Iconset by [famfamfam.com](famfamfam.com), and licensec under the [CC Attribution 2.5](http://creativecommons.org/licenses/by/2.5/) license.
