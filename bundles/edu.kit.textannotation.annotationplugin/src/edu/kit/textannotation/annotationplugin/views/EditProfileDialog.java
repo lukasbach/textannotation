@@ -12,6 +12,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
@@ -40,22 +41,11 @@ public class EditProfileDialog extends Shell {
 	private Runnable onSave;
 	private LayoutUtilities lu = new LayoutUtilities();
 
-	private CCombo colorSelector;
-	private StyledText colorDisplay;
+	private Button colorSelector;
 	private Text itemName;
 	private List annotationClassesList;
 
 	private int newClassNameCounter = 1;
-
-	private String[] defaultColors = new String[] {
-			"46, 204, 113",
-			"52, 152, 219",
-			"155, 89, 182",
-			"231, 76, 60",
-			"230, 126, 34",
-			"243, 156, 18",
-			"241, 196, 15"
-	};
 
 	/**
 	 * Open a new edit profile dialog.
@@ -175,22 +165,14 @@ public class EditProfileDialog extends Shell {
 			itemName.setText("Selected Item Name");
 			itemName.addModifyListener(e -> changeAnnotationClassName(itemName.getText()));
 
-			Composite colorSelectorContainer = new Composite(rightContainer, SWT.NONE);
-			colorSelectorContainer.setLayoutData(lu.horizontalFillingGridData());
-			colorSelectorContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
-
-			colorSelector = new CCombo(colorSelectorContainer, SWT.BORDER);
+			colorSelector = new Button(rightContainer, SWT.PUSH);
+			colorSelector.setBackground(selectedAnnotationClass.getColor());
 			colorSelector.setLayoutData(lu.horizontalFillingGridData());
-			colorSelector.setText("#abcdef");
-			colorSelector.setLayoutData(lu.gridData().withExcessHorizontalSpace(true).withHorizontalAlignment(SWT.FILL).get());
-			colorSelector.addModifyListener(e -> changeAnnotationColor(colorSelector.getText()));
-			colorSelector.setItems(defaultColors);
-
-			colorDisplay = new StyledText(colorSelectorContainer, SWT.BORDER);
-			// colorDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-			int i = colorSelector.getItemHeight();
-			colorDisplay.setLayoutData(lu.gridData().withWidthHint(i).withHeightHint(i).get());
-			colorDisplay.setEditable(false);
+			colorSelector.setText("Change Color");
+			colorSelector.addListener(SWT.Selection, e -> {
+				ColorDialog dialog = new ColorDialog(parent.getShell());
+				changeAnnotationColor(dialog.open());
+			});
 
 			seperator = new Label(rightContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
 			seperator.setLayoutData(lu.horizontalFillingGridData());
@@ -271,18 +253,10 @@ public class EditProfileDialog extends Shell {
 		annotationClassesList.setSelection(new String[]{ name });
 	}
 
-	private void changeAnnotationColor(String colorString) {
-		try {
-			Integer[] colorInts = Arrays.stream(colorString.split(", "))
-					.map(Integer::parseInt).toArray(Integer[]::new);
-			Color color = new Color(Display.getCurrent(), colorInts[0], colorInts[1], colorInts[2]);
-			selectedAnnotationClass.setColor(color);
-			colorDisplay.setBackground(color);
-		} catch (Exception e) {
-			System.out.println("Could not parse color: " + colorString);
-			// If something goes wrong, the colors is probably incorrectly formatted. Just attempt reading it on
-			// the next input
-		}
+	private void changeAnnotationColor(RGB col) {
+		Color color = new Color(Display.getCurrent(), col.red, col.green, col.blue);
+		selectedAnnotationClass.setColor(color);
+		colorSelector.setBackground(color);
 	}
 
 	private void removeCurrentClass() {
