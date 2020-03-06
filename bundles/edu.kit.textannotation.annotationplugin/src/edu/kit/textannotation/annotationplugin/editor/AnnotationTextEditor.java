@@ -147,7 +147,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		int length = p.y;
 		
 		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(), 
-				offset, length, annotationClass.getName(), new String[0]);
+				offset, length, annotationClass.getName());
 		System.out.println("Annotating: " + annotation.toString());
 		textModelData.getAnnotations().addAnnotation(annotation);
 		

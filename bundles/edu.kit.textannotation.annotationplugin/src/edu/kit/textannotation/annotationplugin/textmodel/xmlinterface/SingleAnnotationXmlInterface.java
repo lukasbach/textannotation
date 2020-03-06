@@ -26,8 +26,7 @@ class SingleAnnotationXmlInterface implements XmlNodeParserInterface<SingleAnnot
                 attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ID).getTextContent(),
                 Integer.parseInt(attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET).getTextContent()),
                 Integer.parseInt(attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH).getTextContent()),
-                attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER).getTextContent(),
-                new String[] {}
+                attributes.getNamedItem(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER).getTextContent()
         );
 
         for (int i = 0; i < childs.getLength(); i++) {

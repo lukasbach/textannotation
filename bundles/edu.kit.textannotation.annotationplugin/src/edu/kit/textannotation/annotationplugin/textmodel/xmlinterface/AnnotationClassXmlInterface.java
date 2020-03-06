@@ -40,8 +40,7 @@ public class AnnotationClassXmlInterface implements XmlNodeParserInterface<Annot
         AnnotationClass annotationClass = new AnnotationClass(
                 attributes.getNamedItem("name").getTextContent(),
                 color,
-                description,
-                new LinkedList<>()
+                description
         );
 
         wrappedNode.forEach(n -> {

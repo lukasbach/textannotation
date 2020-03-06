@@ -15,19 +15,16 @@ import org.eclipse.swt.graphics.Color;
 public class AnnotationClass {
 	private String name;
 	private Color color;
-	private List<AnnotationClass> possibleMatchings;
 	private @Nullable String description;
 
 	/** The metadata for this annotation class. */
 	public final MetaDataContainer metaData;
 
 	/** Create a new annotation class with all available options. */
-	public AnnotationClass(String name, Color color, @Nullable String description,
-						   List<AnnotationClass> possibleMatchings) {
+	public AnnotationClass(String name, Color color, @Nullable String description) {
 		this.name = name;
 		this.color = color;
 		this.description = description;
-		this.possibleMatchings = possibleMatchings;
 		this.metaData = new MetaDataContainer();
 	}
 
@@ -36,7 +33,6 @@ public class AnnotationClass {
 		this.name = name;
 		this.color = color;
 		this.description = null;
-		this.possibleMatchings = new LinkedList<>();
 		this.metaData = new MetaDataContainer();
 	}
 
@@ -60,10 +56,6 @@ public class AnnotationClass {
 		return String.format("%s, %s, %s", color.getRed(), color.getGreen(), color.getBlue());
 	}
 	
-	public List<AnnotationClass> getPossibleMatchings() {
-		return possibleMatchings;
-	}
-
 	/** Set the name of the annotation class. */
 	public void setName(String name) {
 		this.name = name;
@@ -78,18 +70,6 @@ public class AnnotationClass {
 		this.color = color;
 	}
 	
-	public void addPossibleMatching(AnnotationClass matching) {
-		this.possibleMatchings.add(matching);
-	}
-	
-	public void removePossibleMatching(AnnotationClass matching) {
-		this.removePossibleMatching(matching.getName());
-	}
-	
-	public void removePossibleMatching(String matchingName) {
-		this.possibleMatchings.removeIf(m -> m.getName().equals(matchingName));
-	}
-
 	/** Get a textual description of the annotation class. */
 	public String getDescription() {
 		return description == null ? "" : description;

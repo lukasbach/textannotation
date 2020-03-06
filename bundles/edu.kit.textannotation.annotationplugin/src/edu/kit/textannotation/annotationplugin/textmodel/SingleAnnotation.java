@@ -19,7 +19,6 @@ public class SingleAnnotation {
 	private int offset;
 	private int length;
 	private String annotationIdentifier;
-	private String[] references;
 
 	/** This event fires when the location of the region of the annotation changes. */
 	public final EventManager<EventManager.EmptyEvent> onLocationChange =
@@ -34,15 +33,12 @@ public class SingleAnnotation {
 	 * @param offset where the annotation starts, relative to the beginning of the text document.
 	 * @param length of the annotation
 	 * @param annotationIdentifier the ID of the associated annotation class.
-	 * @param references
 	 */
-	// TODO remove references
-	public SingleAnnotation(String id, int offset, int length, String annotationIdentifier, String[] references) {
+	public SingleAnnotation(String id, int offset, int length, String annotationIdentifier) {
 		this.id = id;
 		this.offset = offset;
 		this.length = length;
 		this.annotationIdentifier = annotationIdentifier; // TODO rename to annotationclass
-		this.references = references;
 	}
 
 	/** Return the unique ID which identifies this annotation. */
