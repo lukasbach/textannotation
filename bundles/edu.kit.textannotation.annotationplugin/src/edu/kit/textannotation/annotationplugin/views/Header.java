@@ -98,7 +98,7 @@ public class Header {
         setFontSize(titleLabel, 14);
 
         if (subtitle != null) {
-            Label subtitleLabel = new Label(left, SWT.NULL);
+            Label subtitleLabel = new Label(left, SWT.WRAP);
             subtitleLabel.setText(subtitle);
             setFontSize(subtitleLabel, 10);
         }

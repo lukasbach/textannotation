@@ -15,10 +15,11 @@ import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry
 import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.*;
 
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
@@ -102,36 +103,36 @@ public class AnnotationControlsView extends ViewPart {
 		layout = new GridLayout(1, false);
 		parent.setLayout(layout);
 
-		Composite selectorComposite = new Composite(parent, SWT.NONE);
-		selectorComposite.setLayout(new GridLayout(3, false));
+		Header
+				.withTitle(textModelData.getProfileName())
+				.withButton("Change Profile", () -> {
+					ElementListSelectionDialog dialog = new ElementListSelectionDialog(parent.getShell(), new LabelProvider());
+					dialog.setTitle("Change Profile");
+					dialog.setMessage("Change Profile for the current annotation text file");
+					dialog.setElements(profiles.stream().map(AnnotationProfile::getName).toArray());
+					dialog.open();
+					String selectedProfileName = (String) dialog.getFirstResult();
+					if (selectedProfileName != null) {
+						textModelData.setProfileName(selectedProfileName);
+						rebuildContent(parent, textModelData);
+					}
 
-		profileSelector = new Combo(selectorComposite, SWT.DROP_DOWN | SWT.BORDER);
-		profiles.forEach(p -> profileSelector.add(p.getName()));
-		profileSelector.select(profiles.indexOf(new AnnotationProfile(textModelData.getProfileName())));
-		ComboSelectionListener.create(profileSelector, (value) -> {
-			textModelData.setProfileName(value);
-			rebuildContent(parent, textModelData);
-		});
+				})
+				.withButton("Edit Profile", () -> {
+					EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> {
+						rebuildContent(parent, textModelData);
+						editor.onProfileChange.fire(p);
+					});
+				})
+				.render(parent);
 
-		buttonEditProfile = new Button(selectorComposite, SWT.PUSH);
-		buttonNewProfile = new Button(selectorComposite, SWT.PUSH);
-
-		buttonEditProfile.setText("Edit Profile");
-		buttonNewProfile.setText("New Profile");
-		
-		buttonEditProfile.addListener(SWT.Selection, event -> {
-			EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> {
-				rebuildContent(parent, textModelData);
-				editor.onProfileChange.fire(p);
-			});
-		});
-
-		buttonNewProfile.addListener(SWT.Selection, e ->
-				EclipseUtils.openWizard("edu.kit.textannotation.annotationplugin.wizards.ProfileWizard"));
-		
-		for (Control c: Arrays.asList(selectorComposite, profileSelector)) {
-			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		}
+		Label subtitleLabel = new Label(parent, SWT.WRAP | SWT.LEFT);
+		subtitleLabel.setText(String.format("The annotatable text file currently used the \"%s\" annotation profile.",
+				textModelData.getProfileName()));
+		subtitleLabel.setLayoutData(new GridData(SWT.HORIZONTAL, SWT.TOP, true, false, 1, 1));
+		FontData[] fD = subtitleLabel.getFont().getFontData();
+		fD[0].setHeight(10);
+		subtitleLabel.setFont(new Font(Display.getDefault(), fD[0]));
 
 		Header.withTitle("Selection Strategy").render(parent);
 		Composite selectionStrategiesComposite = new Composite(parent, SWT.NONE);
