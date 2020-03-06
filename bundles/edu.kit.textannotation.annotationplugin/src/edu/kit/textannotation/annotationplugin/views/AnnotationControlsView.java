@@ -16,6 +16,7 @@ import edu.kit.textannotation.annotationplugin.profile.ProfileNotFoundException;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
 import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.*;
@@ -158,12 +159,22 @@ public class AnnotationControlsView extends ViewPart {
 			AnnotationProfile profile = registry.findProfile(textModelData.getProfileName());
 
 			for (AnnotationClass a: profile.getAnnotationClasses()) {
-				Button b = new Button(parent, SWT.PUSH | SWT.FILL);
-				b.setText(a.getName());
-				b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-				b.addListener(SWT.Selection, event -> {
+				Composite aclContainer = new Composite(parent, SWT.NONE);
+				aclContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+				aclContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+				StyledText colorDisplay = new StyledText(aclContainer, SWT.BORDER);
+
+				Button button = new Button(aclContainer, SWT.PUSH | SWT.FILL);
+				button.setText(a.getName());
+				button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				button.addListener(SWT.Selection, event -> {
 					new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a, activeSelectionStrategy);
 				});
+
+				colorDisplay.setLayoutData(lu.gridData().withWidthHint(12).withExcessVerticalSpace(true).get());
+				colorDisplay.setEditable(false);
+				colorDisplay.setBackground(a.getColor());
 			}
 		} catch (ProfileNotFoundException e) {
 			EclipseUtils.reportError("Profile " + textModelData.getProfileName() + " was not found.");
