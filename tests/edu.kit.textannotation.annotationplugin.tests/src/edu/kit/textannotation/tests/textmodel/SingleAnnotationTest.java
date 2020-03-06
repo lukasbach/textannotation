@@ -14,7 +14,7 @@ public class SingleAnnotationTest {
 	
 	@Before
 	public void setup() {
-		annotation = new SingleAnnotation("%ID", 1, 2, "%ANNOTATION", null);
+		annotation = new SingleAnnotation("%ID", 1, 2, "%ANNOTATION");
 	}
 	
 	@Test

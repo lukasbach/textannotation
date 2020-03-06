@@ -81,13 +81,13 @@ public class AnnotationSet {
 	private void trimAnnotation(SingleAnnotation annotation) {
 		for (SingleAnnotation existingAnnotation: annotations) {
 			if (annotation.getLength() > 0) {
+				if (existingAnnotation.isContainedWithin(annotation.getStart(), annotation.getEnd())) {
+					annotation.setEnd(existingAnnotation.getStart() - 1);
+				}
 				if (existingAnnotation.containsPosition(annotation.getStart())) {
 					annotation.setStart(existingAnnotation.getEnd() + 1);
 				}
 				if (existingAnnotation.containsPosition(annotation.getEnd())) {
-					annotation.setEnd(existingAnnotation.getStart() - 1);
-				}
-				if (existingAnnotation.isContainedWithin(annotation.getStart(), annotation.getEnd())) {
 					annotation.setEnd(existingAnnotation.getStart() - 1);
 				}
 			}

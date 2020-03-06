@@ -107,14 +107,14 @@ public class ParserTests {
 
 	@Test
 	public void testBuildAnnotationFile()  {
-		SingleAnnotation annotationWithMetadata = new SingleAnnotation("c", 10, 4, "Verb", null);
+		SingleAnnotation annotationWithMetadata = new SingleAnnotation("c", 10, 4, "Verb");
 		annotationWithMetadata.metaData.put("metadatakey", "metadatavalue");
 		
 		TextModelData tmd = new TextModelData(
 			new AnnotationSet(
 				Arrays.asList(
-					new SingleAnnotation("a", 0, 2, "Object", null),
-					new SingleAnnotation("b", 5, 3, "Subject", null),
+					new SingleAnnotation("a", 0, 2, "Object"),
+					new SingleAnnotation("b", 5, 3, "Subject"),
 					annotationWithMetadata
 				)
 			), 

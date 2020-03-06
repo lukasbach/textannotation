@@ -14,7 +14,7 @@ public class AnnotationClassTest {
 	
 	@Test
 	public void testAccessors() {
-		AnnotationClass acl = new AnnotationClass("%NAME", new Color(Display.getCurrent(), 255, 255, 255), "%DESCRIPTION", null);
+		AnnotationClass acl = new AnnotationClass("%NAME", new Color(Display.getCurrent(), 255, 255, 255), "%DESCRIPTION");
 		acl.setDescription("%DESCR");
 		assertEquals(acl.getName(), "%NAME");
 		assertEquals(acl.getColor(), new Color(Display.getCurrent(), 255, 255, 255));
@@ -34,7 +34,7 @@ public class AnnotationClassTest {
 	
 	@Test
 	public void testMetaData() {
-		AnnotationClass acl = new AnnotationClass("%NAME", new Color(Display.getCurrent(), 255, 255, 255), "%DESCRIPTION", null);
+		AnnotationClass acl = new AnnotationClass("%NAME", new Color(Display.getCurrent(), 255, 255, 255), "%DESCRIPTION");
 		assertEquals(0, acl.metaData.size());
 		
 		acl.metaData.put("%KEY1", "%VALUE1");

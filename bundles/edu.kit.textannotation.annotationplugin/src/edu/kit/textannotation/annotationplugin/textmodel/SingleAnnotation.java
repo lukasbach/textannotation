@@ -132,14 +132,14 @@ public class SingleAnnotation {
 	}
 
 	/**
-	 * Return the location in the text document where the region of the annotation starts.
+	 * Return the location in the text document where the region of the annotation starts (inclusive).
 	 */
 	public int getStart() {
 		return getOffset();
 	}
 
 	/**
-	 * Return the location in the text document where the region of the annotation ends.
+	 * Return the location in the text document where the region of the annotation ends (inclusive).
 	 */
 	public int getEnd() {
 		return getOffset() + getLength() - 1;

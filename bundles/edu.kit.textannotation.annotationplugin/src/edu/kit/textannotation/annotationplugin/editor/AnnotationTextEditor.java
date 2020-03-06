@@ -2,6 +2,7 @@ package edu.kit.textannotation.annotationplugin.editor;
 
 import java.util.UUID;
 
+import edu.kit.textannotation.annotationplugin.selectionstrategy.SelectionStrategy;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
@@ -140,14 +141,18 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		return textModelData;
 	}
 
-	/** Add the given annotation class to the text model associated with the currently opened annotation file. */
-	public void annotate(AnnotationClass annotationClass) {
-		Point p = sourceViewer.getSelectedRange();
-		int offset = p.x;
-		int length = p.y;
-		
-		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(), 
-				offset, length, annotationClass.getName());
+	/**
+	 * Add the given annotation class to the text model associated with the currently opened annotation file.
+	 * @param annotationClass the annotation class with which the selection will be annotated.
+	 * @param selectionStrategy the strategy to potentially expand the selection to semantically fitting locations.
+	 */
+	public void annotate(AnnotationClass annotationClass, SelectionStrategy selectionStrategy) {
+		Point originalSelection = sourceViewer.getSelectedRange();
+		Region expandedSelection = selectionStrategy
+				.evaluateSelection(new Region(originalSelection.x, originalSelection.y), textModelData.getDocument());
+
+		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(),
+				expandedSelection.getOffset(), expandedSelection.getLength(), annotationClass.getName());
 		System.out.println("Annotating: " + annotation.toString());
 		textModelData.getAnnotations().addAnnotation(annotation);
 		
