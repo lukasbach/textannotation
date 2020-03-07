@@ -85,6 +85,12 @@
                     <xs:documentation xml:lang="en">The name of the annotation profile.</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
+
+            <xs:attribute name="id" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">The unique ID of the annotation profile.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
 </xs:schema>

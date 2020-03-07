@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 /**
  * This wizard is responsible for creating new profile files. It is registered as an direct
@@ -63,9 +64,10 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String profileName = page.getProfile();
+		final String profileId = UUID.randomUUID().toString();
 		IRunnableWithProgress op = monitor -> {
 			try {
-				doFinish(containerName, fileName, profileName, monitor);
+				doFinish(containerName, fileName, profileName, profileId, monitor);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			} finally {
@@ -85,7 +87,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 
 		Display.getDefault().asyncExec(() -> EditProfileDialog.openWindow(
 				AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass())),
-				profileName,
+				profileId,
 				annotationProfile -> {},
 				null
 		));
@@ -101,6 +103,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		String containerName,
 		String fileName,
 		String profileName,
+		String profileId,
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
@@ -113,7 +116,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream(profileName);
+			InputStream stream = openContentStream(profileName, profileId);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -139,10 +142,11 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	/**
 	 * We will initialize file contents with a sample text.
 	 */
-	private InputStream openContentStream(String profileName) {
+	private InputStream openContentStream(String profileName, String profileId) {
 		String content = "";
 
-		content = (new AnnotationProfileXmlInterface()).buildXml(new AnnotationProfile(profileName));
+		content = (new AnnotationProfileXmlInterface())
+				.buildXml(new AnnotationProfile(profileId, profileName));
 
 		return new ByteArrayInputStream(content.getBytes());
 	}

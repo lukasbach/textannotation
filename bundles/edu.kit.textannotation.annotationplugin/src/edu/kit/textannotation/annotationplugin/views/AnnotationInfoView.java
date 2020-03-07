@@ -127,7 +127,7 @@ public class AnnotationInfoView extends ViewPart {
                     AnnotationTextEditor editor = finder.getAnnotationEditor();
                     AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
                     try {
-                        EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getName(), profile -> {
+                        EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getId(), profile -> {
                             rebuildContent(parent, hoveringAnnotation);
                         }, annotationClass.getName());
                     } catch (ProfileNotFoundException e) {

@@ -16,14 +16,16 @@ import java.util.stream.Collectors;
  */
 public class AnnotationProfile {
 	private List<AnnotationClass> annotationClasses;
+	private String id;
 	private String name;
 
 	/**
 	 * Create a new annotation profile with a name.
-	 * @param name is used to identify the annotation profile against the user. It is also used to reference
-	 *             the profile from within an annotation text file.
+	 * @param id is used to reference the profile from within an annotation text file.
+	 * @param name is used to identify the profile against the user. It can be changed later.
 	 */
-	public AnnotationProfile(String name) {
+	public AnnotationProfile(String id, String name) {
+		this.setId(id);
 		this.setName(name);
 		this.annotationClasses = new LinkedList<>();
 	}
@@ -80,12 +82,28 @@ public class AnnotationProfile {
 	 * Get the name of the annotation profile. The name is used to identify the annotation profile against the user.
 	 * It is also used to reference the profile from within an annotation text file.
 	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Set the name of the profile. See the documentation of the getter for more details.
+	 * @see AnnotationProfile::getName
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return a identifier for the profile meant for presentation against the user. This does not uniquely identify
+	 * the profile.
+	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name of the profile. See the documentation of the getter for more details.
+	 * Overwrite the name of the profile.
 	 * @see AnnotationProfile::getName
 	 */
 	public void setName(String name) {
@@ -94,7 +112,7 @@ public class AnnotationProfile {
 
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof AnnotationProfile) && ((AnnotationProfile)obj).getName().equals(getName());
+		return (obj instanceof AnnotationProfile) && ((AnnotationProfile)obj).getId().equals(getId());
 	}
 
 	@Override

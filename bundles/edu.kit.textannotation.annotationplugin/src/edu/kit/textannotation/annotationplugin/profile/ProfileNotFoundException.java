@@ -22,7 +22,7 @@ public class ProfileNotFoundException extends Exception {
             message = String.format(
                     "Profile %s not found, available are %s",
                     profile,
-                    registry.getProfiles().stream().map(AnnotationProfile::getName)
+                    registry.getProfiles().stream().map(AnnotationProfile::getId)
                             .collect(Collectors.joining(", "))
             );
         } catch (InvalidAnnotationProfileFormatException e) {

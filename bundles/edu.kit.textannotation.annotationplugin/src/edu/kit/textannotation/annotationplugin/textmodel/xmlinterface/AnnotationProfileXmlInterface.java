@@ -29,6 +29,7 @@ public class AnnotationProfileXmlInterface implements XmlBuilderInterface<Annota
         Document doc = utils.getNewDocument();
 
         Element profileElement = doc.createElement(KEY_PROFILE_ELEMENT);
+        profileElement.setAttribute(KEY_PROFILE_ATTR_ID, profile.getId());
         profileElement.setAttribute(KEY_PROFILE_ATTR_NAME, profile.getName());
 
         profile.getAnnotationClasses().forEach(annotationClass -> {
@@ -71,7 +72,9 @@ public class AnnotationProfileXmlInterface implements XmlBuilderInterface<Annota
         NamedNodeMap annotationProfileAttributes = root.getAttributes();
 
         AnnotationProfile profile = new AnnotationProfile(
-                annotationProfileAttributes.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME).getTextContent());
+                annotationProfileAttributes.getNamedItem(KEY_PROFILE_ATTR_ID).getTextContent(),
+                annotationProfileAttributes.getNamedItem(KEY_PROFILE_ATTR_NAME).getTextContent()
+        );
 
         IntStream
                 .rangeClosed(0, annotationClassElements.getLength() - 1)

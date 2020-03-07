@@ -16,7 +16,7 @@ public class XmlSchemaVariables {
     public static final String KEY_ANNOTATEDFILE_PROFILE_ELEMENT = "annotationprofile";
 
     /** The attribute key of the name of a profile in the annotationprofile tag which references the used profile in an annotated file. */
-    public static final String KEY_ANNOTATEDFILE_PROFILE_ATTR_NAME = "name";
+    public static final String KEY_ANNOTATEDFILE_PROFILE_ATTR_ID = "id";
 
     /** The element name of the element that describes a specific annotation. Child of an annotated tag. */
     public static final String KEY_ANNOTATIONDATA_ANNOTATION_ELEMENT = "annotation";
@@ -42,6 +42,9 @@ public class XmlSchemaVariables {
 
     /** The element name of the root element in a profile file. */
     public static final String KEY_PROFILE_ELEMENT = "annotationprofile";
+
+    /** The attribute key of a profiles Id on the root element in a profile file. */
+    public static final String KEY_PROFILE_ATTR_ID = "id";
 
     /** The attribute key of a profiles name on the root element in a profile file. */
     public static final String KEY_PROFILE_ATTR_NAME = "name";

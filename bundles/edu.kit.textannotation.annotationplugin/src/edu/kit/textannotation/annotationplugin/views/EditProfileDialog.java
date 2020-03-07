@@ -45,19 +45,19 @@ public class EditProfileDialog extends Shell {
 	/**
 	 * Open a new edit profile dialog.
 	 * @param registry an annotation profile registry which is used to resolve the profile class.
-	 * @param profileName the name of the profile which is edited. The profile registry is used to resolve the profile.
+	 * @param profileId the ID of the profile which is edited. The profile registry is used to resolve the profile.
 	 * @param onProfileChange a handler that is called when the profile is changed from within the editor, with the
 	 *                        changed profile data as payload.
 	 * @param selectedAnnotationClass the initially selected annotation class, or null if no annotation class should
 	 *                                be selected from the start.
 	 */
 	public static void openWindow(AnnotationProfileRegistry registry,
-								  String profileName,
+								  String profileId,
 								  Consumer<AnnotationProfile> onProfileChange,
 								  @Nullable String selectedAnnotationClass) {
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
-			EditProfileDialog shell = new EditProfileDialog(display, registry, profileName, p -> {
+			EditProfileDialog shell = new EditProfileDialog(display, registry, profileId, p -> {
 				registry.overwriteProfile(p);
 				onProfileChange.accept(p);
 			});
@@ -82,17 +82,17 @@ public class EditProfileDialog extends Shell {
 	/**
 	 * Create the dialog shell.
 	 * @param display the display which is used for the dialog
-	 * @param editingProfile the name of the profile being edited
+	 * @param editingProfileId the ID of the profile being edited
 	 * @param registry the profile registry to resolve the profile information and save changes back to disk
 	 * @param onSave a change handler that is invoked when the profile is changed, with the changed profile as payload
 	 */
 	public EditProfileDialog(Display display, AnnotationProfileRegistry registry,
-							 String editingProfile, Consumer<AnnotationProfile> onSave) {
+							 String editingProfileId, Consumer<AnnotationProfile> onSave) {
 		super(display, SWT.SHELL_TRIM);
 
 		this.registry = registry;
 
-		reloadProfiles(editingProfile);
+		reloadProfiles(editingProfileId);
 
 		this.selectedAnnotationClass = null;
 		this.onSave = () -> onSave.accept(profile);
@@ -101,9 +101,9 @@ public class EditProfileDialog extends Shell {
 		rebuildContent(this);
 	}
 
-	private void reloadProfiles(String editingProfile) {
+	private void reloadProfiles(String editingProfileId) {
 		try {
-			profile = registry.findProfile(editingProfile);
+			profile = registry.findProfile(editingProfileId);
 			allProfiles = registry.getProfiles();
 		} catch (ProfileNotFoundException | InvalidAnnotationProfileFormatException e) {
 			EclipseUtils.reportError(e.getMessage());
@@ -113,7 +113,7 @@ public class EditProfileDialog extends Shell {
 	private void rebuildContent(Composite parent) {
 		EclipseUtils.clearChildren(parent);
 
-		setText(String.format("Editing Profile \"%s\"", profile.getName()));
+		setText(String.format("Editing Profile \"%s\"", profile.getId()));
 
 		parent.setLayout(lu.gridLayout().withNumCols(1).get());
 
@@ -121,17 +121,26 @@ public class EditProfileDialog extends Shell {
 		topContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
 
 		Combo profileSelector = new Combo(topContainer, SWT.DROP_DOWN | SWT.BORDER);
-		allProfiles.forEach(p -> profileSelector.add(p.getName()));
-		profileSelector.select(allProfiles.indexOf(new AnnotationProfile(profile.getName())));
-		ComboSelectionListener.create(profileSelector, (value) -> {
-			allProfiles
-				.stream()
-				.filter(p -> p.getName().equals(value))
-				.findAny()
-				.ifPresent(newProfile -> {
-					profile = newProfile;
-					rebuildContent(parent);
-				});
+		allProfiles.forEach(p -> {
+			// Add numbers at the end of the values in case multiple profiles with the same names exist
+			int i = 0;
+			for (String val: profileSelector.getItems()) {
+				if (val.startsWith(p.getName())) {
+					i++;
+				}
+			}
+
+			if (i > 0) {
+				profileSelector.add(p.getName() + " " + i);
+			} else {
+				profileSelector.add(p.getName());
+			}
+		});
+		profileSelector.select(allProfiles.indexOf(new AnnotationProfile(profile.getId(), "")));
+		ComboSelectionListener.create(profileSelector, (e) -> {
+			System.out.println(e.index + " " + e.value);
+			profile = allProfiles.get(e.index);
+			rebuildContent(parent);
 		});
 
 		Button buttonNewProfile = new Button(topContainer, SWT.PUSH);

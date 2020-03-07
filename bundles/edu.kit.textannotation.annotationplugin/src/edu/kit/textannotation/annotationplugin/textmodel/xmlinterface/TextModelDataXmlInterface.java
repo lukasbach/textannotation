@@ -4,8 +4,6 @@ import edu.kit.textannotation.annotationplugin.textmodel.*;
 import org.eclipse.jface.text.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.List;
 
 import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariables.*;
@@ -19,7 +17,7 @@ import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariabl
 public class TextModelDataXmlInterface
         implements XmlBuilderInterface<TextModelData>, XmlStringParserInterface<TextModelData> {
     private SchemaValidator validator = new SchemaValidator();
-    private XmlStringParserInterface<String> profileNameParser = new AnnotatedFileProfileNameXmlInterface();
+    private XmlStringParserInterface<String> profileIdParser = new AnnotatedFileProfileIdXmlInterface();
     private XmlStringParserInterface<String> contentParser = new AnnotatedFileContentXmlInterface();
     private XmlStringParserInterface<List<SingleAnnotation>> annotationParser = new SingleAnnotationListXmlInterface();
     private XmlInterfaceUtils utils = new XmlInterfaceUtils();
@@ -32,7 +30,7 @@ public class TextModelDataXmlInterface
         doc.appendChild(root);
 
         Element profileEl = doc.createElement(KEY_ANNOTATEDFILE_PROFILE_ELEMENT);
-        profileEl.setAttribute(KEY_ANNOTATEDFILE_PROFILE_ATTR_NAME, textModelData.getProfileName());
+        profileEl.setAttribute(KEY_ANNOTATEDFILE_PROFILE_ATTR_ID, textModelData.getProfileId());
         root.appendChild(profileEl);
 
         textModelData.getAnnotations().stream().forEach(annotation -> {
@@ -63,7 +61,7 @@ public class TextModelDataXmlInterface
 
         return new TextModelData(
             new AnnotationSet(annotationParser.parseXml(source)),
-            profileNameParser.parseXml(source),
+            profileIdParser.parseXml(source),
             new Document(contentParser.parseXml(source))
         );
     }

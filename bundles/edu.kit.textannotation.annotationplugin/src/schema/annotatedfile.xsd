@@ -17,10 +17,10 @@
                     </xs:annotation>
 
                     <xs:complexType>
-                        <xs:attribute name="name" type="xs:string" use="required">
+                        <xs:attribute name="id" type="xs:string" use="required">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">
-                                    The name of the referenced annotation profile.
+                                    The ID of the referenced annotation profile.
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:attribute>

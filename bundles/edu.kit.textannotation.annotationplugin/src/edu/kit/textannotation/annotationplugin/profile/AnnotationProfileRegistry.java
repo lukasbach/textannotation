@@ -5,12 +5,9 @@ import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.Annotation
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,10 +18,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 /**
- * The Annotation Profile Registry is used to read profiles from disk and resolve a profile by its name.
+ * The Annotation Profile Registry is used to read profiles from disk and resolve a profile by its ID.
  * This can be used by clients that have an instance of
  * {@link edu.kit.textannotation.annotationplugin.textmodel.TextModelData}, which contains annotation data and the
- * name of the profile, but not the profile itself.
+ * ID of the profile, but not the profile itself.
  * <br/><br/>
  *
  * The registry resolves profiles which are located in the following paths:
@@ -39,7 +36,7 @@ public class AnnotationProfileRegistry {
     private List<String> registryPaths;
     private List<AnnotationProfile> profiles;
 
-    /** Maps profile names to their paths */
+    /** Maps profile ids to their paths */
     private Map<String, Path> profilePathMap;
 
     /**
@@ -66,8 +63,6 @@ public class AnnotationProfileRegistry {
 
         paths.add(System.getProperty("user.dir") + "/.textannotation"); // eclipseinstalldir/.textannotation
         paths.add(EclipseUtils.getCurrentWorkspaceDirectory(bundle)); // workspace directory
-        // paths.add(EclipseUtils.get1().toString()); // workspace directory
-        // paths.add(EclipseUtils.getCurrentProjectDirectory().toString()); // workspace directory
 
         System.out.println("AnnotationProfileRegistry: Reading profiles from the following paths:");
         paths.forEach(System.out::println);
@@ -77,18 +72,18 @@ public class AnnotationProfileRegistry {
 
     /**
      * Resolve a profile instance by its name.
-     * @param profileName the name of the profile, which is used for resolvement.
+     * @param profileId the name of the profile, which is used for resolvement.
      * @return a {@link AnnotationProfile} instance if the profile could be resolved.
      * @throws ProfileNotFoundException if the profile was not found on disk.
      * @throws InvalidAnnotationProfileFormatException if the profile file was malformed.
      */
-    public AnnotationProfile findProfile(String profileName) throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
+    public AnnotationProfile findProfile(String profileId) throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
         readProfiles();
         return profiles
                 .stream()
-                .filter(p -> p.getName().equals(profileName))
+                .filter(p -> p.getId().equals(profileId))
                 .findFirst()
-                .orElseThrow(() -> new ProfileNotFoundException(profileName, this));
+                .orElseThrow(() -> new ProfileNotFoundException(profileId, this));
     }
 
     /**
@@ -108,7 +103,7 @@ public class AnnotationProfileRegistry {
      */
     public void overwriteProfile(AnnotationProfile profile) {
         try {
-            Path path = profilePathMap.get(profile.getName());
+            Path path = profilePathMap.get(profile.getId());
             String fileContent = annotationProfileXmlInterface.buildXml(profile);
             File file = new File(path.toString());
             FileOutputStream writeStream = new FileOutputStream(file, false);
@@ -139,10 +134,10 @@ public class AnnotationProfileRegistry {
                         try {
                             String s = new String(Files.readAllBytes(f));
                             AnnotationProfile profile = annotationProfileXmlInterface.parseXml(s);
-                            System.out.println(String.format("Parsed '%s' from '%s'", profile.getName(), f.toString()));
+                            System.out.println(String.format("Parsed '%s' from '%s'", profile.getId(), f.toString()));
 
                             profiles.add(profile);
-                            profilePathMap.put(profile.getName(), f);
+                            profilePathMap.put(profile.getId(), f);
                         } catch (IOException e) {
                             e.printStackTrace();
                             EclipseUtils.reportError("Could not read profile: " + e.getMessage());

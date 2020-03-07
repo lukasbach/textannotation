@@ -8,7 +8,6 @@ import edu.kit.textannotation.annotationplugin.selectionstrategy.DefaultSelectio
 import edu.kit.textannotation.annotationplugin.selectionstrategy.SelectionStrategy;
 import edu.kit.textannotation.annotationplugin.selectionstrategy.SentenceSelectionStrategy;
 import edu.kit.textannotation.annotationplugin.selectionstrategy.WordSelectionStrategy;
-import edu.kit.textannotation.annotationplugin.utils.ComboSelectionListener;
 import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
@@ -41,9 +40,6 @@ import javax.inject.Inject;
 public class AnnotationControlsView extends ViewPart {
 	public static final String ID = "edu.kit.textannotation.annotationplugin.views.AnnotationControlsView";
 	private GridLayout layout;
-	private Combo profileSelector;
-	private Button buttonEditProfile;
-	private Button buttonNewProfile;
 	private AnnotationTextEditor editor;
 	private AnnotationProfileRegistry registry;
 	private AnnotationEditorFinder finder;
@@ -90,12 +86,16 @@ public class AnnotationControlsView extends ViewPart {
 		editor = finder.getAnnotationEditor();
 		registry = editor.getAnnotationProfileRegistry();
 		List<AnnotationProfile> profiles;
+		AnnotationProfile profile;
 
 		try {
 			profiles = registry.getProfiles();
+			profile = registry.findProfile(textModelData.getProfileId());
 		} catch (InvalidAnnotationProfileFormatException e) {
-			e.printStackTrace();
 			EclipseUtils.reportError("Invalid profile format: " + e.getMessage());
+			return;
+		} catch (ProfileNotFoundException e) {
+			EclipseUtils.reportError("Profile not found: " + e.getMessage());
 			return;
 		}
 
@@ -105,22 +105,28 @@ public class AnnotationControlsView extends ViewPart {
 		parent.setLayout(layout);
 
 		Header
-				.withTitle(textModelData.getProfileName())
+				.withTitle(profile.getName())
 				.withButton("Change Profile", () -> {
 					ElementListSelectionDialog dialog = new ElementListSelectionDialog(parent.getShell(), new LabelProvider());
 					dialog.setTitle("Change Profile");
 					dialog.setMessage("Change Profile for the current annotation text file");
-					dialog.setElements(profiles.stream().map(AnnotationProfile::getName).toArray());
+					dialog.setElements(profiles.toArray());
 					dialog.open();
-					String selectedProfileName = (String) dialog.getFirstResult();
-					if (selectedProfileName != null) {
-						textModelData.setProfileName(selectedProfileName);
+					AnnotationProfile selectedProfile = (AnnotationProfile) dialog.getFirstResult();
+					if (selectedProfile != null) {
+						textModelData.setProfileId(selectedProfile.getId());
+						try {
+							editor.onProfileChange.fire(registry.findProfile(selectedProfile.getId()));
+							editor.markDocumentAsDirty();
+						} catch (ProfileNotFoundException | InvalidAnnotationProfileFormatException e) {
+							EclipseUtils.reportError("Profile change error: " + e.getMessage());
+						}
 						rebuildContent(parent, textModelData);
 					}
 
 				})
 				.withButton("Edit Profile", () -> {
-					EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> {
+					EditProfileDialog.openWindow(registry, textModelData.getProfileId(), p -> {
 						rebuildContent(parent, textModelData);
 						editor.onProfileChange.fire(p);
 					}, null);
@@ -128,8 +134,8 @@ public class AnnotationControlsView extends ViewPart {
 				.render(parent);
 
 		Label subtitleLabel = new Label(parent, SWT.WRAP | SWT.LEFT);
-		subtitleLabel.setText(String.format("The annotatable text file currently used the \"%s\" annotation profile.",
-				textModelData.getProfileName()));
+		subtitleLabel.setText(String.format("The annotatable text file currently uses the \"%s\" annotation profile, its ID is \"%s\".",
+				profile.getName(), profile.getId()));
 		subtitleLabel.setLayoutData(new GridData(SWT.HORIZONTAL, SWT.TOP, true, false, 1, 1));
 		FontData[] fD = subtitleLabel.getFont().getFontData();
 		fD[0].setHeight(10);
@@ -155,33 +161,23 @@ public class AnnotationControlsView extends ViewPart {
 			.withSubTitle("Click on an annotation class to annotate the selected text as the chosen annotation")
 			.render(parent);
 
-		try {
-			AnnotationProfile profile = registry.findProfile(textModelData.getProfileName());
+		for (AnnotationClass a: profile.getAnnotationClasses()) {
+			Composite aclContainer = new Composite(parent, SWT.NONE);
+			aclContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
+			aclContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-			for (AnnotationClass a: profile.getAnnotationClasses()) {
-				Composite aclContainer = new Composite(parent, SWT.NONE);
-				aclContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
-				aclContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			StyledText colorDisplay = new StyledText(aclContainer, SWT.BORDER);
 
-				StyledText colorDisplay = new StyledText(aclContainer, SWT.BORDER);
+			Button button = new Button(aclContainer, SWT.PUSH | SWT.FILL);
+			button.setText(a.getName());
+			button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			button.addListener(SWT.Selection, event -> {
+				new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a, activeSelectionStrategy);
+			});
 
-				Button button = new Button(aclContainer, SWT.PUSH | SWT.FILL);
-				button.setText(a.getName());
-				button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				button.addListener(SWT.Selection, event -> {
-					new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a, activeSelectionStrategy);
-				});
-
-				colorDisplay.setLayoutData(lu.gridData().withWidthHint(12).withExcessVerticalSpace(true).get());
-				colorDisplay.setEditable(false);
-				colorDisplay.setBackground(a.getColor());
-			}
-		} catch (ProfileNotFoundException e) {
-			EclipseUtils.reportError("Profile " + textModelData.getProfileName() + " was not found.");
-			e.printStackTrace();
-		} catch (InvalidAnnotationProfileFormatException e) {
-			EclipseUtils.reportError("Profile " + textModelData.getProfileName() + " has an invalid format. " + e.getMessage());
-			e.printStackTrace();
+			colorDisplay.setLayoutData(lu.gridData().withWidthHint(12).withExcessVerticalSpace(true).get());
+			colorDisplay.setEditable(false);
+			colorDisplay.setBackground(a.getColor());
 		}
 
 		parent.layout();

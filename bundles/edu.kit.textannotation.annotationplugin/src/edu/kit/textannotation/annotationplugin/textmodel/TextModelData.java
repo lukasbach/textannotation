@@ -25,53 +25,53 @@ public class TextModelData {
 	public final EventManager<String> onChangeProfileName = new EventManager<>("textmodeldata:changeprofile");
 
 	private AnnotationSet annotations;
-	private String profileName;
+	private String profileId;
 	private IDocument document;
 
 	/**
 	 * Create a new data instance with the supplied initial values.
 	 * @param annotations the set of annotations contained in the annotatable text file
-	 * @param profileName the name of the profile, which is defined in a seperate profile file
+	 * @param profileId the ID of the profile, which is defined in a seperate profile file
 	 * @param document the raw text document from the annotatable text file
 	 */
-	public TextModelData(AnnotationSet annotations, String profileName, IDocument document) {
+	public TextModelData(AnnotationSet annotations, String profileId, IDocument document) {
 		this.setAnnotations(annotations);
-		this.profileName = profileName;
+		this.profileId = profileId;
 		this.setDocument(document);
 	}
 
 	/**
-	 * Create a new data instance with a supplied profile name, and an empty annotation set and document.
+	 * Create a new data instance with a supplied profile ID, and an empty annotation set and document.
 	 * Convenience constructor for when those are not required.
 	 */
-	public TextModelData(String profileName) {
+	public TextModelData(String profileId) {
 		this.setAnnotations(new AnnotationSet());
-		this.profileName = profileName;
+		this.profileId = profileId;
 		this.document = new Document("");
 	}
 
 	@Override
 	public String toString() {
-		return String.format("AnnotationData(%s, %s)", getAnnotations().toString(), getProfileName());
+		return String.format("AnnotationData(%s, %s)", getAnnotations().toString(), getProfileId());
 	}
 
 	/**
-	 * Return the name of the profile, which is referenced by the annotatable text file.
+	 * Return the ID of the profile, which is referenced by the annotatable text file.
 	 */
-	public String getProfileName() {
-		return profileName;
+	public String getProfileId() {
+		return profileId;
 	}
 
 	/**
-	 * Set the profile name, which dictates the profile used by the annotatable text file
-	 * @param profileName the new name of the profile. A profile with this must be defined on disk
+	 * Set the profile ID, which dictates the profile used by the annotatable text file
+	 * @param profileId the new ID of the profile. A profile with this must be defined on disk
 	 *                    and visible to a
 	 *                    {@link edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry}
 	 *                    instance.
 	 */
-	public void setProfileName(String profileName) {
-		this.profileName = profileName;
-		onChangeProfileName.fire(profileName);
+	public void setProfileId(String profileId) {
+		this.profileId = profileId;
+		onChangeProfileName.fire(profileId);
 	}
 
 	/**

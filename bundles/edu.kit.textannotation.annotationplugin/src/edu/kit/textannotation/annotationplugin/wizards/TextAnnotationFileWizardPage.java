@@ -86,14 +86,14 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 
 		profile = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
 		try {
-			registry.getProfiles().forEach(p -> profile.add(p.getName()));
+			registry.getProfiles().forEach(p -> profile.add(p.getId()));
 		} catch (InvalidAnnotationProfileFormatException e) {
 			e.printStackTrace();
 			EclipseUtils.reportError("Profile is not properly formatted.");
 		}
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		profile.setLayoutData(gd);
-		ComboSelectionListener.create(profile, v -> dialogChanged());
+		ComboSelectionListener.create(profile, e -> dialogChanged());
 
 		label = new Label(container, SWT.NULL);
 		label.setText("&");

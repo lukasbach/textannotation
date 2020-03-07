@@ -67,7 +67,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			textModelData = e.textModelData;
 			annotationFixer = new AnnotationSetFixer(e.textModelData.getAnnotations(), e.textModelData.getDocument().getLength());
 			try {
-				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileName()), e.textModelData.getAnnotations());
+				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileId()), e.textModelData.getAnnotations());
 			} catch (ProfileNotFoundException ex) {
 				ex.printStackTrace();
 				EclipseUtils.reportError("Profile not found.");
@@ -202,7 +202,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	 */
 	public AnnotationProfile getAnnotationProfile()
 			throws ProfileNotFoundException, InvalidAnnotationProfileFormatException {
-		return getAnnotationProfileRegistry().findProfile(textModelData.getProfileName());
+		return getAnnotationProfileRegistry().findProfile(textModelData.getProfileId());
 	}
 
 	private void openTextAnnotationPerspective(IEditorSite site) {
