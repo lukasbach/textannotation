@@ -40,20 +40,20 @@ public class ParserTests {
 		annotatedFileBuilder = new TextModelDataXmlInterface();
 		
 		profileXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
-				"<annotationprofile name=\"Profilename\">\r\n" + 
-				"  <annotationclass color=\"1, 2, 3\" name=\"Subject\"/>\r\n" + 
-				"  <annotationclass color=\"4, 5, 6\" name=\"Object\"/>\r\n" + 
-				"  <annotationclass color=\"7, 8, 9\" name=\"Verb\">\r\n" + 
+				"<annotationprofile id=\"profileid\" name=\"Profilename\">\r\n" + 
+				"  <annotationclass color=\"1, 2, 3\" id=\"a\" name=\"Subject\"/>\r\n" + 
+				"  <annotationclass color=\"4, 5, 6\" id=\"b\" name=\"Object\"/>\r\n" + 
+				"  <annotationclass color=\"7, 8, 9\" id=\"c\" name=\"Verb\">\r\n" + 
 				"    <metadata name=\"metadatakey\">metadatavalue</metadata>\\r\\n" +
 				"  </annotationclass>\r\n" + 
 				"</annotationprofile>\r\n";
 		
 		annotationFileXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n" + 
 				"<annotated>\r\n" + 
-				"  <annotationprofile name=\"Profilename\"/>\r\n" + 
-				"  <annotation annotation=\"Object\" id=\"a\" length=\"2\" offset=\"0\"/>\r\n" + 
-				"  <annotation annotation=\"Subject\" id=\"b\" length=\"3\" offset=\"5\"/>\r\n" + 
-				"  <annotation annotation=\"Verb\" id=\"c\" length=\"4\" offset=\"10\">\r\n" + 
+				"  <annotationprofile id=\"profileid\"/>\r\n" + 
+				"  <annotation annotation=\"b\" id=\"x\" length=\"2\" offset=\"0\"/>\r\n" + 
+				"  <annotation annotation=\"a\" id=\"y\" length=\"3\" offset=\"5\"/>\r\n" + 
+				"  <annotation annotation=\"c\" id=\"z\" length=\"4\" offset=\"10\">\r\n" + 
 				"    <metadata name=\"metadatakey\">metadatavalue</metadata>\r\n" + 
 				"  </annotation>\r\n" + 
 				"  <content>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor</content>\r\n" + 
@@ -63,8 +63,10 @@ public class ParserTests {
 	@Test
 	public void testParseAnnotationProfile() throws InvalidFileFormatException {
 		AnnotationProfile profile = profileParser.parseXml(profileXml);
+		assertEquals(profile.getId(), "profileid");
 		assertEquals(profile.getName(), "Profilename");
 		assertEquals(profile.getAnnotationClasses().size(), 3);
+		assertArrayEquals(profile.getAnnotationClassIds(), new String[] {"a", "b", "c"});
 		assertArrayEquals(profile.getAnnotationClassNames(), new String[] {"Subject", "Object", "Verb"});
 		assertEquals(profile.getAnnotationClasses().get(0).getColorAsTextModelString(), "1, 2, 3");
 		assertTrue(profile.getAnnotationClasses().get(2).metaData.contains("metadatakey"));
@@ -78,11 +80,11 @@ public class ParserTests {
 		TextModelData data = annotatedFileParser.parseXml(annotationFileXml);
 		
 		assertEquals(data.getDocument().get(), "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor");
-		assertEquals(data.getAnnotations().getAnnotations().get(0).getAnnotationIdentifier(), "Object");
-		assertEquals(data.getAnnotations().getAnnotations().get(1).getAnnotationIdentifier(), "Subject");
-		assertEquals(data.getAnnotations().getAnnotations().get(2).getAnnotationIdentifier(), "Verb");
+		assertEquals(data.getAnnotations().getAnnotations().get(0).getAnnotationClassId(), "b");
+		assertEquals(data.getAnnotations().getAnnotations().get(1).getAnnotationClassId(), "a");
+		assertEquals(data.getAnnotations().getAnnotations().get(2).getAnnotationClassId(), "c");
 
-		assertEquals(data.getAnnotations().getAnnotations().get(0).getId(), "a");
+		assertEquals(data.getAnnotations().getAnnotations().get(0).getId(), "x");
 		assertEquals(data.getAnnotations().getAnnotations().get(0).getLength(), 2);
 		assertEquals(data.getAnnotations().getAnnotations().get(0).getOffset(), 0);
 		
@@ -93,11 +95,11 @@ public class ParserTests {
 	
 	@Test
 	public void testBuildAnnotationProfile()  {
-		AnnotationProfile profile = new AnnotationProfile("Profilename");
-		profile.addAnnotationClass(new AnnotationClass("Subject", new Color(Display.getCurrent(), 1, 2, 3)));
-		profile.addAnnotationClass(new AnnotationClass("Object", new Color(Display.getCurrent(), 4, 5, 6)));
+		AnnotationProfile profile = new AnnotationProfile("profileid", "Profilename");
+		profile.addAnnotationClass(new AnnotationClass("a", "Subject", new Color(Display.getCurrent(), 1, 2, 3)));
+		profile.addAnnotationClass(new AnnotationClass("b", "Object", new Color(Display.getCurrent(), 4, 5, 6)));
 		
-		AnnotationClass aclWithMetadata = new AnnotationClass("Verb", new Color(Display.getCurrent(), 7, 8, 9));
+		AnnotationClass aclWithMetadata = new AnnotationClass("c", "Verb", new Color(Display.getCurrent(), 7, 8, 9));
 		aclWithMetadata.metaData.put("metadatakey", "metadatavalue");
 		
 		profile.addAnnotationClass(aclWithMetadata);
@@ -107,18 +109,18 @@ public class ParserTests {
 
 	@Test
 	public void testBuildAnnotationFile()  {
-		SingleAnnotation annotationWithMetadata = new SingleAnnotation("c", 10, 4, "Verb");
+		SingleAnnotation annotationWithMetadata = new SingleAnnotation("z", 10, 4, "c");
 		annotationWithMetadata.metaData.put("metadatakey", "metadatavalue");
 		
 		TextModelData tmd = new TextModelData(
 			new AnnotationSet(
 				Arrays.asList(
-					new SingleAnnotation("a", 0, 2, "Object"),
-					new SingleAnnotation("b", 5, 3, "Subject"),
+					new SingleAnnotation("x", 0, 2, "b"),
+					new SingleAnnotation("y", 5, 3, "a"),
 					annotationWithMetadata
 				)
 			), 
-			"Profilename", 
+			"profileid", 
 			new Document("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor")
 		);
 

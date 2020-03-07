@@ -22,7 +22,7 @@ public class SingleAnnotationTest {
 		assertEquals("%ID", annotation.getId());
 		assertEquals(1, annotation.getOffset());
 		assertEquals(2, annotation.getLength());
-		assertEquals("%ANNOTATION", annotation.getAnnotationIdentifier());
+		assertEquals("%ANNOTATION", annotation.getAnnotationClassId());
 	}
 	
 	@Test
