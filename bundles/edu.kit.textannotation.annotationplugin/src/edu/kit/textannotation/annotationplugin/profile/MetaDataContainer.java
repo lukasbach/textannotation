@@ -35,7 +35,7 @@ public class MetaDataContainer {
     private Map<String, String> metaData;
 
     /** This event fires when some datum pair was changed in this metadata set. */
-    public EventManager<EventManager.EmptyEvent> onChange = new EventManager<>("metadata:change");
+    public final EventManager<EventManager.EmptyEvent> onChange = new EventManager<>("metadata:change");
 
     /**
      * This class models a key-value pair which is stored in the meta data container. Its variables key and
@@ -43,8 +43,8 @@ public class MetaDataContainer {
      * from all clients.
      */
     public class MetaDataEntry {
-        public String key;
-        public String value;
+        public String key; //NOSONAR
+        public String value; //NOSONAR
 
         MetaDataEntry(String key, String value) {
             this.key = key;

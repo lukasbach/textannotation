@@ -18,10 +18,10 @@ import java.util.function.Consumer;
  */
 public class MetaDataView {
     /** This manager models events in which metadata fields are changed, e.g. new fields are added or values are changed. */
-    public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("metadataview:changedmeta");
+    public final EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("metadataview:changedmeta");
 
     /** This manager models events in which the parent composite should be resized, e.g. because a new field was added. */
-    public EventManager<EventManager.EmptyEvent> onShouldResize = new EventManager<>("metadataview:changedmeta");
+    public final EventManager<EventManager.EmptyEvent> onShouldResize = new EventManager<>("metadataview:changedmeta");
 
     private final LayoutUtilities lu;
     private final Composite parent;

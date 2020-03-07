@@ -102,16 +102,24 @@ public class AnnotationProfileRegistry {
      * @param profile contains the changed profile name alongside the name of the old profile.
      */
     public void overwriteProfile(AnnotationProfile profile) {
+        FileOutputStream writeStream = null;
         try {
             Path path = profilePathMap.get(profile.getId());
             String fileContent = annotationProfileXmlInterface.buildXml(profile);
             File file = new File(path.toString());
-            FileOutputStream writeStream = new FileOutputStream(file, false);
+            writeStream = new FileOutputStream(file, false);
             writeStream.write(fileContent.getBytes());
-            writeStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             EclipseUtils.reportError("Could not save profile data: " + e.getMessage());
+        } finally {
+            if (writeStream != null) {
+                try {
+                    writeStream.close();
+                } catch (IOException e) {
+                    EclipseUtils.reportError("Could not close profile write stream: " + e.getMessage());
+                }
+            }
         }
     }
 
@@ -122,9 +130,10 @@ public class AnnotationProfileRegistry {
         AtomicReference<String> error = new AtomicReference<>(null);
 
         for (String registryPath: registryPaths) {
+            Stream<Path> paths = null;
             try {
                 System.out.println("Walking " + registryPath);
-                Stream<Path> paths = Files.walk(Paths.get(registryPath));
+                paths = Files.walk(Paths.get(registryPath));
 
                 paths
                     .filter(Files::isRegularFile)
@@ -148,6 +157,10 @@ public class AnnotationProfileRegistry {
                     });
             } catch (IOException e) {
                 System.out.println(String.format("Skipping annotation profiles in %s.", registryPath));
+            } finally {
+                if (paths != null) {
+                    paths.close();
+                }
             }
         }
 

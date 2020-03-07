@@ -2,6 +2,7 @@ package edu.kit.textannotation.annotationplugin.profile;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +77,7 @@ public class AnnotationProfile {
 	/** Remove the annotation with the supplied name, and replace it with the altered annotation class. */
 	public void alterAnnotationClass(String oldName, AnnotationClass alteredClass) {
 		for (int i = 0; i < this.annotationClasses.size(); i++) {
-			if (this.annotationClasses.get(i).getId() == oldName) {
+			if (this.annotationClasses.get(i).getId().equals(oldName)) {
 				this.annotationClasses.set(i, alteredClass);
 				return;
 			}
@@ -118,6 +119,11 @@ public class AnnotationProfile {
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof AnnotationProfile) && ((AnnotationProfile)obj).getId().equals(getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 	@Override

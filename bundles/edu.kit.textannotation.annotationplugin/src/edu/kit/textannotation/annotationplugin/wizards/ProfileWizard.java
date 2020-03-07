@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.osgi.framework.FrameworkUtil;
 
-import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,10 +31,8 @@ public class ProfileWizard extends Wizard implements INewWizard {
 	private ProfileWizardPage page;
 	private ISelection selection;
 
-	@Inject private	IWorkbench workbench;
-
 	/** This event fires when the wizard finishes and a new profile is created. */
-	public EventManager<EventManager.EmptyEvent> onFinish = new EventManager<>("profilewizard:finish");
+	public final EventManager<EventManager.EmptyEvent> onFinish = new EventManager<>("profilewizard:finish");
 
 	/**
 	 * Constructor for ProfileWizard.
@@ -77,6 +74,7 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		try {
 			getContainer().run(true, false, op);
 		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();

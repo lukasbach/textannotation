@@ -30,7 +30,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 	 * This models a event that is dispatched when a new document is read causing the editor to initialize.
 	 */
 	public static class InitializeEvent {
-		public TextModelData textModelData;
+		public final TextModelData textModelData;
 
 		InitializeEvent(TextModelData textModelData) {
 			this.textModelData = textModelData;

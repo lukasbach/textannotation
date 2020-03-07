@@ -26,7 +26,7 @@ public class AnnotationInfoView extends ViewPart {
     public static final String ID = "edu.kit.textannotation.annotationplugin.AnnotationInfoView";
 
     /** This event manager fires when the meta data attached to the current annotation changes. */
-    public EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("infoview:changedmeta");
+    public final EventManager<EventManager.EmptyEvent> onChangedMetaData = new EventManager<>("infoview:changedmeta");
 
     private AnnotationTextEditor editor;
     private LayoutUtilities lu = new LayoutUtilities();

@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,8 +32,10 @@ class XmlInterfaceUtils {
      */
     Document getNewDocument() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         try {
-            DocumentBuilder db = db = dbf.newDocumentBuilder();
+            DocumentBuilder db = dbf.newDocumentBuilder();
             return db.newDocument();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -73,6 +76,8 @@ class XmlInterfaceUtils {
      */
     Element parseXmlFile(String source) throws InvalidFileFormatException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
