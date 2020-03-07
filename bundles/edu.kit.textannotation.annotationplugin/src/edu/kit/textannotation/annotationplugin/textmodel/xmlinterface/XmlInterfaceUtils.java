@@ -35,6 +35,8 @@ class XmlInterfaceUtils {
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         try {
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
             DocumentBuilder db = dbf.newDocumentBuilder();
             return db.newDocument();
         } catch (ParserConfigurationException e) {
@@ -80,6 +82,8 @@ class XmlInterfaceUtils {
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
         try {
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document xml = db.parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
             return xml.getDocumentElement();
