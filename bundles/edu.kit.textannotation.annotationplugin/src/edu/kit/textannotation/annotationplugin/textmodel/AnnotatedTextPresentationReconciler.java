@@ -39,7 +39,7 @@ public class AnnotatedTextPresentationReconciler implements IPresentationReconci
 
 			for (SingleAnnotation an: annotationList) {
 				try {
-					AnnotationClass ac = profile.getAnnotationClass(an.getAnnotationIdentifier());
+					AnnotationClass ac = profile.getAnnotationClass(an.getAnnotationClassId());
 
 					textViewer.setTextColor(ac.getColor(), an.getOffset(), an.getLength(), true);
 				} catch (Exception e) {

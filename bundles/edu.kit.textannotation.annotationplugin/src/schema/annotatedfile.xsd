@@ -67,7 +67,7 @@
                         <xs:attribute name="annotation" type="xs:string" use="required">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">
-                                    The name of the annotation class used by this annotation instance.
+                                    The ID of the annotation class used by this annotation instance.
                                     This class must be defined by the referenced annotation profile.
                                 </xs:documentation>
                             </xs:annotation>

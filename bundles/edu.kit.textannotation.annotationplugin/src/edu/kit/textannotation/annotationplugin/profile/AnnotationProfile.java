@@ -38,7 +38,7 @@ public class AnnotationProfile {
 	/** Remove the supplied annotation class from this profile.
 	 * All classes with the same name as the supplied one are removed. */
 	public void removeAnnotationClass(AnnotationClass ac) {
-		this.annotationClasses.removeIf(c -> c.getName().equals(ac.getName()));
+		this.annotationClasses.removeIf(c -> c.getId().equals(ac.getId()));
 	}
 
 	public List<AnnotationClass> getAnnotationClasses() {
@@ -47,20 +47,20 @@ public class AnnotationProfile {
 
 	/**
 	 * Resolve the annotation class instance with the supplied annotation class name.
-	 * @param name the name of the annotation class that is being resolved.
+	 * @param id the ID of the annotation class that is being resolved.
 	 * @return the annotation class if it could be resolved.
 	 * @throws Exception if the profile does not store an annotation class with the supplied name.
 	 */
-	public AnnotationClass getAnnotationClass(String name) throws Exception {
+	public AnnotationClass getAnnotationClass(String id) throws Exception {
 		for (AnnotationClass ac: annotationClasses) {
-			if (ac.getName().equals(name.replace("\n", "").replace("\r", ""))) {
+			if (ac.getId().equals(id.replace("\n", "").replace("\r", ""))) {
 				return ac;
 			}
 		}
 		
 		// TODO custom exception
-		throw new Exception("Could not find annotation class " + name + ", available classes are " 
-		  + annotationClasses.stream().map(AnnotationClass::getName).collect(Collectors.joining(", ")));
+		throw new Exception("Could not find annotation class " + id + ", available classes are "
+		  + annotationClasses.stream().map(AnnotationClass::getId).collect(Collectors.joining(", ")));
 	}
 
 	/** Return the names of all available annotation classes that are stored in this profile. */
@@ -68,10 +68,15 @@ public class AnnotationProfile {
 		return annotationClasses.stream().map(AnnotationClass::getName).toArray(String[]::new);
 	}
 
+	/** Return the Ids of all available annotation classes that are stored in this profile. */
+	public String[] getAnnotationClassIds() {
+		return annotationClasses.stream().map(AnnotationClass::getId).toArray(String[]::new);
+	}
+
 	/** Remove the annotation with the supplied name, and replace it with the altered annotation class. */
 	public void alterAnnotationClass(String oldName, AnnotationClass alteredClass) {
 		for (int i = 0; i < this.annotationClasses.size(); i++) {
-			if (this.annotationClasses.get(i).getName() == oldName) {
+			if (this.annotationClasses.get(i).getId() == oldName) {
 				this.annotationClasses.set(i, alteredClass);
 				return;
 			}

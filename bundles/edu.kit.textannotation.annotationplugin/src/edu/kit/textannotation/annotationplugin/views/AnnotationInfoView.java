@@ -83,7 +83,7 @@ public class AnnotationInfoView extends ViewPart {
         container.setLayoutData(lu.completelyFillingGridData());
 
         try {
-            annotationClass = editor.getAnnotationProfile().getAnnotationClass(hoveringAnnotation.getAnnotationIdentifier());
+            annotationClass = editor.getAnnotationProfile().getAnnotationClass(hoveringAnnotation.getAnnotationClassId());
         } catch (InvalidAnnotationProfileFormatException e) {
             Header.withTitle("Error")
                     .withSubTitle("The profile is not properly formatted.").render(container);
@@ -100,7 +100,7 @@ public class AnnotationInfoView extends ViewPart {
 
         MetaDataContainer profileMetaData = annotationClass.metaData;
 
-        Header.withTitle(annotationClass.getName())
+        Header.withTitle(annotationClass.getId())
                 .withSubTitle(annotationClass.getDescription())
                 .withButton("Remove annotation", () -> {
                     editor.deannotate(hoveringAnnotation.getOffset());
@@ -112,7 +112,7 @@ public class AnnotationInfoView extends ViewPart {
                 container,
                 MetaDataContainer.fromEmpty()
                         .withEntry("Marked Text", editor.getAnnotationContent(hoveringAnnotation))
-                        .withEntry("Annotated Class", hoveringAnnotation.getAnnotationIdentifier())
+                        .withEntry("Annotated Class", hoveringAnnotation.getAnnotationClassId())
                         .withEntry("Location", String.format("%s:%s", hoveringAnnotation.getOffset(), hoveringAnnotation.getLength())),
                 false,
                 false,
@@ -129,7 +129,7 @@ public class AnnotationInfoView extends ViewPart {
                     try {
                         EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getId(), profile -> {
                             rebuildContent(parent, hoveringAnnotation);
-                        }, annotationClass.getName());
+                        }, annotationClass.getId());
                     } catch (ProfileNotFoundException e) {
                         EclipseUtils.reportError("Profile could not be found.");
                     } catch (InvalidAnnotationProfileFormatException e) {

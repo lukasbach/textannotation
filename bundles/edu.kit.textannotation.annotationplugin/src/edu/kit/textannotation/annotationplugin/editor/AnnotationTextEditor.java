@@ -152,7 +152,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 				.evaluateSelection(new Region(originalSelection.x, originalSelection.y), textModelData.getDocument());
 
 		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(),
-				expandedSelection.getOffset(), expandedSelection.getLength(), annotationClass.getName());
+				expandedSelection.getOffset(), expandedSelection.getLength(), annotationClass.getId());
 		System.out.println("Annotating: " + annotation.toString());
 		textModelData.getAnnotations().addAnnotation(annotation);
 		

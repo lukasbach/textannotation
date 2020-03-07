@@ -55,6 +55,9 @@ public class XmlSchemaVariables {
     /** The attribute key of an annotation classes name in an annotationclass element. */
     public static final String KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME = "name";
 
+    /** The attribute key of an annotation classes id in an annotationclass element. */
+    public static final String KEY_PROFILE_ANNOTATIONCLASS_ATTR_ID = "id";
+
     /** The attribute key of an annotation classes color in an annotationclass element. */
     public static final String KEY_PROFILE_ANNOTATIONCLASS_ATTR_COLOR = "color";
 

@@ -21,6 +21,7 @@ import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import org.eclipse.ui.PlatformUI;
 
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -166,13 +167,13 @@ public class EditProfileDialog extends Shell {
 		annotationClassesList = new List(leftContainer, SWT.BORDER);
 		annotationClassesList.setLayoutData(lu.completelyFillingGridData());
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
-		annotationClassesList.addListener(SWT.Selection, e -> selectAnnotationClass(annotationClassesList.getSelection()[0]));
+		annotationClassesList.addListener(SWT.Selection, e -> selectAnnotationClass(annotationClassesList.getSelectionIndex()));
 
 		Label seperator;
 
 		if (selectedAnnotationClass != null) {
 			annotationClassesList.setSelection(
-					Arrays.asList(profile.getAnnotationClassNames()).indexOf(selectedAnnotationClass.getName())
+					Arrays.asList(profile.getAnnotationClassIds()).indexOf(selectedAnnotationClass.getId())
 			);
 
 			itemName = new Text(rightContainer, SWT.BORDER);
@@ -249,9 +250,14 @@ public class EditProfileDialog extends Shell {
 		setMinimumSize(550, 400);
 	}
 
-	private void selectAnnotationClass(String annotationClassName) {
+	private void selectAnnotationClass(int selectionIndex) {
+		String annotationClassId = Arrays.asList(profile.getAnnotationClassIds()).get(selectionIndex);
+		selectAnnotationClass(annotationClassId);
+	}
+
+	private void selectAnnotationClass(String annotationClassId) {
 		try {
-			selectedAnnotationClass = profile.getAnnotationClass(annotationClassName);
+			selectedAnnotationClass = profile.getAnnotationClass(annotationClassId);
 			rebuildContent(this);
 		} catch (Exception e) {
 			// TODO
@@ -281,11 +287,15 @@ public class EditProfileDialog extends Shell {
 
 	private void addNewClass() {
 		Color defaultColor = new Color(Display.getCurrent(), 52, 152, 219);
-		AnnotationClass newClass = new AnnotationClass("New Annotation Class " + newClassNameCounter++, defaultColor);
+		AnnotationClass newClass = new AnnotationClass(
+				UUID.randomUUID().toString(),
+				"New Annotation Class " + newClassNameCounter++,
+				defaultColor
+		);
 		profile.addAnnotationClass(newClass);
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
-		annotationClassesList.setSelection(new String[]{newClass.getName()});
-		selectAnnotationClass(newClass.getName());
+		annotationClassesList.setSelection(new String[]{newClass.getId()});
+		selectAnnotationClass(newClass.getId());
 	}
 
 	private void editAnnotationMetaData(AnnotationClass annotationClass) {
@@ -297,7 +307,7 @@ public class EditProfileDialog extends Shell {
 		Composite contentContainer = lu.createVerticalScrollComposite(editWindow, relayout);
 
 		Header.withTitle("Edit Annotation Class Metadata")
-				.withSubTitle("You are editing the metadata for the annotation class " + annotationClass.getName())
+				.withSubTitle("You are editing the metadata for the annotation class " + annotationClass.getId())
 				.render(contentContainer);
 
 		MetaDataView mdview = new MetaDataView(contentContainer, annotationClass.metaData, true, true, true, true);
@@ -305,7 +315,7 @@ public class EditProfileDialog extends Shell {
 			onSave.run();
 
 			// Refresh edit window
-			selectAnnotationClass(selectedAnnotationClass.getName());
+			selectAnnotationClass(selectedAnnotationClass.getId());
 		});
 		mdview.onShouldResize.addListener(e -> {
 			relayout.fire(new EventManager.EmptyEvent());

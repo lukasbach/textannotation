@@ -8,7 +8,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +22,6 @@ import static edu.kit.textannotation.annotationplugin.textmodel.XmlSchemaVariabl
  * @see AnnotationClass
  */
 public class AnnotationClassXmlInterface implements XmlNodeParserInterface<AnnotationClass> {
-    private XmlInterfaceUtils utils = new XmlInterfaceUtils();
-
     @Override
     public AnnotationClass parseXml(Node node) {
         XmlNodeWrapper wrappedNode = new XmlNodeWrapper(node);
@@ -38,7 +35,8 @@ public class AnnotationClassXmlInterface implements XmlNodeParserInterface<Annot
                 .map(Node::getTextContent).orElse(null);
 
         AnnotationClass annotationClass = new AnnotationClass(
-                attributes.getNamedItem("name").getTextContent(),
+                attributes.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_ID).getTextContent(),
+                attributes.getNamedItem(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME).getTextContent(),
                 color,
                 description
         );

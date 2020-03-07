@@ -34,6 +34,7 @@ public class AnnotationProfileXmlInterface implements XmlBuilderInterface<Annota
 
         profile.getAnnotationClasses().forEach(annotationClass -> {
             Element classEl = doc.createElement(KEY_PROFILE_ANNOTATIONCLASS_ELEMENT);
+            classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_ID, annotationClass.getId());
             classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_NAME, annotationClass.getName());
             classEl.setAttribute(KEY_PROFILE_ANNOTATIONCLASS_ATTR_COLOR, annotationClass.getColorAsTextModelString());
 

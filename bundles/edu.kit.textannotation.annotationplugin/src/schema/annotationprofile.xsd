@@ -54,6 +54,12 @@
                             </xs:element>
                         </xs:sequence>
 
+                        <xs:attribute name="id" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">The ID of the annotation class.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+
                         <xs:attribute name="name" type="xs:string" use="required">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">The name of the annotation class.</xs:documentation>

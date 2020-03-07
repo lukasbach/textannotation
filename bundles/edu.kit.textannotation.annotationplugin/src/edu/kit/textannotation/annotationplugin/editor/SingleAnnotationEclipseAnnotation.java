@@ -15,6 +15,6 @@ class SingleAnnotationEclipseAnnotation extends Annotation {
     public static final String TYPE= "edu.kit.textannotation.annotationplugin.editor.SingleAnnotationEclipseAnnotation"; //$NON-NLS-1$
 
     SingleAnnotationEclipseAnnotation(String content, SingleAnnotation ann, AnnotationClass acl) {
-        super(TYPE, false, acl.getDescription().length() > 0 ? acl.getDescription() : acl.getName());
+        super(TYPE, false, acl.getDescription().length() > 0 ? acl.getDescription() : acl.getId());
     }
 }

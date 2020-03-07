@@ -38,7 +38,7 @@ public class TextModelDataXmlInterface
             annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ID, annotation.getId());
             annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_OFFSET, "" + annotation.getOffset());
             annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_LENGTH, "" + annotation.getLength());
-            annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER, annotation.getAnnotationIdentifier());
+            annotationEl.setAttribute(KEY_ANNOTATIONDATA_ANNOTATION_ATTR_ANNOTATION_IDENTIFIER, annotation.getAnnotationClassId());
             annotation.metaData.stream().forEach(metaDataEntry -> {
                 Element metaDataEl = doc.createElement(KEY_ANNOTATIONDATA_METADATA_ELEMENT);
                 metaDataEl.setTextContent(metaDataEntry.value);

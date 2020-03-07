@@ -1,8 +1,5 @@
 package edu.kit.textannotation.annotationplugin.profile;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.graphics.Color;
 
@@ -13,6 +10,7 @@ import org.eclipse.swt.graphics.Color;
  * A annotation class mostly consists of a name, a description, a color and a metadata set.
  */
 public class AnnotationClass {
+	private String id;
 	private String name;
 	private Color color;
 	private @Nullable String description;
@@ -21,24 +19,21 @@ public class AnnotationClass {
 	public final MetaDataContainer metaData;
 
 	/** Create a new annotation class with all available options. */
-	public AnnotationClass(String name, Color color, @Nullable String description) {
+	public AnnotationClass(String id, String name, Color color, @Nullable String description) {
+		this.id = id;
 		this.name = name;
 		this.color = color;
 		this.description = description;
 		this.metaData = new MetaDataContainer();
 	}
 
-	/** Create a new annotation class with its name and color. */
-	public AnnotationClass(String name, Color color) {
+	/** Create a new annotation class with its ID, name and color. */
+	public AnnotationClass(String id, String name, Color color) {
+		this.id = id;
 		this.name = name;
 		this.color = color;
 		this.description = null;
 		this.metaData = new MetaDataContainer();
-	}
-
-	/** Return the name of the annotation class, which can be represented to the end user. */
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -55,8 +50,29 @@ public class AnnotationClass {
 	public String getColorAsTextModelString() {
 		return String.format("%s, %s, %s", color.getRed(), color.getGreen(), color.getBlue());
 	}
+
+	/** Return the ID of the annotation class, which is used to uniquely identify the annotation class. */
+	public String getId() {
+		return id;
+	}
 	
-	/** Set the name of the annotation class. */
+	/**
+	 * Set the name of the annotation class.
+	 * @see AnnotationClass::getId
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/** Return the name of the annotation class, which can be used to display the class to the end user. */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set the annotation class name.
+	 * @see AnnotationClass::getName
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -85,6 +101,6 @@ public class AnnotationClass {
 
 	@Override
 	public String toString() {
-		return String.format("AnnotationClass(%s, %s)", name, this.getColorAsTextModelString());
+		return String.format("AnnotationClass(%s, %s)", id, this.getColorAsTextModelString());
 	}
 }

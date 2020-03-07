@@ -18,7 +18,7 @@ public class SingleAnnotation {
 	private String id;
 	private int offset;
 	private int length;
-	private String annotationIdentifier;
+	private String annotationClassId;
 
 	/** This event fires when the location of the region of the annotation changes. */
 	public final EventManager<EventManager.EmptyEvent> onLocationChange =
@@ -32,13 +32,13 @@ public class SingleAnnotation {
 	 * @param id a unique string that represents the annotation. May be random.
 	 * @param offset where the annotation starts, relative to the beginning of the text document.
 	 * @param length of the annotation
-	 * @param annotationIdentifier the ID of the associated annotation class.
+	 * @param annotationClassId the ID of the associated annotation class.
 	 */
-	public SingleAnnotation(String id, int offset, int length, String annotationIdentifier) {
+	public SingleAnnotation(String id, int offset, int length, String annotationClassId) {
 		this.id = id;
 		this.offset = offset;
 		this.length = length;
-		this.annotationIdentifier = annotationIdentifier; // TODO rename to annotationclass
+		this.annotationClassId = annotationClassId;
 	}
 
 	/** Return the unique ID which identifies this annotation. */
@@ -151,12 +151,12 @@ public class SingleAnnotation {
 	 * referenced by this annotation.
 	 * @see edu.kit.textannotation.annotationplugin.profile.AnnotationClass
 	 */
-	public String getAnnotationIdentifier() {
-		return annotationIdentifier;
+	public String getAnnotationClassId() {
+		return annotationClassId;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("SingleAnnotation(annotation=%s, offset=%s, length=%s)", getAnnotationIdentifier(), getOffset(), getLength());
+		return String.format("SingleAnnotation(annotation=%s, offset=%s, length=%s)", getAnnotationClassId(), getOffset(), getLength());
 	}
 }

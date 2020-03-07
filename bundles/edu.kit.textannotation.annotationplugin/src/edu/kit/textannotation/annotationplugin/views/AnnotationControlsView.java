@@ -170,6 +170,7 @@ public class AnnotationControlsView extends ViewPart {
 
 			Button button = new Button(aclContainer, SWT.PUSH | SWT.FILL);
 			button.setText(a.getName());
+			button.setToolTipText(a.getId());
 			button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			button.addListener(SWT.Selection, event -> {
 				new AnnotationEditorFinder(workbench).getAnnotationEditor().annotate(a, activeSelectionStrategy);
