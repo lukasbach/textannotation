@@ -135,7 +135,7 @@ public class AnnotationControlsView extends ViewPart {
 		fD[0].setHeight(10);
 		subtitleLabel.setFont(new Font(Display.getDefault(), fD[0]));
 
-		Header.withTitle("Selection Strategy").render(parent);
+		Header.withTitle("Selection Strategy").withSubTitle(activeSelectionStrategy.getDescription()).render(parent);
 		Composite selectionStrategiesComposite = new Composite(parent, SWT.NONE);
 		selectionStrategiesComposite.setLayoutData(lu.horizontalFillingGridData());
 		selectionStrategiesComposite.setLayout(lu.fillLayout().withHorizontal().get());
