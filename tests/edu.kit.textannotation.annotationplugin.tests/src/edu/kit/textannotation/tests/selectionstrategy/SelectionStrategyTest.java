@@ -39,7 +39,7 @@ public class SelectionStrategyTest {
 	public void testWordStrategy() {
 		Region result = (new WordSelectionStrategy()).evaluateSelection(new Region(7, 2), document);
 		assertEquals(6, result.getOffset());
-		assertEquals(4, result.getLength());
+		assertEquals(5, result.getLength());
 	}
 
 	@Test
