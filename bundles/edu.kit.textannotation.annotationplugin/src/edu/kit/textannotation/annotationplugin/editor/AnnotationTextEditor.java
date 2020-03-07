@@ -69,10 +69,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 			try {
 				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileId()), e.textModelData.getAnnotations());
 			} catch (ProfileNotFoundException ex) {
-				ex.printStackTrace();
+				EclipseUtils.logger().error(ex);
 				EclipseUtils.reportError("Profile not found.");
 			} catch (InvalidAnnotationProfileFormatException ex) {
-				ex.printStackTrace();
+				EclipseUtils.logger().error(ex);
 				EclipseUtils.reportError("Profile not properly formatted. " + ex.getMessage());
 			}
 		});
