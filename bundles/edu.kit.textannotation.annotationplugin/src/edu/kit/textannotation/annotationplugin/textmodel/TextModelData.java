@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -113,7 +114,7 @@ public class TextModelData {
 			return document.get(annotation.getOffset(), annotation.getLength());
 		} catch (BadLocationException e) {
 			// TODO
-			e.printStackTrace();
+			EclipseUtils.logger().error(e);
 			return "[BADANNOTATION]";
 		}
 	}

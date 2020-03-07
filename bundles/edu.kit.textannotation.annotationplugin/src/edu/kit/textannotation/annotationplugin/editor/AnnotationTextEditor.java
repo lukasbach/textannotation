@@ -153,7 +153,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
 		SingleAnnotation annotation = new SingleAnnotation(UUID.randomUUID().toString(),
 				expandedSelection.getOffset(), expandedSelection.getLength(), annotationClass.getId());
-		System.out.println("Annotating: " + annotation.toString());
+		EclipseUtils.logger().info("Annotating: " + annotation.toString());
 		textModelData.getAnnotations().addAnnotation(annotation);
 		
 		// Trigger rehighlight
@@ -221,18 +221,10 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	private void prepareSourceViewer(ISourceViewer sv) {
 		sourceViewer = sv;
 
-		sv.addTextListener(new ITextListener() {
-			@Override
-			public void textChanged(TextEvent event) {
-				DocumentEvent de = event.getDocumentEvent();
-				if (de != null) {
-					annotationFixer.applyEditEvent(de);
-					// dv.documentChanged(event.getDocumentEvent());
-				}
-
-				// sv.setVisibleRegion(2, 5);
-				System.out.println(event.getText() + event.getOffset() + ":" + event.getLength());
-
+		sv.addTextListener(event -> {
+			DocumentEvent de = event.getDocumentEvent();
+			if (de != null) {
+				annotationFixer.applyEditEvent(de);
 			}
 		});
 	}

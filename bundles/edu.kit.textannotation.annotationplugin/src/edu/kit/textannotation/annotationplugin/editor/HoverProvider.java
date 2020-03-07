@@ -68,13 +68,13 @@ class HoverProvider extends AbstractAnnotationHover {
 		try {
 			content = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			EclipseUtils.logger().error(e);
 		}
 
 		try {
 			acl = editor.getAnnotationProfile().getAnnotationClass(ann.getAnnotationClassId());
 		} catch (Exception e) {
-			e.printStackTrace();
+			EclipseUtils.logger().error(e);
 			EclipseUtils.reportError("Could not get annotationclass data");
 			return null;
 		}

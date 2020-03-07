@@ -75,8 +75,8 @@ public class EditProfileDialog extends Shell {
 				}
 			}
 		} catch (Exception e) {
+			EclipseUtils.logger().error(e);
 			EclipseUtils.reportError(e.getMessage());
-			e.printStackTrace();
 		}
 	}
 
@@ -139,7 +139,6 @@ public class EditProfileDialog extends Shell {
 		});
 		profileSelector.select(allProfiles.indexOf(new AnnotationProfile(profile.getId(), "")));
 		ComboSelectionListener.create(profileSelector, (e) -> {
-			System.out.println(e.index + " " + e.value);
 			profile = allProfiles.get(e.index);
 			rebuildContent(parent);
 		});
@@ -261,7 +260,7 @@ public class EditProfileDialog extends Shell {
 			rebuildContent(this);
 		} catch (Exception e) {
 			// TODO
-			e.printStackTrace();
+			EclipseUtils.logger().error(e);
 		}
 	}
 

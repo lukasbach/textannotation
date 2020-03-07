@@ -88,7 +88,7 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		try {
 			registry.getProfiles().forEach(p -> profile.add(p.getId()));
 		} catch (InvalidAnnotationProfileFormatException e) {
-			e.printStackTrace();
+			EclipseUtils.logger().error(e);
 			EclipseUtils.reportError("Profile is not properly formatted.");
 		}
 		gd = new GridData(GridData.FILL_HORIZONTAL);

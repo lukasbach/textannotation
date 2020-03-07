@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 
@@ -47,7 +48,9 @@ public class AnnotationSetFixer {
 		oldDocumentLength = docLength;		
 		
 		for (SingleAnnotation annotation: annotations.getAnnotations()) {
-			System.out.println(String.format("annotationOffset=%s, eventStart=%s, eventLength=%s", annotation.getOffset(), eventStart, eventLength));
+			EclipseUtils.logger().info(
+					String.format("Apply edit event: annotationOffset=%s, eventStart=%s, eventLength=%s",
+							annotation.getOffset(), eventStart, eventLength));
 			if (annotation.getOffset() >= eventStart) {
 				annotation.addOffset(eventLength);
 			} else if (annotation.getOffset() < eventStart && annotation.getOffset() + annotation.getLength() >= eventStart) {

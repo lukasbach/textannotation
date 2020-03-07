@@ -1,5 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.*;
 
@@ -43,7 +44,7 @@ public class AnnotatedTextPresentationReconciler implements IPresentationReconci
 
 					textViewer.setTextColor(ac.getColor(), an.getOffset(), an.getLength(), true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					EclipseUtils.logger().error(e);
 				}
 			}
 		}

@@ -45,7 +45,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite)
 			throws CoreException {
-		System.out.println("doSaveDocument: " + element.toString() + ", document: " + document.get());
+		EclipseUtils.logger().info("doSaveDocument: " + element.toString() + ", document: " + document.get());
 
 		String saveData = textModelDataXmlInterface.buildXml(textModelData);
 		super.doSaveDocument(monitor, element, new Document(saveData), overwrite);
@@ -66,7 +66,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				document.set(textModelData.getDocument().get());
 				onInitialize.fire(new InitializeEvent(textModelData));
 			} catch (InvalidFileFormatException e) {
-				e.printStackTrace();
+				EclipseUtils.logger().error(e);
 				EclipseUtils.reportError("File not properly formatted. " + e.getMessage());
 			}
 			

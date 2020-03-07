@@ -38,7 +38,7 @@ class XmlInterfaceUtils {
             DocumentBuilder db = dbf.newDocumentBuilder();
             return db.newDocument();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            EclipseUtils.logger().error(e);
             EclipseUtils.reportError("Could not create XML Document builder: " + e.getMessage());
             return null;
         }
@@ -61,7 +61,7 @@ class XmlInterfaceUtils {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             return writer.getBuffer().toString();
         } catch (TransformerException e) {
-            e.printStackTrace();
+            EclipseUtils.logger().error(e);
         }
 
         return "";

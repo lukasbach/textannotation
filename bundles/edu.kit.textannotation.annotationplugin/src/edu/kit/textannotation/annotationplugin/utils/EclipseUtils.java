@@ -3,6 +3,7 @@ package edu.kit.textannotation.annotationplugin.utils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jgit.annotations.Nullable;
@@ -34,8 +35,13 @@ public class EclipseUtils {
      * @param message the error message to display in textual form.
      */
     public static void reportError(String message) {
+        logger().error("Reported error: " + message);
         StatusManager.getManager().handle(new Status(IStatus.ERROR, PluginConfig.PLUGIN_ID, message),
                 StatusManager.SHOW);
+    }
+
+    public static Logger logger() {
+        return PlatformUI.getWorkbench().getService(org.eclipse.e4.core.services.log.Logger.class);
     }
 
     /**
@@ -103,7 +109,7 @@ public class EclipseUtils {
                 return wizard;
             }
         } catch (CoreException e) {
-            e.printStackTrace();
+            EclipseUtils.logger().error(e);
         }
 
         return null;

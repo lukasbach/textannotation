@@ -81,7 +81,7 @@ public class EventManager<T> {
 
 	private void log(String line) {
 		if (name != null) {
-			System.out.println(String.format("Eventmanager(%s): %s", name, line));
+			EclipseUtils.logger().info(String.format("Eventmanager(%s): %s", name, line));
 		}
 	}
 }

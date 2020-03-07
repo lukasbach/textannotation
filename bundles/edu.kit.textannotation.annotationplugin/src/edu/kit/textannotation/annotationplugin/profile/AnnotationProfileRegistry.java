@@ -50,7 +50,7 @@ public class AnnotationProfileRegistry {
         this.registryPaths = registryPaths;
         this.profiles = new LinkedList<>();
         this.profilePathMap = new HashMap<>();
-        registryPaths.forEach(p -> System.out.println("REGPATH: " + p));
+        registryPaths.forEach(p -> EclipseUtils.logger().info("ProfileRegistry path loaded: " + p));
     }
 
     /**
@@ -64,8 +64,8 @@ public class AnnotationProfileRegistry {
         paths.add(System.getProperty("user.dir") + "/.textannotation"); // eclipseinstalldir/.textannotation
         paths.add(EclipseUtils.getCurrentWorkspaceDirectory(bundle)); // workspace directory
 
-        System.out.println("AnnotationProfileRegistry: Reading profiles from the following paths:");
-        paths.forEach(System.out::println);
+        EclipseUtils.logger().info("AnnotationProfileRegistry: Reading profiles from the following paths:");
+        paths.forEach(p -> EclipseUtils.logger().info(p));
 
         return new AnnotationProfileRegistry(paths);
     }
@@ -110,7 +110,7 @@ public class AnnotationProfileRegistry {
             writeStream = new FileOutputStream(file, false);
             writeStream.write(fileContent.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            EclipseUtils.logger().error(e);
             EclipseUtils.reportError("Could not save profile data: " + e.getMessage());
         } finally {
             if (writeStream != null) {
@@ -132,7 +132,7 @@ public class AnnotationProfileRegistry {
         for (String registryPath: registryPaths) {
             Stream<Path> paths = null;
             try {
-                System.out.println("Walking " + registryPath);
+                EclipseUtils.logger().info("Walking " + registryPath);
                 paths = Files.walk(Paths.get(registryPath));
 
                 paths
@@ -143,20 +143,20 @@ public class AnnotationProfileRegistry {
                         try {
                             String s = new String(Files.readAllBytes(f));
                             AnnotationProfile profile = annotationProfileXmlInterface.parseXml(s);
-                            System.out.println(String.format("Parsed '%s' from '%s'", profile.getId(), f.toString()));
+                            EclipseUtils.logger().info(String.format("Parsed '%s' from '%s'", profile.getId(), f.toString()));
 
                             profiles.add(profile);
                             profilePathMap.put(profile.getId(), f);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            EclipseUtils.logger().error(e);
                             EclipseUtils.reportError("Could not read profile: " + e.getMessage());
                         } catch (InvalidFileFormatException e) {
-                            e.printStackTrace();
+                            EclipseUtils.logger().error(e);
                             EclipseUtils.reportError("Profile is improperly formatted: " + e.getMessage());
                         }
                     });
             } catch (IOException e) {
-                System.out.println(String.format("Skipping annotation profiles in %s.", registryPath));
+                EclipseUtils.logger().info(String.format("Skipping annotation profiles in %s.", registryPath));
             } finally {
                 if (paths != null) {
                     paths.close();
