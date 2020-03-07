@@ -86,7 +86,8 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		Display.getDefault().asyncExec(() -> EditProfileDialog.openWindow(
 				AnnotationProfileRegistry.createNew(FrameworkUtil.getBundle(this.getClass())),
 				profileName,
-				annotationProfile -> {}
+				annotationProfile -> {},
+				null
 		));
 
 		return true;

@@ -9,6 +9,7 @@ import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jgit.annotations.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -47,15 +48,24 @@ public class EditProfileDialog extends Shell {
 	 * @param profileName the name of the profile which is edited. The profile registry is used to resolve the profile.
 	 * @param onProfileChange a handler that is called when the profile is changed from within the editor, with the
 	 *                        changed profile data as payload.
+	 * @param selectedAnnotationClass the initially selected annotation class, or null if no annotation class should
+	 *                                be selected from the start.
 	 */
-	public static void openWindow(AnnotationProfileRegistry registry, String profileName,
-								  Consumer<AnnotationProfile> onProfileChange) {
+	public static void openWindow(AnnotationProfileRegistry registry,
+								  String profileName,
+								  Consumer<AnnotationProfile> onProfileChange,
+								  @Nullable String selectedAnnotationClass) {
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			EditProfileDialog shell = new EditProfileDialog(display, registry, profileName, p -> {
 				registry.overwriteProfile(p);
 				onProfileChange.accept(p);
 			});
+
+			if (selectedAnnotationClass != null) {
+				shell.selectAnnotationClass(selectedAnnotationClass);
+			}
+
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {

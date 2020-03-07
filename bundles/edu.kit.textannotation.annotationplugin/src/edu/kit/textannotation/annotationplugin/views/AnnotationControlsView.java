@@ -123,7 +123,7 @@ public class AnnotationControlsView extends ViewPart {
 					EditProfileDialog.openWindow(registry, textModelData.getProfileName(), p -> {
 						rebuildContent(parent, textModelData);
 						editor.onProfileChange.fire(p);
-					});
+					}, null);
 				})
 				.render(parent);
 

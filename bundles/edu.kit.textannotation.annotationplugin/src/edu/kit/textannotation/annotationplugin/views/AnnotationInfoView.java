@@ -108,7 +108,7 @@ public class AnnotationInfoView extends ViewPart {
                 })
                 .render(container);
 
-        MetaDataView annotationDataForm = new MetaDataView(
+        new MetaDataView(
                 container,
                 MetaDataContainer.fromEmpty()
                         .withEntry("Marked Text", editor.getAnnotationContent(hoveringAnnotation))
@@ -120,16 +120,16 @@ public class AnnotationInfoView extends ViewPart {
                 false
         );
 
-        Header.withTitle("Profile meta data")
+        Header.withTitle("Annotation class meta data")
                 .withSubTitle("You can edit this data in the profile editor")
-                .withButton("Edit Profile", () -> {
+                .withButton("Edit in Profile Editor", () -> {
                     AnnotationEditorFinder finder = new AnnotationEditorFinder(workbench);
                     AnnotationTextEditor editor = finder.getAnnotationEditor();
                     AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
                     try {
                         EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getName(), profile -> {
                             rebuildContent(parent, hoveringAnnotation);
-                        });
+                        }, annotationClass.getName());
                     } catch (ProfileNotFoundException e) {
                         EclipseUtils.reportError("Profile could not be found.");
                     } catch (InvalidAnnotationProfileFormatException e) {
@@ -138,7 +138,7 @@ public class AnnotationInfoView extends ViewPart {
                 })
                 .render(container);
 
-        MetaDataView profileMetaDataForm = new MetaDataView(
+        new MetaDataView(
                 container,
                 profileMetaData,
                 false,
