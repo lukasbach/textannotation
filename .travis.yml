@@ -40,7 +40,7 @@ script:
   - java -jar jacococli.jar report tests/edu.kit.textannotation.annotationplugin.tests/target/coverage-reports/jacoco.exec --classfiles bundles/edu.kit.textannotation.annotationplugin/target/classes --html $HOME/coverage --xml $HOME/jacoco.xml
 
   # Run sonar scanner
-  - mvn sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.java.source=1.8 -Dsonar.coverage.jacoco.xmlReportPaths=$HOME/jacoco.xml -Dsonar.junit.reportPaths=target/surefire-reports
+  - mvn sonar:sonar -Dsonar.projectKey=lukasbach_textannotation -Dsonar.java.source=1.8 -Dsonar.coverage.jacoco.xmlReportPaths=$HOME/jacoco.xml -Dsonar.junit.reportPaths=target/surefire-reports -Dsonar.exclusions=tests/**
 
 deploy:
   # deploy jar files to github releases
