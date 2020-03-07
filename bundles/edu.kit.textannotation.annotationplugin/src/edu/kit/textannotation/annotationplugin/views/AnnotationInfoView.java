@@ -100,7 +100,7 @@ public class AnnotationInfoView extends ViewPart {
 
         MetaDataContainer profileMetaData = annotationClass.metaData;
 
-        Header.withTitle(annotationClass.getId())
+        Header.withTitle(annotationClass.getName())
                 .withSubTitle(annotationClass.getDescription())
                 .withButton("Remove annotation", () -> {
                     editor.deannotate(hoveringAnnotation.getOffset());
@@ -112,7 +112,8 @@ public class AnnotationInfoView extends ViewPart {
                 container,
                 MetaDataContainer.fromEmpty()
                         .withEntry("Marked Text", editor.getAnnotationContent(hoveringAnnotation))
-                        .withEntry("Annotated Class", hoveringAnnotation.getAnnotationClassId())
+                        .withEntry("Annotated Class", annotationClass.getName())
+                        .withEntry("Annotated Class ID", annotationClass.getId())
                         .withEntry("Location", String.format("%s:%s", hoveringAnnotation.getOffset(), hoveringAnnotation.getLength())),
                 false,
                 false,
