@@ -26,6 +26,12 @@ The repository comes with an example Eclipse workspace to explore the functions 
 
 The plugin adds a custom perspective that provides all necessary views for using the plugin. Click the perspective shortcut on the top right or navigate through the menu bar via ``Window > Perspective > Open Perspective`` and open the *Text Annotation Perspective*. This automatically opens the relevant views and adds shortcuts for creating new files.
 
+## Logs
+
+The plugin uses the default logging service of Eclipse. By default, all logs are saved at
+``workspace/.metadata/.log`` or ``eclipse/configuration/*.log``. You can also open the logs from within eclipse via ``Window > Show View > PDE Runtime > Error Log``.
+Logging granularity can be changed via the ``config.ini`` file of eclipse by adapting the ``eclipse.log.level`` to one of the following: ``INFO``, ``WARNING``, ``ERROR``.
+
 ## About
 (TODO)
 
