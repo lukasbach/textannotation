@@ -14,11 +14,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.helpers.AnnotationRegistry;
 import org.osgi.framework.FrameworkUtil;
 
 import javax.inject.Inject;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

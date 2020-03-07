@@ -7,7 +7,6 @@ import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.utils.LayoutUtilities;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
-import edu.kit.textannotation.annotationplugin.wizards.ProfileWizard;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -18,13 +17,8 @@ import org.eclipse.swt.widgets.*;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationClass;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.ui.wizards.IWizardDescriptor;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -135,9 +129,7 @@ public class EditProfileDialog extends Shell {
 		buttonNewProfile.addListener(SWT.Selection, e -> {
 			close();
 			String wizardId = "edu.kit.textannotation.annotationplugin.wizards.ProfileWizard";
-			EclipseUtils.openWizard(wizardId); // openwizard is blocking
-			// reloadProfiles(profile.getName());
-			// rebuildContent(parent);
+			EclipseUtils.openWizard(wizardId);
 		});
 
 		Composite bottomContainer = new Composite(parent, SWT.NONE);
@@ -160,9 +152,13 @@ public class EditProfileDialog extends Shell {
 		Label seperator;
 
 		if (selectedAnnotationClass != null) {
+			annotationClassesList.setSelection(
+					Arrays.asList(profile.getAnnotationClassNames()).indexOf(selectedAnnotationClass.getName())
+			);
+
 			itemName = new Text(rightContainer, SWT.BORDER);
 			itemName.setLayoutData(lu.horizontalFillingGridData());
-			itemName.setText("Selected Item Name");
+			itemName.setText(selectedAnnotationClass.getName());
 			itemName.addModifyListener(e -> changeAnnotationClassName(itemName.getText()));
 
 			colorSelector = new Button(rightContainer, SWT.PUSH);
@@ -238,9 +234,6 @@ public class EditProfileDialog extends Shell {
 		try {
 			selectedAnnotationClass = profile.getAnnotationClass(annotationClassName);
 			rebuildContent(this);
-			colorDisplay.setBackground(selectedAnnotationClass.getColor());
-			colorSelector.setText(selectedAnnotationClass.getColorAsTextModelString());
-			itemName.setText(annotationClassName);
 		} catch (Exception e) {
 			// TODO
 			e.printStackTrace();
