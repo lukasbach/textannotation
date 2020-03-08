@@ -24,8 +24,9 @@ as well as the internal project structure.
     - [Basic Concepts](#basic-concepts)
     - [Getting started with a First Annotation File](#getting-started-with-a-first-annotation-file)
     - [Views](#views)
-    - [Advanced Usage](#advanced-usage)
-    - [Overview of the Contributions of the Plugin](#overview-of-the-contributions-of-the-plugin)
+      - [Text Annotation Control Panel](#text-annotation-control-panel)
+      - [Text Annotation Details Panel](#text-annotation-details-panel)
+      - [Edit Profile Dialog](#edit-profile-dialog)
   - [Project Documentation](#project-documentation)
     - [An Overview of the Project](#an-overview-of-the-project)
     - [Plugin Architecture](#plugin-architecture)
@@ -89,6 +90,11 @@ An annotation profile will be required to create a new annotatable text
 file. On the next step, you have to specify a file name, the directory
 where the profile will be stored as well as a name for the profile.
 
+After the creation of the profile, the edit dialog is opened where you can
+define the annotation classes in your profile. Click on *Add Class* on the
+right to add new annotation classes, and specify suitable names for them.
+If your finished, close the dialog by clicking on *Save*.
+
 After you have created your first profile, continue by creating your
 first annotatable text file. Again, rightclick on your current project
 and select ``New > Other... > Text Annotation > Annotatable Text File``.
@@ -100,31 +106,53 @@ the *Text Annotation Perspective* has opened, which provides a control
 panel on the right side and a detail view on the bottom, which should be
 empty by default.
 
-You should start by specifying the annotation classes within your profile
-that you anticipate to use. In the control view, you can see that your
-newly created annotation profile is currently selected. Note that, changing
-the profile here also changes the profile used in the text annotation file,
-potentially invalidating annotations that are incompatible with the changed
-profile.
-
-Click on *Edit Profile*. You can add new Annotation classes with the
-*Add Class* button on the right. Newly added classes can be edited by
-selecting them from the list on the left and changing the values in the form
-on the right. If you're finished with specifying annotation classes, click
-*Save*.
-
 You can now start writing text and annotating the document! Add some content
 to your text file, select chunks of text and click the annotation class buttons
 on the right to annotate the selection. When clicking on an annotation, it will
 be selected in the detail view where the annotation can be deleted again.
 
 ### Views
-[ ] Overview of all views contributed by the plugin
 
-### Advanced Usage
-[ ] Description of the detail view, and metadata on profile classes etc
+The following section gives an overview of the UI views that are contributed
+to by the plugin.
 
-### Overview of the Contributions of the Plugin
+#### Text Annotation Control Panel
+
+This panel is displayed on the right of the eclipse IDE by default, and defines
+most control actions that can be invoked on an annotatable text file.
+You can change the profile that is being used, open the dialog for editing
+profiles and annotate the text using the defined annotation classes. Annotating
+text works by selecting the text in the editor view and then clicking on the
+corresponding annotation class.
+
+You can also change the used selected strategy, which expands the made
+selection based on the semantics of the selected text. For example, the
+word-based selection strategy expands the annotated region to include complete
+words.
+
+#### Text Annotation Details Panel
+
+This panel is displayed on the bottom of the eclipse IDE by default, and
+defines actions based on specific annotation classes. Click on or hover over
+an annotation in the editor view to see details on that annotation. You can
+remove the selected annotation from the document or change metadata
+associated with the annotation or the annotation class.
+
+#### Edit Profile Dialog
+
+This dialog allows changing the data within a profile as well as annotation
+classes stored in that profile. The dialog can be opened from three locations:
+
+- From the Control Panel, via the button *Edit Profile*
+- From the Details Panel, via the button *Edit in Profile Editor*. This
+  directly opens the annotation class settings in the dialog.
+- After creating a new profile, the dialog is automatically opened for that
+  profile.
+
+You can also change the profile that you are currently editing via the
+selection dropdown at the top of the dialog. This does not change the profile
+that is associated with the annotation file that is currently open. To change
+that, click on *Change Profile* in the Control Panel.
 
 ## Project Documentation
 
@@ -162,6 +190,10 @@ within the ``edu.kit.textannotation.annotationplugin`` parent package:
   related to profiles. Notable is also the ``AnnotationProfileRegistry``-class,
   which is responsible for locating a profile file within the project given its
   name.
+- ``selectionstrategy``: This package defines convenience selection strategies
+  that can be used to expand annotation regions based on text semantics. New
+  selection strategies can be added easily by implementing the
+  ``SelectionStrategy`` interface.
 - ``textmodel``: Classes in this package are related to a specific annotatable
   text file rather than its used profile. This package also contains classes
   regarding the validation of source files as well as the subpackage
@@ -179,6 +211,21 @@ when opening a new annotatable text file:
 ![Annotation Process][annotationprocessimage]
 
 ### XML Schemas
+
+In the context of the plugin, there exist two kinds of data structures which
+are persistet to hard disk, which are annotatable text files and annotation
+profiles. Both introduce respective file extensions (``*.taf`` and ``*.tap``),
+and both serialize their data as XML structures.
+
+When reading the data from files, the plugin core loads the XML structure
+and validates their correctness using XML schemas. The schema files are
+located in
+
+- ``bundles/edu.kit.textannotation.annotationplugin/src/schema/annotatedfile.xsd``
+- ``bundles/edu.kit.textannotation.annotationplugin/src/schema/annotationprofile.xsd``
+
+They describe how the respective files should be formatted, and throw errors
+with the structural violation if a malformed file is being loaded.
 
 ### Quality Assurance and Continuous Integration
 

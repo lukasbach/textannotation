@@ -26,6 +26,10 @@ The repository comes with an example Eclipse workspace to explore the functions 
 
 The plugin adds a custom perspective that provides all necessary views for using the plugin. Click the perspective shortcut on the top right or navigate through the menu bar via ``Window > Perspective > Open Perspective`` and open the *Text Annotation Perspective*. This automatically opens the relevant views and adds shortcuts for creating new files.
 
+## Documentation
+
+The user documentation as well as a documentation on the development of this plugin is located [here](./docs/documentation.md).
+
 ## Logs
 
 The plugin uses the default logging service of Eclipse. By default, all logs are saved at
@@ -33,6 +37,9 @@ The plugin uses the default logging service of Eclipse. By default, all logs are
 Logging granularity can be changed via the ``config.ini`` file of eclipse by adapting the ``eclipse.log.level`` to one of the following: ``INFO``, ``WARNING``, ``ERROR``.
 
 ## About
-(TODO)
+
+This plugin was developed during a practical project at the Karlsruher Institut of Technology.
+
+The project is documented [here](./docs/documentation.md).
 
 The icon used in the plugin is part of the Silk Iconset by [famfamfam.com](famfamfam.com), and licensec under the [CC Attribution 2.5](http://creativecommons.org/licenses/by/2.5/) license.
