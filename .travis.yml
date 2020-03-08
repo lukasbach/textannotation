@@ -49,7 +49,7 @@ deploy:
   body: >-
     To install this version of the plugin, download the
     ``edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar``
-    file from this release and place it in ``eclipse-install-dir%/dropins/plugins``.
+    file from this release and place it in ``%eclipse-install-dir%/dropins/plugins``.
     The ``plugins`` subdirectory might not exist yet and has to be created in this case.
     Then start eclipse with the -clean option for it to load the plugin.
   edge: true
