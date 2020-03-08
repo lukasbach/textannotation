@@ -25,10 +25,6 @@ before_install:
   - git clone --depth 1 https://github.com/kit-sdq/BuildUtilities.git /tmp/BuildUtilities
   - ". /tmp/BuildUtilities/travis-ci/setupenvironment.sh"
 
-before_deploy:
-  # generate changelog to be appended as release description
-  - npx standard-version --skip.bump --skip.commit --skip.tag
-
 script:
   # Build, run tests and generate binary jacoco output
   - mvn clean install test verify
@@ -50,7 +46,12 @@ deploy:
     - bundles/edu.kit.textannotation.annotationplugin/target/edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar
   skip_cleanup: true
   draft: false
-  release_notes_file: "CHANGELOG.md"
+  body: >-
+    To install this version of the plugin, download the
+    ``edu.kit.textannotation.annotationplugin-1.0.0-SNAPSHOT.jar``
+    file from this release and place it in ``eclipse-install-dir%/dropins/plugins``.
+    The ``plugins`` subdirectory might not exist yet and has to be created in this case.
+    Then start eclipse with the -clean option for it to load the plugin.
   edge: true
   on:
     tags: true
