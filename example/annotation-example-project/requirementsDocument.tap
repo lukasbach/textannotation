@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<annotationprofile name="Requirements Document">
-  <annotationclass color="46, 204, 113" name="Stakeholder"/>
-  <annotationclass color="230, 126, 34" name="Goal"/>
-  <annotationclass color="52, 152, 219" name="Functional Requirement"/>
+<annotationprofile id="reqdoc" name="Requirements Document">
+  <annotationclass color="46, 204, 113" id="Stakeholder" name="Stakeholder">
+    <metadata name="Reference Document">stakeholder.pdf</metadata>
+    <metadata name="modelname">stake-holder</metadata>
+    <description>A stakeholder is a person that has an affiliation to the project.</description>
+  </annotationclass>
+  <annotationclass color="230, 126, 34" id="Goal" name="Goal">
+    <metadata name="Reference Document">goal.pdf</metadata>
+    <metadata name="modelname">goal</metadata>
+    <description>A goal is something that the project aims to achieve.</description>
+  </annotationclass>
+  <annotationclass color="0, 128, 255" id="Functional Requirement" name="Functional Requirement"/>
 </annotationprofile>

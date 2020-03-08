@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <annotated>
-  <annotationprofile name="Requirements Document"/>
-  <annotation annotation="Goal" id="633ff051-7d80-427f-bdd0-1a9181e669ee" length="23" offset="112"/>
-  <annotation annotation="Stakeholder" id="78a039a3-a233-407c-ba20-ae5e1e27c513" length="19" offset="311"/>
-  <annotation annotation="Stakeholder" id="263acec1-16f0-4f3b-b8da-50e2823ecc6e" length="24" offset="339"/>
-  <annotation annotation="Functional Requirement" id="605d0f82-dd26-43e3-ba8f-69a69bcf2d53" length="111" offset="427"/>
-  <annotation annotation="Stakeholder" id="6e8d0d2f-d80a-4607-a30a-2c70e961eb74" length="18" offset="800"/>
-  <annotation annotation="Goal" id="20513413-1082-4ab6-a095-0db800907f3e" length="34" offset="756"/>
-  <annotation annotation="Goal" id="c3bfcd27-6e62-4ab9-ae5c-cf930c19f11b" length="38" offset="1190"/>
-  <annotation annotation="Stakeholder" id="44a149e7-2db3-490a-bebd-011858f53c37" length="23" offset="933"/>
-  <annotation annotation="Goal" id="6a2d8e91-8956-4085-bb47-2e28ade02d73" length="20" offset="1079"/>
-  <annotation annotation="Stakeholder" id="3952dddf-78f3-4b6b-bf1e-de90c04ea170" length="12" offset="1264"/>
-  <annotation annotation="Stakeholder" id="61452dda-f378-46d9-beb3-700f805e678b" length="33" offset="1378"/>
-  <annotation annotation="Goal" id="c8b6fa06-3bb0-4d34-8f38-b3dca50d72ae" length="21" offset="1457"/>
-  <annotation annotation="Goal" id="a0e4ca38-a535-4047-9c67-631f0b24cf70" length="21" offset="1640"/>
-  <annotation annotation="Goal" id="5d94dc3f-9e86-472f-a665-9c30c830d00d" length="4" offset="1683"/>
-  <annotation annotation="Stakeholder" id="e68b343e-dc6d-4535-bce4-45dfc2f81b9f" length="6" offset="1670"/>
-  <annotation annotation="Goal" id="79ee1ab1-deb0-4450-9088-3e3a5df5ebdb" length="14" offset="1837"/>
-  <annotation annotation="Goal" id="c9ce7802-cfd5-43dc-9f55-bd4db8525f59" length="36" offset="1855"/>
-  <annotation annotation="Goal" id="c044aa7d-d448-4aec-9bb4-f19366b78881" length="17" offset="1901"/>
-  <annotation annotation="Goal" id="65fa7bfd-9759-4669-bb69-068d7fa7a120" length="10" offset="1984"/>
-  <annotation annotation="Goal" id="8736550c-8899-4fd2-b7ed-2eedd16e055a" length="17" offset="2078"/>
-  <annotation annotation="Stakeholder" id="6c9ebdb2-7de0-4598-b4e9-7d80efae885f" length="22" offset="2110"/>
-  <annotation annotation="Stakeholder" id="e9274926-c271-4ade-8105-6f3a55b6df11" length="35" offset="2248"/>
-  <annotation annotation="Stakeholder" id="683846db-5d86-49b8-8181-d290e861fb73" length="11" offset="2301"/>
-  <annotation annotation="Stakeholder" id="c1c43dc2-85b3-4e4f-a782-fc1ee1aaddae" length="11" offset="2504"/>
-  <content>So far, our travel management is still characterized by many forms and manual transfers. We want to&#13;
-completely replace this old system with a new, paperless system that will reduce the costs of processing&#13;
-travel requests and travel reimbursements and that will simplify the booking and documentation for the&#13;
-travelling employee.&#13;
-&#13;
-The travel management system should support all employees in planning their business trips. Up to 100&#13;
-employees should be able to work with it at the same time with response times of less than 5 seconds.&#13;
-If an employee wants to travel, he or she uses the system to plan the travel. The system shall request the&#13;
-required travel data from the employee and then automatically plan a travel itinerary. To do so, it shall&#13;
-request options for transportation from our registered vendors, i.e. airlines, rail companies and car rental&#13;
-companies. For hotel booking, the system shall be connected to our partner travel agencies to automatically&#13;
-make inquiries. With this information on available transportation options and hotels, the system shall&#13;
-suggest an itinerary to the travelling employee.&#13;
-&#13;
-If the employee is satisfied with the itinerary, he or she sends the itinerary through the system. It will then&#13;
-be presented to the line manager unless the employee has the right to self-authorize travel. Finally, the&#13;
-itinerary is checked by an employee of the travel department. The employee of the travel department will&#13;
-clarify any inquiries concerning cheaper or better options directly with the traveling employee. Once all the&#13;
-queries have been clarified, the employee of the travel department will confirm the itinerary and the system&#13;
-will book the corresponding others through the systems of the vendors and of the travelling agency.&#13;
-&#13;
-After the trip, the employee can also use the system for reimbursements by scanning and uploading the&#13;
-receipts. After a final examination by the travel department, the expenses of the employee are then&#13;
-reimbursed. In order to increase the company-wide benefits, the system should also be able to generate&#13;
-reports that help the controlling department to reduce the travel costs at Sigurado.&#13;
-&#13;
-For authorization of employees, the new system must be connected to our central Identity Management&#13;
-System, operated by the IT Services, because we do not want to manage the rights more than once. Any&#13;
-unauthorized access to the system should be prevented. I think the system should also be operated in the&#13;
+  <annotationprofile id="reqdoc"/>
+  <annotation annotation="Goal" id="67955f0d-4458-4174-b1c0-674a10e2bccb" length="23" offset="111"/>
+  <annotation annotation="Stakeholder" id="0138d380-6c58-4cac-8418-36af1d49f5c0" length="24" offset="334"/>
+  <annotation annotation="Functional Requirement" id="3d6613fe-d78a-4a69-bb55-c453aa4bf7f6" length="102" offset="432"/>
+  <annotation annotation="Goal" id="ec43428f-2823-491b-9ee5-c53343444c2c" length="34" offset="747"/>
+  <annotation annotation="Stakeholder" id="c49a5997-4faa-4364-bf59-0c98f8cc9483" length="18" offset="791"/>
+  <annotation annotation="Stakeholder" id="1cc6396f-e76d-4908-b152-30a5e1055786" length="23" offset="923"/>
+  <annotation annotation="Goal" id="537ec435-492d-4d3b-b653-b3287c2db911" length="38" offset="1176"/>
+  <annotation annotation="Stakeholder" id="e9843084-b4b2-49c9-b3fb-989b2225a2b4" length="12" offset="1249"/>
+  <annotation annotation="Stakeholder" id="24a29fbb-1aed-4899-9d8a-282c1ac90bfb" length="33" offset="1362"/>
+  <annotation annotation="Goal" id="d9e42e51-9cd6-4c4f-b429-086113ae0525" length="21" offset="1440"/>
+  <annotation annotation="Goal" id="c58a76d1-0dff-4592-b2c3-74ed7e907601" length="21" offset="1622"/>
+  <annotation annotation="Goal" id="0e4a6649-c96d-40c6-b947-975e5f0e164f" length="14" offset="1817"/>
+  <annotation annotation="Goal" id="7884f8ab-576f-43ef-9db8-0ff675bff1cb" length="35" offset="1835"/>
+  <annotation annotation="Goal" id="5c46f0a2-8308-4fcb-8c42-089032025c5d" length="17" offset="1880"/>
+  <annotation annotation="Goal" id="e54d2510-c195-43a5-99e7-ef66c30bcdf9" length="10" offset="1962"/>
+  <annotation annotation="Stakeholder" id="9a3fda66-4adf-4377-a1a5-9f12166a9b92" length="22" offset="2087"/>
+  <annotation annotation="Stakeholder" id="e97f35d5-91d2-4c34-9022-5d0e016ee16b" length="34" offset="2223"/>
+  <annotation annotation="Stakeholder" id="a1fed711-0850-4429-95e0-04229276a25c" length="11" offset="2275"/>
+  <annotation annotation="Stakeholder" id="6c55796a-efdb-4a3c-81cd-c11764fc6f7d" length="11" offset="2476"/>
+  <content>So far, our travel management is still characterized by many forms and manual transfers. We want to
+completely replace this old system with a new, paperless system that will reduce the costs of processing
+travel requests and travel reimbursements and that will simplify the booking and documentation for the
+travelling employee.
+
+The travel management system should support all employees in planning their business trips. Up to 100
+employees should be able to work with it at the same time with response times of less than 5 seconds.
+If an employee wants to travel, he or she uses the system to plan the travel. The system shall request the
+required travel data from the employee and then automatically plan a travel itinerary. To do so, it shall
+request options for transportation from our registered vendors, i.e. airlines, rail companies and car rental
+companies. For hotel booking, the system shall be connected to our partner travel agencies to automatically
+make inquiries. With this information on available transportation options and hotels, the system shall
+suggest an itinerary to the travelling employee.
+
+If the employee is satisfied with the itinerary, he or she sends the itinerary through the system. It will then
+be presented to the line manager unless the employee has the right to self-authorize travel. Finally, the
+itinerary is checked by an employee of the travel department. The employee of the travel department will
+clarify any inquiries concerning cheaper or better options directly with the traveling employee. Once all the
+queries have been clarified, the employee of the travel department will confirm the itinerary and the system
+will book the corresponding others through the systems of the vendors and of the travelling agency.
+
+After the trip, the employee can also use the system for reimbursements by scanning and uploading the
+receipts. After a final examination by the travel department, the expenses of the employee are then
+reimbursed. In order to increase the company-wide benefits, the system should also be able to generate
+reports that help the controlling department to reduce the travel costs at Sigurado.
+
+For authorization of employees, the new system must be connected to our central Identity Management
+System, operated by the IT Services, because we do not want to manage the rights more than once. Any
+unauthorized access to the system should be prevented. I think the system should also be operated in the
 data center of our IT services so that the existing infrastructure can be used cost-efficiently.</content>
 </annotated>
