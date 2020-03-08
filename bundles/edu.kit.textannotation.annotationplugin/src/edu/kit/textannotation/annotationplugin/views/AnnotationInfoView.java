@@ -39,6 +39,7 @@ public class AnnotationInfoView extends ViewPart {
 
         Consumer<SingleAnnotation> onHover = s -> Display.getDefault().syncExec(() -> rebuildContent(parent, s));
         Consumer<EventManager.EmptyEvent> onUnHover = v -> Display.getDefault().syncExec(() -> rebuildContent(parent, null));
+        rebuildContent(parent, null);
 
         finder.onAnnotationEditorActivated.addListener(e -> {
             e.onClickAnnotation.addListener(onHover);
@@ -70,11 +71,6 @@ public class AnnotationInfoView extends ViewPart {
 
         EclipseUtils.clearChildren(parent);
 
-        if (hoveringAnnotation == null) {
-            parent.layout();
-            return;
-        }
-
         AnnotationClass annotationClass;
 
         EventManager<EventManager.EmptyEvent> relayout = new EventManager<>();
@@ -82,19 +78,30 @@ public class AnnotationInfoView extends ViewPart {
         container.setLayout(lu.gridLayout().withNumCols(1).get());
         container.setLayoutData(lu.completelyFillingGridData());
 
+        if (hoveringAnnotation == null) {
+            Header.withTitle("No Annotation selected")
+                    .withSubTitle("Click on an annotated region to display details.")
+                    .render(container);
+            parent.layout();
+            return;
+        }
+
         try {
             annotationClass = editor.getAnnotationProfile().getAnnotationClass(hoveringAnnotation.getAnnotationClassId());
         } catch (InvalidAnnotationProfileFormatException e) {
             Header.withTitle("Error")
                     .withSubTitle("The profile is not properly formatted.").render(container);
+            parent.layout();
             return;
         } catch (ProfileNotFoundException e) {
             Header.withTitle("Error")
                     .withSubTitle("The profile could not be found..").render(container);
+            parent.layout();
             return;
         } catch (Exception e) {
             Header.withTitle("Error")
                     .withSubTitle(e.getMessage()).render(container);
+            parent.layout();
             return;
         }
 
