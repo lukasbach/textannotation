@@ -47,6 +47,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 			throws CoreException {
 		EclipseUtils.logger().info("doSaveDocument: " + element.toString() + ", document: " + document.get());
 
+		textModelData.setDocument(document);
 		String saveData = textModelDataXmlInterface.buildXml(textModelData);
 		super.doSaveDocument(monitor, element, new Document(saveData), overwrite);
 	}
