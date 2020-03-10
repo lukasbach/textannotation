@@ -1,6 +1,6 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
-import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+import edu.kit.textannotation.annotationplugin.editor.AnnotationTextEditor;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 
@@ -16,7 +16,7 @@ import org.eclipse.jface.text.IDocument;
 public class AnnotationSetFixer {
 	private AnnotationSet annotations;
 	private int oldDocumentLength;
-	private boolean isFeedbackEvent;
+	private AnnotationTextEditor editor;
 
 	/**
 	 * Create a new fixer instance.
@@ -24,11 +24,12 @@ public class AnnotationSetFixer {
 	 *                    adapted by the fixer. It's okay for the annotationset to change after the creation
 	 *                    of the fixer, as long as the reference remains the same.
 	 * @param initialDocumentLength the return value of {@link IDocument::getLength} on the document.
+	 * @param editor a reference on the annotation editor
 	 */
-	public AnnotationSetFixer(AnnotationSet annotations, int initialDocumentLength) {
+	public AnnotationSetFixer(AnnotationSet annotations, int initialDocumentLength, AnnotationTextEditor editor) {
 		this.annotations = annotations;
 		this.oldDocumentLength = initialDocumentLength;
-		this.isFeedbackEvent = false;
+		this.editor = editor;
 	}
 
 	/**
@@ -36,11 +37,6 @@ public class AnnotationSetFixer {
 	 * @param e a document event that is performed on the text document.
 	 */
 	public void applyEditEvent(DocumentEvent e) {
-		if (isFeedbackEvent) {
-			isFeedbackEvent = false;
-			return;
-		}
-		
 		IDocument doc = e.getDocument();
 		int docLength = doc.getLength();
 		int eventStart = e.getOffset();
@@ -48,9 +44,6 @@ public class AnnotationSetFixer {
 		oldDocumentLength = docLength;		
 		
 		for (SingleAnnotation annotation: annotations.getAnnotations()) {
-			EclipseUtils.logger().info(
-					String.format("Apply edit event: annotationOffset=%s, eventStart=%s, eventLength=%s",
-							annotation.getOffset(), eventStart, eventLength));
 			if (annotation.getOffset() >= eventStart) {
 				annotation.addOffset(eventLength);
 			} else if (annotation.getOffset() < eventStart && annotation.getOffset() + annotation.getLength() >= eventStart) {
@@ -59,10 +52,7 @@ public class AnnotationSetFixer {
 				// NOOP
 			}
 		}
-		
-		// Change document model to trigger syntax rehighlighting
-		// use isFeedbackEvent to prevent infinite loop
-		isFeedbackEvent = true;
-		doc.set(doc.get());
+
+		editor.markDocumentAsDirty();
 	}
 }

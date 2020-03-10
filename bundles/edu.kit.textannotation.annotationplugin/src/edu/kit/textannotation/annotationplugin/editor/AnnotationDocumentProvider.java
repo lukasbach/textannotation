@@ -62,7 +62,7 @@ public class AnnotationDocumentProvider extends FileDocumentProvider {
 				textModelData = textModelDataXmlInterface.parseXml(document.get());
 
 				// Mark document as dirty after changing the profile
-				textModelData.onChangeProfileName.addListener(profile -> document.set(document.get()));
+				textModelData.onChangeProfileName.addListener(profile -> setCanSaveDocument(editorInput));
 
 				document.set(textModelData.getDocument().get());
 				onInitialize.fire(new InitializeEvent(textModelData));

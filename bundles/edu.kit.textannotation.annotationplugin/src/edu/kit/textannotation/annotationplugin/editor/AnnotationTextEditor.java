@@ -51,7 +51,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	public final EventManager<SingleAnnotation> onClickAnnotation = new EventManager<>("editor:click");
 
 	/** This event fires when the user dispatches a click in the editor view to a location which does not map to an annotation. */
-	public final EventManager<EventManager.EmptyEvent> onClickOutsideOfAnnotation = new EventManager<>("editor:clickoutside");
+	public final EventManager<EventManager.EmptyEvent> onClickOutsideOfAnnotation = new EventManager<>();
 
 	/** This event fires when the profile associated with the currently opened file is changed. */
 	public final EventManager<AnnotationProfile> onProfileChange = new EventManager<>("editor:profilechange");
@@ -65,9 +65,13 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		documentProvider = new AnnotationDocumentProvider();
 		documentProvider.onInitialize.addListener(e -> {
 			textModelData = e.textModelData;
-			annotationFixer = new AnnotationSetFixer(e.textModelData.getAnnotations(), e.textModelData.getDocument().getLength());
+			annotationFixer = new AnnotationSetFixer(e.textModelData.getAnnotations(),
+					e.textModelData.getDocument().getLength(), this);
 			try {
-				presentationReconciler.setAnnotationInformation(getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileId()), e.textModelData.getAnnotations());
+				presentationReconciler.setAnnotationInformation(
+						getAnnotationProfileRegistry().findProfile(e.textModelData.getProfileId()),
+						e.textModelData.getAnnotations()
+				);
 			} catch (ProfileNotFoundException ex) {
 				EclipseUtils.logger().error(ex);
 				EclipseUtils.reportError("Profile not found.");
@@ -156,7 +160,6 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 		EclipseUtils.logger().info("Annotating: " + annotation.toString());
 		textModelData.getAnnotations().addAnnotation(annotation);
 		
-		// Trigger rehighlight
 		markDocumentAsDirty();
 	}
 
@@ -164,7 +167,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	public void deannotate(int offset) {
 		SingleAnnotation annotation = textModelData.getSingleAnnotationAt(offset);
 		textModelData.getAnnotations().removeAnnotation(annotation);
-		markDocumentAsDirty();
+		sourceViewer.getDocument().set(sourceViewer.getDocument().get());
 	}
 
 	/** Return a unique ID for this editor. */
@@ -186,11 +189,11 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 
 	/**
 	 * Mark the document as dirty, i.e. the user gets notified if he attempts to close the file without saving,
-	 * and the document gets savable.
+	 * and the document gets savable. Also the syntax highlighting is reevaluated.
 	 */
 	public void markDocumentAsDirty() {
-		IDocument doc = sourceViewer.getDocument();
-		doc.set(doc.get());
+		sourceViewer.invalidateTextPresentation();
+		((AnnotationDocumentProvider) getDocumentProvider()).setCanSaveDocument(getEditorInput());
 	}
 
 	/**

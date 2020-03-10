@@ -21,8 +21,7 @@ public class SingleAnnotation {
 	private String annotationClassId;
 
 	/** This event fires when the location of the region of the annotation changes. */
-	public final EventManager<EventManager.EmptyEvent> onLocationChange =
-			new EventManager<>("singleAnnotation:locationChange");
+	public final EventManager<EventManager.EmptyEvent> onLocationChange = new EventManager<>();
 
 	/** Metadata attached to the specific annotation. */
 	public final MetaDataContainer metaData = new MetaDataContainer();
