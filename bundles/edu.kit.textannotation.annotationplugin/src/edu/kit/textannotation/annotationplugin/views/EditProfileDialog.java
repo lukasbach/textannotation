@@ -121,27 +121,10 @@ public class EditProfileDialog extends Shell {
 		Composite topContainer = new Composite(parent, SWT.NONE);
 		topContainer.setLayout(lu.gridLayout().withNumCols(2).withEqualColumnWidth(false).get());
 
-		Combo profileSelector = new Combo(topContainer, SWT.DROP_DOWN | SWT.BORDER);
-		allProfiles.forEach(p -> {
-			// Add numbers at the end of the values in case multiple profiles with the same names exist
-			int i = 0;
-			for (String val: profileSelector.getItems()) {
-				if (val.startsWith(p.getName())) {
-					i++;
-				}
-			}
-
-			if (i > 0) {
-				profileSelector.add(p.getName() + " " + i);
-			} else {
-				profileSelector.add(p.getName());
-			}
-		});
-		profileSelector.select(allProfiles.indexOf(new AnnotationProfile(profile.getId(), "")));
-		ComboSelectionListener.create(profileSelector, (e) -> {
-			profile = allProfiles.get(e.index);
+		new ProfileSelectorCombo(topContainer, allProfiles, (profile) -> {
+			this.profile = profile;
 			rebuildContent(parent);
-		});
+		}, profile.getId());
 
 		Button buttonNewProfile = new Button(topContainer, SWT.PUSH);
 		buttonNewProfile.setText("New Profile");

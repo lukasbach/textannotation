@@ -5,6 +5,7 @@ import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.PluginConfig;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.textmodel.InvalidAnnotationProfileFormatException;
+import edu.kit.textannotation.annotationplugin.views.ProfileSelectorCombo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,8 +29,8 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 	private Text containerText;
 	private Text fileText;
 	private Text templateFileText;
+	private String profile;
 	private ISelection selection;
-	private Combo profile;
 
 	/**
 	 * Constructor for TextAnnotationFileWizardPage.
@@ -84,16 +85,18 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 		label = new Label(container, SWT.NULL);
 		label.setText("&Annotation Profile:");
 
-		profile = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
+
 		try {
-			registry.getProfiles().forEach(p -> profile.add(p.getId()));
+			ProfileSelectorCombo selector = new ProfileSelectorCombo(container, registry.getProfiles(), (profile) -> {
+				this.profile = profile.getId();
+				dialogChanged();
+			}, null);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			selector.combo.setLayoutData(gd);
 		} catch (InvalidAnnotationProfileFormatException e) {
 			EclipseUtils.logger().error(e);
 			EclipseUtils.reportError("Profile is not properly formatted.");
 		}
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		profile.setLayoutData(gd);
-		ComboSelectionListener.create(profile, e -> dialogChanged());
 
 		label = new Label(container, SWT.NULL);
 		label.setText("&");
@@ -236,6 +239,6 @@ public class TextAnnotationFileWizardPage extends WizardPage {
 	 * Get the name of the profile that should be referenced by the annotatable text file.
 	 */
 	String getProfile() {
-		return profile.getText();
+		return profile;
 	}
 }
