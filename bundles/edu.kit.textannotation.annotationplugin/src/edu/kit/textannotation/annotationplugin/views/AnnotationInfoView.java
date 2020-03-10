@@ -30,6 +30,7 @@ public class AnnotationInfoView extends ViewPart {
 
     private AnnotationTextEditor editor;
     private LayoutUtilities lu = new LayoutUtilities();
+    private SingleAnnotation lastAnnotation;
 
     @Inject IWorkbench workbench;
 
@@ -65,9 +66,20 @@ public class AnnotationInfoView extends ViewPart {
     }
 
     private void rebuildContent(Composite parent, @Nullable SingleAnnotation hoveringAnnotation) {
+        rebuildContent(parent, hoveringAnnotation, false);
+    }
+
+    private void rebuildContent(Composite parent, @Nullable SingleAnnotation hoveringAnnotation, boolean forceRedraw) {
         if (parent.isDisposed()) {
             return;
         }
+
+        if (!forceRedraw && lastAnnotation != null && hoveringAnnotation != null
+                && lastAnnotation.getId().equals(hoveringAnnotation.getId())) {
+            return;
+        }
+
+        lastAnnotation = hoveringAnnotation;
 
         EclipseUtils.clearChildren(parent);
 
@@ -136,7 +148,7 @@ public class AnnotationInfoView extends ViewPart {
                     AnnotationProfileRegistry registry = editor.getAnnotationProfileRegistry();
                     try {
                         EditProfileDialog.openWindow(registry, editor.getAnnotationProfile().getId(), profile -> {
-                            rebuildContent(parent, hoveringAnnotation);
+                            rebuildContent(parent, hoveringAnnotation, true);
                         }, annotationClass.getId());
                     } catch (ProfileNotFoundException e) {
                         EclipseUtils.reportError("Profile could not be found.");
