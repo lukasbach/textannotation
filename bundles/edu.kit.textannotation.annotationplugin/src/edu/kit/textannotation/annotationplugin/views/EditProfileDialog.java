@@ -269,11 +269,29 @@ public class EditProfileDialog extends Shell {
 
 	private void addNewClass() {
 		Color defaultColor = new Color(Display.getCurrent(), 52, 152, 219);
+		String annotationClassName = "";
+
+		InputDialog dialog = new InputDialog(getShell(), "Create new annotation class",
+				"Set the name of the annotation class", "New Annotation Class " + newClassNameCounter++,
+				t -> null);
+
+		if (dialog.open() == Window.OK) {
+			annotationClassName = dialog.getValue();
+		}
+
+		String annotationId = String.format(
+				"%s_%s_%s",
+				profile.getName().toLowerCase().replaceAll("\\s", "-").substring(0, 8),
+				annotationClassName.toLowerCase().replaceAll("\\s", "-").substring(0, 8),
+				UUID.randomUUID().toString().toLowerCase().replaceAll("\\s", "-").substring(0, 4)
+		);
+
 		AnnotationClass newClass = new AnnotationClass(
-				UUID.randomUUID().toString(),
-				"New Annotation Class " + newClassNameCounter++,
+				annotationId,
+				annotationClassName,
 				defaultColor
 		);
+
 		profile.addAnnotationClass(newClass);
 		annotationClassesList.setItems(profile.getAnnotationClassNames());
 		annotationClassesList.setSelection(new String[]{newClass.getId()});
