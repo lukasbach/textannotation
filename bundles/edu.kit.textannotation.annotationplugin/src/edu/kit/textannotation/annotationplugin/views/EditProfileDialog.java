@@ -242,7 +242,6 @@ public class EditProfileDialog extends Shell {
 			selectedAnnotationClass = profile.getAnnotationClass(annotationClassId);
 			rebuildContent(this);
 		} catch (Exception e) {
-			// TODO
 			EclipseUtils.logger().error(e);
 		}
 	}

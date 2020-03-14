@@ -113,7 +113,6 @@ public class TextModelData {
 		try {
 			return document.get(annotation.getOffset(), annotation.getLength());
 		} catch (BadLocationException e) {
-			// TODO
 			EclipseUtils.logger().error(e);
 			return "[BADANNOTATION]";
 		}

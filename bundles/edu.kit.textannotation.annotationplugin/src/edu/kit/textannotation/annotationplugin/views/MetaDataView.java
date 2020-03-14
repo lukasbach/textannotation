@@ -59,7 +59,6 @@ public class MetaDataView {
         EclipseUtils.clearChildren(parent);
 
         GridLayout layout = new GridLayout();
-        // TODO LayoutUtilities
         parent.setLayout(layout);
         layout.numColumns = 3;
         layout.verticalSpacing = 7;

@@ -89,7 +89,7 @@ public class AnnotatedTextPresentationReconciler implements IPresentationReconci
 	 * @param profile the profile of the currently opened annotatable text file.
 	 * @param annotations the set of annotations in the annotatable text file.
 	 */
-    public void setAnnotationInformation(AnnotationProfile profile, AnnotationSet annotations) { // TODO use TextModelData
+    public void setAnnotationInformation(AnnotationProfile profile, AnnotationSet annotations) {
     	this.profile = profile;
     	this.annotations = annotations;
     }
