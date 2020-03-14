@@ -40,6 +40,9 @@ as well as the internal project structure.
       - [CI Setup](#ci-setup)
       - [Specifying a custom Syntax Highlighter](#specifying-a-custom-syntax-highlighter)
       - [Developing with JetBrains IntelliJ](#developing-with-jetbrains-intellij)
+    - [Guidelines for moving the project](#guidelines-for-moving-the-project)
+      - [GitHub releases](#github-releases)
+      - [SonarCloud](#sonarcloud)
     - [Contribution Guidelines](#contribution-guidelines)
     - [Conclusion](#conclusion)
 
@@ -491,8 +494,90 @@ The detail steps are described below:
 The [StackOverflow thread][intellij-so] also describes how the debug task
 can be embedded in IntelliJ.
 
+### Guidelines for moving the project
+
+As the project is supposed to eventually be moved to a different GitHub
+account, this section documents the necessary steps to do so.
+
+The plugin code itself is not dependent on the location of the repository.
+Only the CI setup makes relevant assumptions. The CI setup is based on the
+configuration file ``.travis.yml``, which is based in the root of the
+repository. As long as Travis is connected to a GitHub user, it will
+automatically scan all available repositories for such configuration files,
+so as long as the new GitHub account is connected to a Travis account, that
+account will automatically start building the project.
+
+There are two additional integrations defined in the Travis setup, which
+require manual adoption: The GitHub releases integration (defined in
+the config file in lines ``41-59``) and the Sonarcloud integration (defined
+in lines ``4-8``).
+Both sections can be removed to remove the entire integrations if desired,
+however they can also be moved to the new project context. For moving them,
+the [Travis CLI][traviscli] is required and you need to be logged in
+(``travis login``). Note that, if you are using ``travis.com`` rather than
+``travis.org`` (which is likely for newer travis accounts), **you need to
+append ``--pro`` to all commands!**
+
+#### GitHub releases
+
+Relevant documentation: https://docs.travis-ci.com/user/deployment/releases/
+
+- Generate a new GitHub access token via
+  ``Settings > Developer Settings > Personal access tokens > Generate new token`` with the repo scope.
+- Encrypt the token via ``travis encrypt {token}``.
+- Replace the token in the travis config in line 59, after the ``secure:``.
+
+#### SonarCloud
+
+Relevant documentation: https://docs.travis-ci.com/user/sonarcloud/
+
+A SonarCloud account is required for this step.
+
+- Create a user authentication token at https://sonarcloud.io/account/security
+- Encrypt the token via ``travis encrypt {token}``.
+- Replace the token in the travis config in line 59, after the ``secure:``.
+
 ### Contribution Guidelines
+
+Commit messages are formatted by following the
+[Conventional Commits Specification][conventional].
+
+The project can be built by running ``mvn clean verify``, test reports and
+coverage reports are generated accordingly. For running and debugging the
+plugin, the package ``bundles/edu.kit.textannotation.annotationplugin``
+can be opened as Eclipse project and started as an plugin project from
+there.
+
 ### Conclusion
+
+The contributions of this project include the development of an eclipse plugin
+for annotating regions in text documents, with various additional features
+implemented such as the addition of metadata to annotations or the extraction
+of common annotation informations in annotation profile files.
+
+Various tools for improving the quality assurance process and structuring
+the development process were incorporated, such as CI tools and unit tests.
+A setup based on Travis CI and Sonarcloud was implemented to yield fast
+and structured QA data.
+
+Even though the project did yield a usable tool that can be leveraged in
+practical projects, there are some tasks open for future work. The existing
+unit tests only cover a low percentage of the overall code, whereas many
+components use SWT UI classes which are hard to manually test via unit tests
+and where not many mocking approaches exist. The most likely way of effectively
+testing these components is to implement end-to-end tests for the UI logic
+by leveraging frameworks such as SWTBot.
+
+Also, during development, the idea came up to implement ways of synchronizing
+an annotatable text file with the original text file that was used as data
+source. This is likely not a trivial task as producing text differences is
+a task for which exist solutions, but they are not easy to implement. This
+would also be a task open for future work.
+
+Finally, the publication of the plugin to the Eclipse Marketplace is something
+that is still open for future work. While it already can be installed by
+downloading and installing the plugin JAR file, this is only a workaround until
+the publication is final.
 
 [vogella-maven-tycho]: https://www.vogella.com/tutorials/EclipseTycho/article.html
 [swtbot]: https://www.eclipse.org/swtbot/
@@ -505,3 +590,5 @@ can be embedded in IntelliJ.
 [intellij-so]: https://stackoverflow.com/a/43195085/2692307
 [annotationprocessimage]: ./images/annotationprocess.png
 [maven-bug]: https://issues.apache.org/jira/browse/MNG-6765
+[conventional]: [conventionalcommits.org](https://www.conventionalcommits.org/en/v1.0.0/)
+[traviscli]: https://github.com/travis-ci/travis.rb
