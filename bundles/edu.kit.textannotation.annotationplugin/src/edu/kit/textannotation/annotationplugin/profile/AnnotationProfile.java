@@ -52,15 +52,14 @@ public class AnnotationProfile {
 	 * @return the annotation class if it could be resolved.
 	 * @throws Exception if the profile does not store an annotation class with the supplied name.
 	 */
-	public AnnotationClass getAnnotationClass(String id) throws Exception {
+	public AnnotationClass getAnnotationClass(String id) throws AnnotationClassNotFoundException {
 		for (AnnotationClass ac: annotationClasses) {
 			if (ac.getId().equals(id.replace("\n", "").replace("\r", ""))) {
 				return ac;
 			}
 		}
 		
-		// TODO custom exception
-		throw new Exception("Could not find annotation class " + id + ", available classes are "
+		throw new AnnotationClassNotFoundException("Could not find annotation class " + id + ", available classes are "
 		  + annotationClasses.stream().map(AnnotationClass::getId).collect(Collectors.joining(", ")));
 	}
 

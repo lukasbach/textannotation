@@ -107,8 +107,11 @@ public class AnnotationInfoView extends ViewPart {
             return;
         } catch (ProfileNotFoundException e) {
             Header.withTitle("Error")
-                    .withSubTitle("The profile could not be found..").render(container);
+                    .withSubTitle("The profile could not be found.").render(container);
             parent.layout();
+            return;
+        } catch (AnnotationClassNotFoundException e) {
+            rebuildContent(parent, null);
             return;
         } catch (Exception e) {
             Header.withTitle("Error")
