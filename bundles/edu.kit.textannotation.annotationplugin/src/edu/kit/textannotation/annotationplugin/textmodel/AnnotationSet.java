@@ -50,23 +50,26 @@ public class AnnotationSet {
 	}
 
 	/**
-	 * Add an annotation instance to this set instance. Note that the annotation might be "trimmed",
-	 * i.e. if the annotation overlaps with existing annotations in this set, it will be cut short
-	 * to not overlap, and then only be added if it keeps a positive length.
+	 * Add an annotation instance to this set instance. The annotation will only be added if it does not
+	 * overlap with existing annotations in the annotationset.
 	 * @param annotation the annotation to add to the set.
+	 * @return true if the annotation was added, false if it was not due to overlaps.
 	 */
-	public void addAnnotation(SingleAnnotation annotation) {
+	public boolean addAnnotation(SingleAnnotation annotation) {
 		// Alternative to erroring on overlapping annotations:
 		// trimAnnotation(annotation);
 
 		if (checkOverlaps(annotation)) {
 			EclipseUtils.reportError("The annotation overlaps with other annotations. No annotation was placed.");
-			return;
+			return false;
 		}
 
 		if (annotation.getLength() > 0) {
 			this.annotations.add(annotation);
+			return true;
 		}
+		
+		return false;
 	}
 
 	/**
