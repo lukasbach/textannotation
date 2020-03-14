@@ -33,6 +33,12 @@ public class AnnotationEditorFinder {
 	public AnnotationEditorFinder(IWorkbench workbench) {
 		this.workbench = workbench;
 		this.activeEditorId = "";
+
+		AnnotationTextEditor editor = getAnnotationEditor();
+		if (editor != null) {
+			onAnnotationEditorActivated.fire(editor);
+		}
+
 		workbench.getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener2() {
 			@Override public void partVisible(IWorkbenchPartReference partRef) {}					
 			@Override public void partOpened(IWorkbenchPartReference partRef) {}					
@@ -45,7 +51,7 @@ public class AnnotationEditorFinder {
 				IEditorPart activeEditor = workbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 				if (activeEditor instanceof AnnotationTextEditor) {
 					String editorId = ((AnnotationTextEditor) activeEditor).getId();
-					if (!activeEditorId.equals(editorId)) {
+					if (activeEditorId.equals(editorId)) {
 						onAnnotationEditorActivated.fire((AnnotationTextEditor) activeEditor);
 						activeEditorId = editorId;
 						lastEditor = (AnnotationTextEditor) activeEditor;
