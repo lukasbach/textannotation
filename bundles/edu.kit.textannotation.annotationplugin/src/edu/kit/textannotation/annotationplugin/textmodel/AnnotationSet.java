@@ -1,5 +1,7 @@
 package edu.kit.textannotation.annotationplugin.textmodel;
 
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +56,13 @@ public class AnnotationSet {
 	 * @param annotation the annotation to add to the set.
 	 */
 	public void addAnnotation(SingleAnnotation annotation) {
-		trimAnnotation(annotation);
+		// Alternative to erroring on overlapping annotations:
+		// trimAnnotation(annotation);
+
+		if (checkOverlaps(annotation)) {
+			EclipseUtils.reportError("The annotation overlaps with other annotations. No annotation was placed.");
+			return;
+		}
 
 		if (annotation.getLength() > 0) {
 			this.annotations.add(annotation);
@@ -92,5 +100,26 @@ public class AnnotationSet {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Check whether the annotation overlaps with existing annotations in this annotation set.
+	 */
+	private boolean checkOverlaps(SingleAnnotation annotation) {
+		for (SingleAnnotation existingAnnotation: annotations) {
+			if (annotation.getLength() > 0) {
+				if (existingAnnotation.isContainedWithin(annotation.getStart(), annotation.getEnd())) {
+					return true;
+				}
+				if (existingAnnotation.containsPosition(annotation.getStart())) {
+					return true;
+				}
+				if (existingAnnotation.containsPosition(annotation.getEnd())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }
