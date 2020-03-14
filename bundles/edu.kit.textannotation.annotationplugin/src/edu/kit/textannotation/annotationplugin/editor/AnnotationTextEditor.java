@@ -151,6 +151,7 @@ public class AnnotationTextEditor extends AbstractTextEditor {
 	 * @param selectionStrategy the strategy to potentially expand the selection to semantically fitting locations.
 	 */
 	public void annotate(AnnotationClass annotationClass, SelectionStrategy selectionStrategy) {
+		textModelData.setDocument(getDocumentProvider().getDocument(getEditorInput()));
 		Point originalSelection = sourceViewer.getSelectedRange();
 		Region expandedSelection = selectionStrategy
 				.evaluateSelection(new Region(originalSelection.x, originalSelection.y), textModelData.getDocument());
