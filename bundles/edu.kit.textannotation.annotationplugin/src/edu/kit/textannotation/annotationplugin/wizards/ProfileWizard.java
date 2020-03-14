@@ -1,8 +1,10 @@
 package edu.kit.textannotation.annotationplugin.wizards;
 
+import edu.kit.textannotation.annotationplugin.editor.AnnotationEditorFinder;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfile;
 import edu.kit.textannotation.annotationplugin.profile.AnnotationProfileRegistry;
 import edu.kit.textannotation.annotationplugin.textmodel.xmlinterface.AnnotationProfileXmlInterface;
+import edu.kit.textannotation.annotationplugin.utils.EclipseUtils;
 import edu.kit.textannotation.annotationplugin.utils.EventManager;
 import edu.kit.textannotation.annotationplugin.views.EditProfileDialog;
 import org.eclipse.core.resources.*;
@@ -61,7 +63,12 @@ public class ProfileWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String profileName = page.getProfile();
-		final String profileId = UUID.randomUUID().toString();
+		final String profileId = String.format(
+				"%s_%s",
+				EclipseUtils.capString(profileName.toLowerCase().replaceAll("\\s", "-"), 8),
+				EclipseUtils.capString(UUID.randomUUID().toString().toLowerCase().replaceAll("\\s", "-"), 4)
+		);
+
 		IRunnableWithProgress op = monitor -> {
 			try {
 				doFinish(containerName, fileName, profileName, profileId, monitor);

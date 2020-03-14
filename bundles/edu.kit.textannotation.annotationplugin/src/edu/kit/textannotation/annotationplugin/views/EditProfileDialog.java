@@ -281,9 +281,9 @@ public class EditProfileDialog extends Shell {
 
 		String annotationId = String.format(
 				"%s_%s_%s",
-				profile.getName().toLowerCase().replaceAll("\\s", "-").substring(0, 8),
-				annotationClassName.toLowerCase().replaceAll("\\s", "-").substring(0, 8),
-				UUID.randomUUID().toString().toLowerCase().replaceAll("\\s", "-").substring(0, 4)
+				EclipseUtils.capString(profile.getName().toLowerCase().replaceAll("\\s", "-"), 8),
+				EclipseUtils.capString(annotationClassName.toLowerCase().replaceAll("\\s", "-"), 8),
+				EclipseUtils.capString(UUID.randomUUID().toString().toLowerCase().replaceAll("\\s", "-"), 4)
 		);
 
 		AnnotationClass newClass = new AnnotationClass(

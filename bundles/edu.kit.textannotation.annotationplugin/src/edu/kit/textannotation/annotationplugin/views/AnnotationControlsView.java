@@ -107,10 +107,17 @@ public class AnnotationControlsView extends ViewPart {
 		Header
 				.withTitle(profile.getName())
 				.withButton("Change Profile", () -> {
+					List<AnnotationProfile> newlyLoadedProfiles;
+					try {
+						newlyLoadedProfiles = registry.getProfiles();
+					} catch (InvalidAnnotationProfileFormatException e) {
+						newlyLoadedProfiles = profiles;
+					}
+
 					ElementListSelectionDialog dialog = new ElementListSelectionDialog(parent.getShell(), new LabelProvider());
 					dialog.setTitle("Change Profile");
 					dialog.setMessage("Change Profile for the current annotation text file");
-					dialog.setElements(profiles.toArray());
+					dialog.setElements(newlyLoadedProfiles.toArray());
 					dialog.open();
 					AnnotationProfile selectedProfile = (AnnotationProfile) dialog.getFirstResult();
 					if (selectedProfile != null) {

@@ -114,4 +114,14 @@ public class EclipseUtils {
 
         return null;
     }
+
+    /**
+     * Cap the length of the supplied string. Does return the source string unchanged if it already is short enough.
+     * @param str the original unchanged string.
+     * @param length the length to which the string will be capped.
+     * @return the string shortened to the supplied length.
+     */
+    public static String capString(String str, int length) {
+        return str.length() >= length ? str : str.substring(0, length);
+    }
 }
