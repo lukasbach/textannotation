@@ -15,7 +15,7 @@ This document is segmented into two parts. The
 documents how the application is installed and used and serves as a user
 documentation. The
 [second section](#Project-Documentation) documents the overall approach,
-the pitfalls and takeaways experienced during the project's developemnt
+the pitfalls and takeaways experienced during the project's development
 as well as the internal project structure.
 
 - [TextAnnotation Eclipse-Plugin](#textannotation-eclipse-plugin)
@@ -45,6 +45,10 @@ as well as the internal project structure.
       - [SonarCloud](#sonarcloud)
     - [Contribution Guidelines](#contribution-guidelines)
     - [Conclusion](#conclusion)
+
+
+
+Copyright (c) 2020 [Lukas Bach](https://lukasbach.com) via MIT License.
 
 ## User Documentation
 
@@ -353,7 +357,7 @@ that on the fly:
 
     # Build, run tests and generate binary jacoco output
     - mvn clean install test verify
-
+    
     # Download Jacoco CLI
     - curl [...]/org.jacoco.cli-0.8.5-nodeps.jar --output jacococli.jar
     
@@ -590,5 +594,5 @@ the publication is final.
 [intellij-so]: https://stackoverflow.com/a/43195085/2692307
 [annotationprocessimage]: ./images/annotationprocess.png
 [maven-bug]: https://issues.apache.org/jira/browse/MNG-6765
-[conventional]: [conventionalcommits.org](https://www.conventionalcommits.org/en/v1.0.0/)
+[conventional]: conventionalcommits.org(https://www.conventionalcommits.org/en/v1.0.0/)
 [traviscli]: https://github.com/travis-ci/travis.rb
