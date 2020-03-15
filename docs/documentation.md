@@ -270,8 +270,6 @@ consistent report page, which can be found [here][sonarcloud-project].
 
 The relevant steps of the CI configuration follow:
 
-- Generate a changelog file based on the version tag using
-  [standard-version][standard-version].
 - Build the project, run test cases and record coverage.
 - Generate a XML coverage report using the [Jacoco CLI][jacoco-cli].
 - Run the Sonar Scanner, uploading the analysis results and coverage reports to
@@ -373,6 +371,36 @@ box, however then the coverage reports only show covered code in the test
 package which invalidates the idea of test coverage reports.
 
 #### Generating changelogs
+
+Initially I have attempted to automatically generate changelog files with
+data mined from commit messages, so that the changelogs could be attached
+to the generated GitHub Releases.
+
+The used CI setup Travis CI supports attaching text file contents as release
+description, so only the changelog file would have to be generated as part
+of the CI setup.
+
+The tool I wanted to use was [standard-version][standard-version]. It relies
+on the fact that commit messages are formatted according to the
+[conventional commits guidelines][conventional], where commits are structured
+as follows
+
+    type(domain): description
+
+where type is one of the following
+
+    feat, fix, test, docs, chore, ...
+
+and the ``domain`` describes the component of the software where the changes
+are made in. [Standard-version][standard-version] would then generate the
+changelog file based on the commit messages, taking only those commits into
+account if they occured since the last version tag.
+
+However, I struggled getting the integration of version tags to work, and
+ended up with all commits taken into account for any changelog generation
+regardless of the version tags defined. Eventually, I removed the changelog
+generation part from the CI setup and used static installation guidelines
+as release documentations instead.
 
 #### CI Setup
 
@@ -540,6 +568,7 @@ A SonarCloud account is required for this step.
 - Create a user authentication token at https://sonarcloud.io/account/security
 - Encrypt the token via ``travis encrypt {token}``.
 - Replace the token in the travis config in line 59, after the ``secure:``.
+- Replace the definition of the sonarcloud account name with the new account.
 
 ### Contribution Guidelines
 
@@ -594,5 +623,5 @@ the publication is final.
 [intellij-so]: https://stackoverflow.com/a/43195085/2692307
 [annotationprocessimage]: ./images/annotationprocess.png
 [maven-bug]: https://issues.apache.org/jira/browse/MNG-6765
-[conventional]: conventionalcommits.org(https://www.conventionalcommits.org/en/v1.0.0/)
+[conventional]: https://www.conventionalcommits.org/en/v1.0.0/
 [traviscli]: https://github.com/travis-ci/travis.rb
